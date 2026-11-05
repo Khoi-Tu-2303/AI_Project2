@@ -2,6 +2,8 @@
 
 Tài liệu này hướng dẫn chi tiết cách các thành viên B, C, D, E sử dụng nền tảng Phần A đã hoàn thiện, nhập khẩu (import) các kiểu dữ liệu dùng chung, và tự kiểm tra mã nguồn của mình trước khi nghiệm thu tích hợp.
 
+Cập nhật 2026-11-05: phần B đã có triển khai và G-B PASS. API thực tế, constructor và hướng dẫn ghép với C/D xem [handoff-B.md](handoff-B.md). Các mục "cần cài đặt" dưới đây giữ lại phân công ban đầu.
+
 ---
 
 ## 1. Bàn giao cho Thành viên B (Biểu diễn logic, CNF Encoder & Evaluator)

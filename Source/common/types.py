@@ -241,3 +241,24 @@ class Hint:
     def __post_init__(self) -> None:
         if isinstance(self.clue_ids, list):
             object.__setattr__(self, "clue_ids", tuple(self.clue_ids))
+
+
+@dataclass(frozen=True)
+class KnowledgeBase:
+    """Detached CNF snapshot; primary variables are 1..n*n in row-major order."""
+
+    n: int
+    clauses: tuple[tuple[int, ...], ...]
+    num_primary: int
+    num_aux: int
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "clauses", tuple(tuple(c) for c in self.clauses))
+
+    @property
+    def num_vars(self) -> int:
+        return self.num_primary + self.num_aux
+
+    @property
+    def num_clauses(self) -> int:
+        return len(self.clauses)

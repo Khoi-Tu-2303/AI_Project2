@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-11-05T09:17:15.835515+00:00",
-  "scope": "a",
-  "require_real": false,
-  "overall_status": "PASS",
-  "exit_code": 0,
+  "timestamp": "2026-11-05T14:23:09.444077+00:00",
+  "scope": "all",
+  "require_real": true,
+  "overall_status": "BLOCKED",
+  "exit_code": 2,
   "gates": {
     "G-A": {
       "gate_id": "G-A",
@@ -19,49 +19,227 @@
           "description": "Imports and layout boundaries",
           "status": "PASS",
           "evidence": "All common and engine modules import cleanly without external dependencies",
-          "duration_ms": 47.38
+          "duration_ms": 67.68
         },
         {
           "check_id": "A-02",
           "description": "Coordinates, bounds, and neighbors",
           "status": "PASS",
           "evidence": "Cell coordinates, bounds, row-major order, and neighbor counts verified for 3x3, 4x4, 5x5",
-          "duration_ms": 0.71
+          "duration_ms": 0.32
         },
         {
           "check_id": "A-03/04",
           "description": "Regions and referenced_cells for 8 clues",
           "status": "PASS",
           "evidence": "Region resolution and referenced_cells verified with COMPARE overlap",
-          "duration_ms": 0.12
+          "duration_ms": 0.43
         },
         {
           "check_id": "A-05/06",
           "description": "Strict JSON IO and Puzzle structure",
           "status": "PASS",
           "evidence": "Strict JSON parsed and round-tripped fixture 3x3_chain.json",
-          "duration_ms": 1.92
+          "duration_ms": 2.93
         },
         {
           "check_id": "A-07",
           "description": "Manifest loader and security",
           "status": "PASS",
           "evidence": "Manifest loader loaded index.json and enforced path security",
-          "duration_ms": 2.28
+          "duration_ms": 5.32
         },
         {
           "check_id": "A-08..18",
           "description": "GameEngine lifecycle and verdict transactions",
           "status": "PASS",
           "evidence": "Engine load, verdict submission, token increment, and isolation verified",
-          "duration_ms": 1.78
+          "duration_ms": 2.09
         },
         {
           "check_id": "A-19",
           "description": "Sequential chain solving via OracleClassifier",
           "status": "PASS",
           "evidence": "8-step sequential chain reveal fully verified with independent Oracle",
-          "duration_ms": 28.04
+          "duration_ms": 29.66
+        }
+      ]
+    },
+    "G-B": {
+      "gate_id": "G-B",
+      "module_owner": "B (CNF Encoder)",
+      "status": "PASS",
+      "passed_count": 11,
+      "failed_count": 0,
+      "blocked_count": 0,
+      "total_count": 11,
+      "subchecks": [
+        {
+          "check_id": "test_b01_varmap_bijection",
+          "description": "test_b01_varmap_bijection",
+          "status": "PASS",
+          "evidence": "Real Module B implementation checked against independent oracles",
+          "duration_ms": 0.58
+        },
+        {
+          "check_id": "test_b02_binary_projection",
+          "description": "test_b02_binary_projection",
+          "status": "PASS",
+          "evidence": "Real Module B implementation checked against independent oracles",
+          "duration_ms": 100.01
+        },
+        {
+          "check_id": "test_b03_counting_all_bounds",
+          "description": "test_b03_counting_all_bounds",
+          "status": "PASS",
+          "evidence": "Real Module B implementation checked against independent oracles",
+          "duration_ms": 9495.75
+        },
+        {
+          "check_id": "test_b04_parity_and_region_kinds",
+          "description": "test_b04_parity_and_region_kinds",
+          "status": "PASS",
+          "evidence": "Real Module B implementation checked against independent oracles",
+          "duration_ms": 393.57
+        },
+        {
+          "check_id": "test_b05_compare_overlap_and_identical_regions",
+          "description": "test_b05_compare_overlap_and_identical_regions",
+          "status": "PASS",
+          "evidence": "Real Module B implementation checked against independent oracles",
+          "duration_ms": 1842.37
+        },
+        {
+          "check_id": "test_b06_independent_bruteforce_auxiliary_projection",
+          "description": "test_b06_independent_bruteforce_auxiliary_projection",
+          "status": "PASS",
+          "evidence": "Real Module B implementation checked against independent oracles",
+          "duration_ms": 31.52
+        },
+        {
+          "check_id": "test_b07_kb_rebuild_isolation_and_public_inputs",
+          "description": "test_b07_kb_rebuild_isolation_and_public_inputs",
+          "status": "PASS",
+          "evidence": "Real Module B implementation checked against independent oracles",
+          "duration_ms": 25.44
+        },
+        {
+          "check_id": "test_b08_standalone_clues_do_not_reuse_auxiliaries",
+          "description": "test_b08_standalone_clues_do_not_reuse_auxiliaries",
+          "status": "PASS",
+          "evidence": "Real Module B implementation checked against independent oracles",
+          "duration_ms": 16.17
+        },
+        {
+          "check_id": "test_b09_reject_invalid_clues_and_assignments",
+          "description": "test_b09_reject_invalid_clues_and_assignments",
+          "status": "PASS",
+          "evidence": "Real Module B implementation checked against independent oracles",
+          "duration_ms": 0.21
+        },
+        {
+          "check_id": "test_b10_larger_boards_have_bounded_encoding",
+          "description": "test_b10_larger_boards_have_bounded_encoding",
+          "status": "PASS",
+          "evidence": "Real Module B implementation checked against independent oracles",
+          "duration_ms": 490.9
+        },
+        {
+          "check_id": "test_b11_only_public_snapshot_enters_kb",
+          "description": "test_b11_only_public_snapshot_enters_kb",
+          "status": "PASS",
+          "evidence": "Real Module B implementation checked against independent oracles",
+          "duration_ms": 1.62
+        }
+      ]
+    },
+    "G-C": {
+      "gate_id": "G-C",
+      "module_owner": "C (DPLL Solver)",
+      "status": "BLOCKED",
+      "passed_count": 0,
+      "failed_count": 0,
+      "blocked_count": 1,
+      "total_count": 1,
+      "subchecks": [
+        {
+          "check_id": "G-C-MOD",
+          "description": "Inspect availability of logic.dpll",
+          "status": "BLOCKED",
+          "evidence": "Module 'logic.dpll' is not yet implemented or delivered by C (DPLL Solver)",
+          "duration_ms": 0.0
+        }
+      ]
+    },
+    "G-P": {
+      "gate_id": "G-P",
+      "module_owner": "C (Puzzle Suite)",
+      "status": "BLOCKED",
+      "passed_count": 0,
+      "failed_count": 0,
+      "blocked_count": 1,
+      "total_count": 1,
+      "subchecks": [
+        {
+          "check_id": "G-P-MOD",
+          "description": "Inspect availability of puzzles (requires B & C)",
+          "status": "BLOCKED",
+          "evidence": "Module 'puzzles (requires B & C)' is not yet implemented or delivered by C (Puzzle Suite)",
+          "duration_ms": 0.0
+        }
+      ]
+    },
+    "G-D": {
+      "gate_id": "G-D",
+      "module_owner": "D (Logic Agent)",
+      "status": "BLOCKED",
+      "passed_count": 0,
+      "failed_count": 0,
+      "blocked_count": 1,
+      "total_count": 1,
+      "subchecks": [
+        {
+          "check_id": "G-D-MOD",
+          "description": "Inspect availability of agent.logic_agent",
+          "status": "BLOCKED",
+          "evidence": "Module 'agent.logic_agent' is not yet implemented or delivered by D (Logic Agent)",
+          "duration_ms": 0.0
+        }
+      ]
+    },
+    "G-E": {
+      "gate_id": "G-E",
+      "module_owner": "E (GUI & Main)",
+      "status": "BLOCKED",
+      "passed_count": 0,
+      "failed_count": 0,
+      "blocked_count": 1,
+      "total_count": 1,
+      "subchecks": [
+        {
+          "check_id": "G-E-MOD",
+          "description": "Inspect availability of gui.app / gui.controller",
+          "status": "BLOCKED",
+          "evidence": "Module 'gui.app / gui.controller' is not yet implemented or delivered by E (GUI & Main)",
+          "duration_ms": 0.0
+        }
+      ]
+    },
+    "G-I": {
+      "gate_id": "G-I",
+      "module_owner": "Integration (All Members)",
+      "status": "BLOCKED",
+      "passed_count": 0,
+      "failed_count": 0,
+      "blocked_count": 1,
+      "total_count": 1,
+      "subchecks": [
+        {
+          "check_id": "G-I-MOD",
+          "description": "Inspect availability of Full stack (logic & agent)",
+          "status": "BLOCKED",
+          "evidence": "Module 'Full stack (logic & agent)' is not yet implemented or delivered by Integration (All Members)",
+          "duration_ms": 0.0
         }
       ]
     }

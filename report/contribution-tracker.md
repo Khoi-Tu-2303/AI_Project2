@@ -9,7 +9,7 @@ Theo yêu cầu mục 4.6 của đề bài: Ghi nhận phân công công việc 
 | Thành viên | Vai trò | Nhiệm vụ chính được giao | Trạng thái hiện tại |
 |---|---|---|---|
 | **A** | Trưởng nhóm / Lõi game | - Quản lý tiến độ, quy ước chung và shared contracts.<br>- Xây dựng lõi GameEngine, StateToken, snapshot isolation.<br>- Parser JSON strict, validator 8 clue và regions.<br>- Viết test runner, test harness, oracle độc lập. | **100% Hoàn thành Phần A** (Đạt Gate G-A) |
-| **B** | Biểu diễn tri thức | - Xây dựng VarMap và ánh xạ biến.<br>- Triển khai CNFEncoder cho 6 core + 2 extensions.<br>- Triển khai SemanticEvaluator độc lập. | Đang chờ bàn giao mã nguồn (Chờ Gate G-B) |
+| **B** | Biểu diễn tri thức | - Xây dựng VarMap và ánh xạ biến.<br>- Triển khai CNFEncoder cho 6 core + 2 extensions.<br>- Triển khai SemanticEvaluator độc lập. | Đã có triển khai với hỗ trợ Codex và G-B PASS; thành viên B cần rà soát, xác nhận mức đóng góp cá nhân |
 | **C** | Thuật toán SAT & Dữ liệu | - Cài đặt DPLL Solver (unit prop, backtrack, ledger).<br>- Cài đặt EntailmentChecker.<br>- Xây dựng bộ màn puzzle (normal, negative, stress). | Đang chờ bàn giao mã nguồn (Chờ Gate G-C, G-P) |
 | **D** | Tác tử suy luận | - Cài đặt LogicAgent không đoán (no-guess).<br>- Deduction loop, Hint, Uniqueness check offline.<br>- Thiết lập pipeline thực nghiệm và ghi số liệu. | Đang chờ bàn giao mã nguồn (Chờ Gate G-D) |
 | **E** | Giao diện & Đa phương tiện | - Thiết kế giao diện đồ họa GUI (Board, Clues, Highlight).<br>- Tích hợp GamePort và LogicAgent vào GUI.<br>- Biên tập video thuyết minh demo sản phẩm. | Đang chờ bàn giao mã nguồn (Chờ Gate G-E) |

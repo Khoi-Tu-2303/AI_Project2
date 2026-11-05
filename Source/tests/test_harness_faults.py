@@ -54,12 +54,18 @@ def test_fault_injection_wrong_forced_caught_by_reference() -> None:
         engine.submit_verdict("B1", Status.INNOCENT)
 
 
-def test_runner_missing_module_yields_blocked() -> None:
+def test_runner_missing_module_yields_blocked(monkeypatch) -> None:
     """A-22: Runner marks missing modules as BLOCKED and produces exit code 2."""
     source_dir = Path(__file__).resolve().parent.parent
     runner = IntegrationRunner(source_dir=source_dir, require_real=True)
 
-    # Scope B (logic.encoder is missing)
+    # Simulate missing B even after delivery; preserve other module checks.
+    from tools import integration_runner
+    original = integration_runner.is_module_available
+    monkeypatch.setattr(integration_runner, "is_module_available",
+                        lambda name: False if name == "logic.encoder" else original(name))
+
+    # Scope B (logic.encoder is simulated missing)
     report_b = runner.run_scope("b")
     assert report_b.overall_status == "BLOCKED"
     assert report_b.exit_code == 2
@@ -75,4 +81,15 @@ def test_runner_missing_module_yields_blocked() -> None:
     assert report_all.gates["G-C"].status == "BLOCKED"
     assert report_all.gates["G-D"].status == "BLOCKED"
     assert report_all.gates["G-E"].status == "BLOCKED"
+
+
+def test_runner_rejects_broken_real_encoder(monkeypatch) -> None:
+    """G-B must fail if the delivered encoder silently drops constraints."""
+    from logic.encoder import CNFEncoder
+    monkeypatch.setattr(CNFEncoder, "encode_clue", lambda self, clue: [])
+    runner = IntegrationRunner(Path(__file__).resolve().parent.parent, require_real=True)
+    report = runner.run_scope("b")
+    assert report.overall_status == "FAIL"
+    assert report.exit_code == 1
+    assert report.gates["G-B"].failed_count > 0
 

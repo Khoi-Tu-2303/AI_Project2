@@ -235,6 +235,33 @@ class IntegrationRunner:
             subchecks=subchecks,
         )
 
+    def run_gate_b(self) -> GateResult:
+        """Execute real encoder acceptance checks, including projection."""
+        try:
+            import pytest
+            from tests import test_encoder_acceptance as checks
+            functions = [(name, getattr(checks, name)) for name in sorted(dir(checks))
+                         if name.startswith("test_b")]
+            if not functions:
+                raise RuntimeError("No Module B acceptance checks found")
+            def invoke(func):
+                try:
+                    func()
+                except (pytest.fail.Exception, pytest.skip.Exception) as exc:
+                    raise AssertionError(f"Acceptance check did not pass: {exc}") from exc
+                return "Real Module B implementation checked against independent oracles"
+
+            subchecks = [self.run_check(name, func.__doc__ or name,
+                                        lambda func=func: invoke(func))
+                         for name, func in functions]
+        except Exception as exc:
+            subchecks = [SubCheckResult("G-B-IMPORT", "Load Module B checks", "FAIL", str(exc))]
+        passed = sum(c.status == "PASS" for c in subchecks)
+        failed = len(subchecks) - passed
+        return GateResult(GATE_B, "B (CNF Encoder)", "FAIL" if failed else "PASS",
+                          passed_count=passed, failed_count=failed,
+                          total_count=len(subchecks), subchecks=subchecks)
+
     def create_blocked_gate(self, gate_id: str, owner: str, module_name: str) -> GateResult:
         """Create a standard BLOCKED gate report when a member's module is missing."""
         sub = SubCheckResult(
@@ -268,8 +295,7 @@ class IntegrationRunner:
             if not is_module_available("logic.encoder"):
                 gates[GATE_B] = self.create_blocked_gate(GATE_B, "B (CNF Encoder)", "logic.encoder")
             else:
-                # If present, run acceptance tests
-                gates[GATE_B] = self.create_blocked_gate(GATE_B, "B (CNF Encoder)", "logic.encoder")
+                gates[GATE_B] = self.run_gate_b()
 
         # G-C
         if scope_lower in ("c", "all"):

@@ -44,7 +44,7 @@ Source/
   engine/                   # Module A: Lõi trò chơi & phân phối quyền
     game_engine.py          # Quản lý vòng đời trò chơi, StateToken, commit verdict
     public_port.py          # Facade GamePort chỉ mở 2 phương thức công khai
-  logic/                    # Module B (CNF/Encoder) & Module C (DPLL/Entailment)
+  logic/                    # B đã có varmap/encoder/evaluator; C chưa có DPLL/Entailment
   agent/                    # Module D: LogicAgent, Uniqueness, Deduction Loop
   gui/                      # Module E: Giao diện đồ họa người dùng
   puzzles/                  # Bộ câu đố & màn chơi thử nghiệm
@@ -130,4 +130,21 @@ Mỗi file puzzle là file JSON UTF-8 với cấu trúc chuẩn:
 6. `AT_MOST`: Có nhiều nhất $k$ người là Criminal trong vùng (`region`, `k`).
 7. `PARITY`: Tính chẵn lẻ của tổng Criminal trong vùng (`region`, `parity: EVEN/ODD`).
 8. `COMPARE`: So sánh số Criminal giữa 2 vùng (`left`, `right`, `op: EQ/LT/LE/GT/GE`).
+
+## 6. Phần B đã triển khai
+
+```python
+from logic import CNFEncoder
+
+# state lấy từ GamePort.get_public_state()
+encoder = CNFEncoder(state.n)
+kb = encoder.build_kb(tuple(state.revealed_clues.values()), state.known_statuses)
+print(kb.num_primary, kb.num_aux, kb.num_clauses)
+# Phần C sẽ nhận kb.clauses và kb.num_vars để chạy SAT.
+```
+
+CNFEncoder hỗ trợ đủ 8 clue bằng mạch đếm ngưỡng và chuỗi XOR.
+SemanticEvaluator(n) đánh giá clue trực tiếp trên assignment đầy đủ, độc lập với encoder.
+Chạy `python -m tools.verify_project --scope b --require-real` để nghiệm thu B.
+Xem `../docs/handoff-B.md` và `../report/B-encoding.md` để biết API và phép biến đổi.
 
