@@ -1,0 +1,27 @@
+{
+  "schema_version": 2,
+  "cases": [
+    {
+      "case_id": "chain_demo",
+      "path": "examples/3x3_chain.json",
+      "kind": "normal",
+      "expected": {
+        "load": "VALID",
+        "full_clue_uniqueness": "UNIQUE",
+        "run": "SOLVED",
+        "reference_matches": true,
+        "accepted_order": [
+          "B1",
+          "C1",
+          "A2",
+          "B2",
+          "C2",
+          "A3",
+          "B3",
+          "C3"
+        ]
+      }
+    }
+  ]
+}
+

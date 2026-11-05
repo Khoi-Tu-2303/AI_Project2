@@ -1,0 +1,21 @@
+# Virtual environment
+.venv/
+venv/
+ENV/
+
+# Python bytecode & caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# OS artifacts
+Thumbs.db
+.DS_Store
+
+# Ignore PhaseA documentation
+docs/PhaseA/
+PhaseA/
+
+# Docs
+

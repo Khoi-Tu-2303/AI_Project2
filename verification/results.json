@@ -1,0 +1,69 @@
+{
+  "timestamp": "2026-11-05T09:17:15.835515+00:00",
+  "scope": "a",
+  "require_real": false,
+  "overall_status": "PASS",
+  "exit_code": 0,
+  "gates": {
+    "G-A": {
+      "gate_id": "G-A",
+      "module_owner": "A (Core & Engine)",
+      "status": "PASS",
+      "passed_count": 7,
+      "failed_count": 0,
+      "blocked_count": 0,
+      "total_count": 7,
+      "subchecks": [
+        {
+          "check_id": "A-01",
+          "description": "Imports and layout boundaries",
+          "status": "PASS",
+          "evidence": "All common and engine modules import cleanly without external dependencies",
+          "duration_ms": 47.38
+        },
+        {
+          "check_id": "A-02",
+          "description": "Coordinates, bounds, and neighbors",
+          "status": "PASS",
+          "evidence": "Cell coordinates, bounds, row-major order, and neighbor counts verified for 3x3, 4x4, 5x5",
+          "duration_ms": 0.71
+        },
+        {
+          "check_id": "A-03/04",
+          "description": "Regions and referenced_cells for 8 clues",
+          "status": "PASS",
+          "evidence": "Region resolution and referenced_cells verified with COMPARE overlap",
+          "duration_ms": 0.12
+        },
+        {
+          "check_id": "A-05/06",
+          "description": "Strict JSON IO and Puzzle structure",
+          "status": "PASS",
+          "evidence": "Strict JSON parsed and round-tripped fixture 3x3_chain.json",
+          "duration_ms": 1.92
+        },
+        {
+          "check_id": "A-07",
+          "description": "Manifest loader and security",
+          "status": "PASS",
+          "evidence": "Manifest loader loaded index.json and enforced path security",
+          "duration_ms": 2.28
+        },
+        {
+          "check_id": "A-08..18",
+          "description": "GameEngine lifecycle and verdict transactions",
+          "status": "PASS",
+          "evidence": "Engine load, verdict submission, token increment, and isolation verified",
+          "duration_ms": 1.78
+        },
+        {
+          "check_id": "A-19",
+          "description": "Sequential chain solving via OracleClassifier",
+          "status": "PASS",
+          "evidence": "8-step sequential chain reveal fully verified with independent Oracle",
+          "duration_ms": 28.04
+        }
+      ]
+    }
+  }
+}

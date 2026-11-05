@@ -1,0 +1,140 @@
+{
+  "schema_version": 2,
+  "id": "3x3_chain",
+  "n": 3,
+  "characters": [
+    {
+      "cell": "A1",
+      "name": "Alice",
+      "profession": "Baker"
+    },
+    {
+      "cell": "B1",
+      "name": "Ben",
+      "profession": "Doctor"
+    },
+    {
+      "cell": "C1",
+      "name": "Cara",
+      "profession": "Teacher"
+    },
+    {
+      "cell": "A2",
+      "name": "David",
+      "profession": "Chef"
+    },
+    {
+      "cell": "B2",
+      "name": "Emma",
+      "profession": "Artist"
+    },
+    {
+      "cell": "C2",
+      "name": "Finn",
+      "profession": "Pilot"
+    },
+    {
+      "cell": "A3",
+      "name": "Grace",
+      "profession": "Nurse"
+    },
+    {
+      "cell": "B3",
+      "name": "Hugo",
+      "profession": "Farmer"
+    },
+    {
+      "cell": "C3",
+      "name": "Iris",
+      "profession": "Writer"
+    }
+  ],
+  "clues": {
+    "A1": {
+      "id": "c_A1",
+      "type": "FACT",
+      "cells": [
+        "B1"
+      ],
+      "status": "CRIMINAL"
+    },
+    "B1": {
+      "id": "c_B1",
+      "type": "FACT",
+      "cells": [
+        "C1"
+      ],
+      "status": "INNOCENT"
+    },
+    "C1": {
+      "id": "c_C1",
+      "type": "FACT",
+      "cells": [
+        "A2"
+      ],
+      "status": "CRIMINAL"
+    },
+    "A2": {
+      "id": "c_A2",
+      "type": "FACT",
+      "cells": [
+        "B2"
+      ],
+      "status": "INNOCENT"
+    },
+    "B2": {
+      "id": "c_B2",
+      "type": "FACT",
+      "cells": [
+        "C2"
+      ],
+      "status": "CRIMINAL"
+    },
+    "C2": {
+      "id": "c_C2",
+      "type": "FACT",
+      "cells": [
+        "A3"
+      ],
+      "status": "INNOCENT"
+    },
+    "A3": {
+      "id": "c_A3",
+      "type": "FACT",
+      "cells": [
+        "B3"
+      ],
+      "status": "CRIMINAL"
+    },
+    "B3": {
+      "id": "c_B3",
+      "type": "FACT",
+      "cells": [
+        "C3"
+      ],
+      "status": "INNOCENT"
+    },
+    "C3": {
+      "id": "c_C3",
+      "type": "FACT",
+      "cells": [
+        "A1"
+      ],
+      "status": "INNOCENT"
+    }
+  },
+  "initial_revealed": {
+    "A1": "INNOCENT"
+  },
+  "solution": {
+    "A1": "INNOCENT",
+    "B1": "CRIMINAL",
+    "C1": "INNOCENT",
+    "A2": "CRIMINAL",
+    "B2": "INNOCENT",
+    "C2": "CRIMINAL",
+    "A3": "INNOCENT",
+    "B3": "CRIMINAL",
+    "C3": "INNOCENT"
+  }
+}

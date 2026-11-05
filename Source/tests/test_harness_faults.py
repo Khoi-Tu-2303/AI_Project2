@@ -1,0 +1,78 @@
+"""Fault injection tests verifying the verification runner and harness detect faults (A-22)."""
+
+from pathlib import Path
+import pytest
+
+from common.errors import ReferenceMismatchError
+from common.puzzle_io import load_puzzle
+from common.types import (
+    Classification,
+    ClassificationReport,
+    PublicState,
+    ReasoningStatus,
+    Status,
+    VerdictResult,
+)
+from engine.game_engine import GameEngine
+from tools.integration_runner import IntegrationRunner
+
+
+def test_fault_injection_always_unknown_cannot_solve() -> None:
+    """A-22: A faulty classifier that always returns UNKNOWN cannot solve the chain puzzle."""
+    chain_path = Path(__file__).resolve().parent.parent / "puzzles" / "examples" / "3x3_chain.json"
+    engine = GameEngine()
+    engine.load(chain_path)
+
+    def always_unknown(state: PublicState, *, deadline: float | None = None) -> ClassificationReport:
+        return ClassificationReport(
+            token=state.token,
+            status=ReasoningStatus.READY,
+            by_cell={c: Classification.UNKNOWN for c in state.unsolved},
+        )
+
+    engine.set_classifier(always_unknown)
+    # Attempting to submit verdict for any unsolved cell yields NOT_PROVABLE
+    outcome = engine.submit_verdict("B1", Status.CRIMINAL)
+    assert outcome.result is VerdictResult.NOT_PROVABLE
+    assert not engine.is_complete()
+
+
+def test_fault_injection_wrong_forced_caught_by_reference() -> None:
+    """A-22: A faulty classifier that forces an incorrect verdict is caught by ReferenceMismatchError."""
+    chain_path = Path(__file__).resolve().parent.parent / "puzzles" / "examples" / "3x3_chain.json"
+    engine = GameEngine()
+    engine.load(chain_path)
+
+    # In 3x3_chain, B1 is CRIMINAL. Inject faulty classifier claiming B1 is INNOCENT
+    def wrong_forced(state: PublicState, *, deadline: float | None = None) -> ClassificationReport:
+        by_cell = {c: Classification.UNKNOWN for c in state.unsolved}
+        by_cell["B1"] = Classification.INNOCENT
+        return ClassificationReport(token=state.token, status=ReasoningStatus.READY, by_cell=by_cell)
+
+    engine.set_classifier(wrong_forced)
+    with pytest.raises(ReferenceMismatchError):
+        engine.submit_verdict("B1", Status.INNOCENT)
+
+
+def test_runner_missing_module_yields_blocked() -> None:
+    """A-22: Runner marks missing modules as BLOCKED and produces exit code 2."""
+    source_dir = Path(__file__).resolve().parent.parent
+    runner = IntegrationRunner(source_dir=source_dir, require_real=True)
+
+    # Scope B (logic.encoder is missing)
+    report_b = runner.run_scope("b")
+    assert report_b.overall_status == "BLOCKED"
+    assert report_b.exit_code == 2
+    assert "G-B" in report_b.gates
+    assert report_b.gates["G-B"].status == "BLOCKED"
+
+    # Scope All (missing modules cause BLOCKED)
+    report_all = runner.run_scope("all")
+    assert report_all.overall_status == "BLOCKED"
+    assert report_all.exit_code == 2
+    assert report_all.gates["G-A"].status == "PASS"
+    assert report_all.gates["G-B"].status == "BLOCKED"
+    assert report_all.gates["G-C"].status == "BLOCKED"
+    assert report_all.gates["G-D"].status == "BLOCKED"
+    assert report_all.gates["G-E"].status == "BLOCKED"
+
