@@ -528,250 +528,313 @@ html, body {
 .spec-dot.emerald { background: #10B981; box-shadow: 0 0 8px #10B981; }
 .spec-dot.ruby { background: #F43F5E; box-shadow: 0 0 8px #F43F5E; }
 
-/* Cột Phải: Bàn Hồ Sơ Manila Đang Mở (Real Kraft Paper & Cutout Tab) */
-.bureau-dossier-panel {
+/* =========================================================================
+   CỘT PHẢI: BẢNG GHIM MANH MỐI HIỆN TRƯỜNG (CRIME BULLETIN PINBOARD)
+   ========================================================================= */
+.bureau-pinboard-panel {
   width: 100%;
-}
-
-.dossier-desk-frame {
-  position: relative;
-  background: linear-gradient(168deg, #241C15 0%, #1A130E 50%, #120D09 100%);
-  border: 1.5px solid rgba(217, 119, 6, 0.45);
-  border-top: 4px solid var(--gold-bright);
-  border-radius: 4px 18px 18px 18px;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 230, 160, 0.15);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  padding: 16px 20px 14px;
-}
-[data-theme="paper"] .dossier-desk-frame {
-  background: linear-gradient(168deg, #FBF6EB 0%, #F3EBD8 60%, #E9DFC8 100%);
-  border: 1.5px solid rgba(180, 83, 9, 0.4);
-  border-top: 4px solid var(--gold);
-}
-
-.desk-header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding-bottom: 12px;
-  border-bottom: 1px dashed rgba(245, 158, 11, 0.28);
-  margin-bottom: 12px;
-}
-.desk-header-title {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  font-family: var(--font-mono);
-  font-size: 10.5px;
-  font-weight: 800;
-  color: var(--gold-bright);
-  letter-spacing: 0.1em;
-}
-
-.dossier-tab-pills {
-  display: inline-flex;
-  gap: 5px;
-  background: rgba(11, 14, 22, 0.6);
-  padding: 3px;
-  border-radius: 8px;
-  border: 1px solid var(--border-subtle);
-}
-.dossier-pill-btn {
-  padding: 4px 11px;
-  border-radius: 6px;
-  border: none;
-  background: transparent;
-  color: var(--ink-secondary);
-  font-family: var(--font-sans);
-  font-size: 11px;
-  font-weight: 700;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.dossier-pill-btn:hover {
-  color: var(--ink-primary);
-  background: rgba(245, 158, 11, 0.14);
-}
-.dossier-pill-btn.active {
-  background: var(--gold-bright);
-  color: #0B0E14;
+.bureau-pinboard-panel:hover {
+  transform: translateY(-3px);
 }
 
-.active-dossier-card {
-  display: flex;
-  flex-direction: column;
-  gap: 11px;
-}
-
-.dossier-top-meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.dossier-stamp-seal {
-  display: inline-flex;
-  align-items: center;
-  border: 2px dashed #DC2626;
-  color: #EF4444;
-  padding: 2px 10px;
-  border-radius: 3px;
-  font-family: var(--font-mono);
-  font-weight: 900;
-  font-size: 10.5px;
-  letter-spacing: 1.8px;
-  text-transform: uppercase;
-  transform: rotate(-3deg);
-  background: rgba(220, 38, 38, 0.08);
-  box-shadow: 0 0 12px rgba(220, 38, 38, 0.2);
-}
-
-.dossier-difficulty-badge {
-  font-family: var(--font-mono);
-  font-size: 10.5px;
-  color: var(--gold-bright);
-  font-weight: 700;
-  letter-spacing: 0.04em;
-}
-
-.dossier-case-title {
-  font-family: var(--font-serif);
-  font-size: 1.35rem;
-  font-weight: 700;
-  line-height: 1.25;
-  color: #FFFFFF;
-  margin: 0;
-}
-[data-theme="paper"] .dossier-case-title {
-  color: #0F172A;
-}
-
-.dossier-meta-specs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-}
-.spec-chip {
-  padding: 3px 9px;
-  border-radius: 5px;
-  background: rgba(245, 158, 11, 0.09);
-  border: 1px solid rgba(245, 158, 11, 0.28);
-  font-family: var(--font-mono);
-  font-size: 10.5px;
-  color: var(--ink-secondary);
-}
-.spec-chip strong {
-  color: var(--gold-bright);
-}
-
-.dossier-clue-preview {
+.pinboard-frame {
   position: relative;
-  background: rgba(10, 14, 22, 0.65);
-  border-left: 3px solid var(--gold-bright);
-  padding: 9px 14px 9px 30px;
-  border-radius: 0 7px 7px 0;
+  width: 100%;
+  height: 380px;
+  background: radial-gradient(circle at 50% 50%, #201712 0%, #150F0B 75%, #0D0907 100%);
+  border: 4px solid #3E2B1F;
+  border-radius: 12px;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.8), inset 0 0 35px rgba(0, 0, 0, 0.7);
+  overflow: hidden;
+  user-select: none;
 }
-[data-theme="paper"] .dossier-clue-preview {
-  background: rgba(242, 232, 214, 0.7);
+[data-theme="paper"] .pinboard-frame {
+  background: radial-gradient(circle at 50% 50%, #D4C3A3 0%, #BBA580 80%, #9B835E 100%);
+  border-color: #7A5C3E;
 }
-.preview-quote-icon {
+
+/* Đinh tán đồng 4 góc khung bảng */
+.pinboard-stud {
   position: absolute;
-  left: 9px;
-  top: 4px;
-  font-family: var(--font-serif);
-  font-size: 22px;
-  color: var(--gold-bright);
-  opacity: 0.55;
-  line-height: 1;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #FDE68A 0%, #D97706 60%, #78350F 100%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+  z-index: 10;
 }
-.preview-quote-text {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: 12.5px;
-  line-height: 1.5;
-  color: var(--ink-secondary);
-  margin: 0;
-}
+.pinboard-stud.top-left { top: 8px; left: 8px; }
+.pinboard-stud.top-right { top: 8px; right: 8px; }
+.pinboard-stud.bottom-left { bottom: 8px; left: 8px; }
+.pinboard-stud.bottom-right { bottom: 8px; right: 8px; }
 
-/* Sa Bàn Mini Trực Quan Kiểu Ảnh Chứng Cứ Polaroid */
-.mini-grid-wrapper {
-  display: flex;
-  justify-content: center;
-  padding: 4px 0;
+/* Băng rôn tiêu đề bảng điều tra */
+.pinboard-header-tape {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0F172A;
+  border: 1px solid rgba(245, 158, 11, 0.5);
+  padding: 4px 16px;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  z-index: 5;
 }
-.mini-grid-container {
-  display: grid;
-  gap: 5px;
-  width: 118px;
-  height: 118px;
-  padding: 7px;
-  background: #0E121B;
-  border-radius: 6px;
-  border: 1.5px solid rgba(217, 119, 6, 0.35);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
-}
-.mini-cell {
-  background: #192233;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 3px;
-  transition: all 0.2s ease;
-}
-.mini-cell.revealed {
-  background: #059669;
-  border-color: #34D399;
-  box-shadow: 0 0 8px rgba(16, 185, 129, 0.45);
-}
-.mini-cell.target {
-  background: #E11D48;
-  border-color: #FB7185;
-  box-shadow: 0 0 10px rgba(225, 29, 72, 0.55);
-}
-
-.dossier-actions-footer {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding-top: 10px;
-  border-top: 1px solid var(--border-subtle);
-}
-.btn-spotlight-play.gold {
-  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
-  border: 1px solid rgba(254, 240, 138, 0.5);
-  color: #0B0E14;
+.pinboard-header-tape .tape-text {
+  font-family: var(--font-mono);
+  font-size: 10px;
   font-weight: 800;
-  letter-spacing: 0.04em;
-  padding: 10px 16px;
-  border-radius: 8px;
-  box-shadow: 0 6px 18px rgba(217, 119, 6, 0.35);
-  transition: all 0.16s ease;
+  color: var(--gold-bright);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+/* Lớp SVG Dây Chỉ Đỏ */
+.pinboard-yarn-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+.yarn-path {
+  fill: none;
+  stroke: #DC2626;
+  stroke-linecap: round;
+  filter: drop-shadow(0 2px 5px rgba(220, 38, 38, 0.65));
+}
+.yarn-path.main { stroke-width: 2.5; stroke: #EF4444; }
+.yarn-path.sub { stroke-width: 2; stroke: #DC2626; stroke-dasharray: 4 2; }
+.yarn-path.cross { stroke-width: 1.8; stroke: #B91C1C; }
+
+/* Đinh Ghim Đỏ 3D (Pushpin) */
+.pushpin-red {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #FCA5A5 0%, #EF4444 50%, #991B1B 100%);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8), 0 0 6px rgba(239, 68, 68, 0.4);
+  z-index: 8;
+}
+
+/* Các Vật Phẩm Ghim Trên Bảng */
+.pinboard-item {
+  position: absolute;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  z-index: 3;
+}
+.bureau-pinboard-panel:hover .pinboard-item {
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.7);
+}
+
+/* 1. Ảnh Polaroid Nghi Phạm A1 */
+.polaroid-card.p-suspect {
+  top: 55px;
+  left: 22px;
+  width: 135px;
+  background: #FDFBF7;
+  padding: 8px 8px 12px;
+  border-radius: 4px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+  transform: rotate(-4deg);
+}
+.bureau-pinboard-panel:hover .polaroid-card.p-suspect {
+  transform: rotate(-2deg) scale(1.03);
+}
+.polaroid-photo {
   position: relative;
+  width: 100%;
+  height: 108px;
+  background: #111827;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
 }
-.btn-spotlight-play.gold:hover {
-  background: #FBBF24;
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(217, 119, 6, 0.5), 0 0 18px rgba(245, 158, 11, 0.4);
+.silhouette-svg {
+  color: #94A3B8;
+  opacity: 0.85;
 }
-.btn-view-all {
-  background: transparent;
-  border: none;
-  color: var(--gold-bright);
-  font-family: var(--font-sans);
-  font-size: 11.5px;
+.photo-overlay-stamp {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 800;
+  color: #EF4444;
+  border: 1px solid #EF4444;
+  padding: 1px 4px;
+  border-radius: 2px;
+  background: rgba(15, 23, 42, 0.85);
+  transform: rotate(-3deg);
+}
+.polaroid-caption {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 11px;
+  color: #1E293B;
+  text-align: center;
+  margin-top: 6px;
+  line-height: 1.25;
+}
+
+/* 2. Mẩu Báo Cáo Hiện Trường Xé Góc */
+.evidence-clipping {
+  top: 60px;
+  right: 22px;
+  width: 185px;
+  background: #F4ECE1;
+  border: 1px solid #D5C7B2;
+  border-left: 3px solid #D97706;
+  padding: 12px 14px;
+  border-radius: 2px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.65);
+  transform: rotate(3deg);
+}
+.bureau-pinboard-panel:hover .evidence-clipping {
+  transform: rotate(1deg) scale(1.03);
+}
+.pushpin-red.pin-2 {
+  top: -7px;
+  left: 24px;
+}
+.clipping-stamp {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  font-weight: 900;
+  color: #DC2626;
+  border: 1px dashed #DC2626;
+  padding: 1px 5px;
+  border-radius: 2px;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+  transform: rotate(-2deg);
+}
+.clipping-title {
+  font-family: var(--font-serif);
+  font-size: 13px;
   font-weight: 700;
-  cursor: pointer;
-  padding: 5px 8px;
-  border-radius: 5px;
-  transition: background 0.15s ease;
+  color: #0F172A;
+  margin-bottom: 4px;
 }
-.btn-view-all:hover {
-  background: rgba(245, 158, 11, 0.1);
+.clipping-body {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  line-height: 1.45;
+  color: #334155;
+  margin: 0 0 6px;
+}
+.clipping-body strong {
+  color: #0F172A;
+}
+.clipping-meta {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: #B45309;
+  letter-spacing: 0.5px;
+}
+
+/* 3. Sa Bàn Mini Polaroid */
+.polaroid-card.p-matrix {
+  bottom: 25px;
+  left: 145px;
+  width: 142px;
+  background: #FDFBF7;
+  padding: 8px 8px 10px;
+  border-radius: 4px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.65);
+  transform: rotate(2deg);
+}
+.bureau-pinboard-panel:hover .polaroid-card.p-matrix {
+  transform: rotate(0deg) scale(1.04);
+}
+.pushpin-red.pin-3 {
+  top: -7px;
+  left: 50%;
+}
+.polaroid-mini-matrix {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3px;
+  width: 100%;
+  height: 96px;
+  background: #0B0F19;
+  padding: 5px;
+  border-radius: 2px;
+  box-sizing: border-box;
+}
+.pm-cell {
+  background: #1E293B;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+}
+.pm-cell.solved {
+  background: #059669;
+  border-color: #34D399;
+}
+.pm-cell.target {
+  background: #E11D48;
+  border-color: #FB7185;
+  box-shadow: 0 0 8px rgba(225, 29, 72, 0.7);
+  animation: pulseCrimePin 2s infinite ease-in-out;
+}
+@keyframes pulseCrimePin {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.08); }
+}
+.polaroid-caption.red-highlight {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 800;
+  color: #B91C1C;
+  font-style: normal;
+}
+
+/* 4. Tem Niêm Phong Khám Phá */
+.pinboard-seal-badge {
+  position: absolute;
+  bottom: 12px;
+  right: 14px;
+  background: rgba(15, 23, 42, 0.92);
+  border: 1.5px solid var(--gold-bright);
+  padding: 5px 12px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.7), 0 0 12px rgba(245, 158, 11, 0.25);
+  z-index: 6;
+  transition: all 0.18s ease;
+}
+.bureau-pinboard-panel:hover .pinboard-seal-badge {
+  background: var(--gold-bright);
+  border-color: #FBBF24;
+}
+.pinboard-seal-badge .seal-icon {
+  font-size: 12px;
+}
+.pinboard-seal-badge .seal-text {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--gold-bright);
+  letter-spacing: 0.8px;
+}
+.bureau-pinboard-panel:hover .pinboard-seal-badge .seal-text {
+  color: #090B10;
 }
 .profile-rank-badge {
   display: inline-flex;

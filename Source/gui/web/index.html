@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=JetBrains+Mono:wght@500;600;700&family=Lora:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/styles.css?v=20261109_05" />
+  <link rel="stylesheet" href="/styles.css?v=20261109_06" />
 </head>
 <body>
   <!-- Nền Động Khí Quyển Điện Ảnh (Cinematic Ambient Spotlight & Particles Canvas) -->
@@ -150,63 +150,73 @@
           </div>
         </div>
 
-        <!-- CỘT PHẢI: BÀN HỒ SƠ TÀI LIỆU TRỌNG ÁN (INTERACTIVE DOSSIER DESK) -->
-        <div class="bureau-dossier-panel">
-          <div class="dossier-desk-frame">
-            <div class="desk-header">
-              <div class="desk-header-title">
-                <span class="paperclip-icon">📎</span>
-                <span>HỒ SƠ ÁN LỆ TIÊU ĐIỂM (MANILA DOSSIER)</span>
-              </div>
-              <!-- Tab chuyển đổi nhanh 3 vụ án -->
-              <div class="dossier-tab-pills" role="tablist">
-                <button type="button" class="dossier-pill-btn active" id="tabDossier3" onclick="switchDossierTab('3x3')">3×3 Căn Bản</button>
-                <button type="button" class="dossier-pill-btn" id="tabDossier4" onclick="switchDossierTab('4x4')">4×4 Nâng Cao</button>
-                <button type="button" class="dossier-pill-btn" id="tabDossier5" onclick="switchDossierTab('5x5')">5×5 Thử Thách</button>
-              </div>
+        <!-- CỘT PHẢI: BẢNG GHIM MANH MỐI HIỆN TRƯỜNG (CRIME SCENE BULLETIN PINBOARD) -->
+        <div class="bureau-pinboard-panel" onclick="launchSpotlightCase('3x3_classic')" title="Bấm vào Bảng Manh Mối để bắt đầu phá án ngay">
+          <div class="pinboard-frame">
+            <!-- Đinh tán đồng 4 góc khung bảng -->
+            <div class="pinboard-stud top-left" aria-hidden="true"></div>
+            <div class="pinboard-stud top-right" aria-hidden="true"></div>
+            <div class="pinboard-stud bottom-left" aria-hidden="true"></div>
+            <div class="pinboard-stud bottom-right" aria-hidden="true"></div>
+
+            <!-- Băng rôn tiêu đề bảng điều tra -->
+            <div class="pinboard-header-tape">
+              <span class="tape-text">★ BẢNG GHIM MANH MỐI HIỆN TRƯỜNG ★ ÁN LỆ #01</span>
             </div>
 
-            <!-- Nội dung Hồ Sơ Manila Đang Mở -->
-            <div class="active-dossier-card" id="activeDossierCard">
-              <div class="dossier-inner-content">
-                <div class="dossier-top-meta">
-                  <div class="dossier-stamp-seal" id="dossierStamp">ÁN LỆ #01 · PHẢN CHỨNG</div>
-                  <div class="dossier-difficulty-badge" id="dossierDiff">⭐☆☆ ĐỘ KHÓ: CĂN BẢN</div>
-                </div>
+            <!-- Lớp SVG Dây Chỉ Đỏ Căng Nối Giữa Các Đinh Ghim -->
+            <svg class="pinboard-yarn-layer" viewBox="0 0 460 380" aria-hidden="true">
+              <path class="yarn-path main" d="M 115 65 Q 210 155 285 75" />
+              <path class="yarn-path sub" d="M 285 75 Q 240 230 180 260" />
+              <path class="yarn-path cross" d="M 115 65 Q 160 220 330 265" />
+            </svg>
 
-                <h2 class="dossier-case-title" id="dossierTitle">Chuỗi Suy Luận Phản Chứng</h2>
-                <div class="dossier-meta-specs" id="dossierSpecs">
-                  <span class="spec-chip">📐 Kích Thước: <strong>3×3 (9 Ô)</strong></span>
-                  <span class="spec-chip">👤 Nghi Phạm: <strong>9 Người</strong></span>
-                  <span class="spec-chip">🎯 Kẻ Chủ Mưu: <strong>1 Thủ Phạm</strong></span>
-                </div>
-
-                <div class="dossier-clue-preview">
-                  <div class="preview-quote-icon">“</div>
-                  <p class="preview-quote-text" id="dossierQuote">
-                    "Nghi phạm ban đầu chỉ điểm kẻ đồng lõa, kích hoạt chuỗi suy luận phản chứng liên hoàn trên bàn cờ 9 ô để bóc tách kẻ nói dối."
-                  </p>
-                </div>
-
-                <!-- Sa bàn mini trực quan dạng lưới tế vi -->
-                <div class="mini-grid-wrapper">
-                  <div class="mini-grid-container" id="dossierMiniGrid">
-                    <!-- Được vẽ tự động bởi switchDossierTab -->
-                  </div>
-                </div>
-
-                <div class="dossier-actions-footer">
-                  <button type="button" class="btn btn-spotlight-play gold" id="btnPlayDossier" onclick="launchSpotlightCase('3x3_classic')">
-                    <span>BẮT ĐẦU ĐIỀU TRA NGAY</span>
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                      <polygon points="5 3 19 12 5 21 5 3"/>
-                    </svg>
-                  </button>
-                  <button type="button" class="btn btn-view-all" onclick="showScreen('screenCases')">
-                    <span>Xem Tất Cả 10 Vụ Án Trong Kho Hồ Sơ →</span>
-                  </button>
-                </div>
+            <!-- Vật phẩm 1: Ảnh Chứng Cứ Polaroid 1 (Nghi phạm chủ mưu) -->
+            <div class="pinboard-item polaroid-card p-suspect">
+              <div class="pushpin-red" aria-hidden="true"></div>
+              <div class="polaroid-photo">
+                <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" class="silhouette-svg">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                  <line x1="9" y1="17" x2="15" y2="17" stroke="#EF4444" stroke-width="2"/>
+                </svg>
+                <div class="photo-overlay-stamp">NGHI PHẠM A1</div>
               </div>
+              <div class="polaroid-caption">“Lời khai mâu thuẫn”</div>
+            </div>
+
+            <!-- Vật phẩm 2: Mẩu Báo Cáo Hiện Trường Xé Góc (Field Evidence Report) -->
+            <div class="pinboard-item evidence-clipping">
+              <div class="pushpin-red pin-2" aria-hidden="true"></div>
+              <div class="clipping-stamp">TUYỆT MẬT</div>
+              <div class="clipping-title">BÁO CÁO PHÒNG KÍN</div>
+              <p class="clipping-body">
+                Hiện trường 9 nghi phạm. Thuật toán <strong>DPLL SAT</strong> chứng minh tính khả thỏa duy nhất bằng phản chứng.
+              </p>
+              <div class="clipping-meta">VẬT CHỨNG #01 · KB₀</div>
+            </div>
+
+            <!-- Vật phẩm 3: Sa Bàn Mini Polaroid (Lưới 3×3 đánh dấu vòng tròn mực đỏ) -->
+            <div class="pinboard-item polaroid-card p-matrix">
+              <div class="pushpin-red pin-3" aria-hidden="true"></div>
+              <div class="polaroid-mini-matrix">
+                <div class="pm-cell solved"></div>
+                <div class="pm-cell"></div>
+                <div class="pm-cell"></div>
+                <div class="pm-cell"></div>
+                <div class="pm-cell target"></div>
+                <div class="pm-cell"></div>
+                <div class="pm-cell"></div>
+                <div class="pm-cell"></div>
+                <div class="pm-cell"></div>
+              </div>
+              <div class="polaroid-caption red-highlight">🎯 Ma Trận 3×3</div>
+            </div>
+
+            <!-- Vật phẩm 4: Tem Niêm Phong Khám Phá -->
+            <div class="pinboard-seal-badge">
+              <span class="seal-icon">🔍</span>
+              <span class="seal-text">BẤM VÀO BẢNG ĐỂ PHÁ ÁN NGAY</span>
             </div>
           </div>
         </div>
@@ -557,6 +567,6 @@
     </div>
   </div>
 
-  <script src="/app.js?v=20261109_05"></script>
+  <script src="/app.js?v=20261109_06"></script>
 </body>
 </html>
