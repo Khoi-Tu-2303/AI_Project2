@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=JetBrains+Mono:wght@500;600;700&family=Lora:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/styles.css?v=20261109_06" />
+  <link rel="stylesheet" href="/styles.css?v=20261109_07" />
 </head>
 <body>
   <!-- Nền Động Khí Quyển Điện Ảnh (Cinematic Ambient Spotlight & Particles Canvas) -->
@@ -66,86 +66,140 @@
 
     <div class="start-container">
       <div class="bureau-layout">
-        <!-- CỘT TRÁI: ĐẠI BẢN DOANH ĐIỀU TRA (COMMAND & BRIEFING) -->
+        <!-- CỘT TRÁI: ĐẠI BẢN DOANH ĐIỀU TRA (COMMAND & BRIEFING DOSSIER) -->
         <div class="bureau-command-panel">
+          <!-- Con dấu nghiệp vụ & Mã chuyên án -->
           <div class="hero-stamps-row">
             <div class="secret-stamp-badge">
               <span>TUYỆT MẬT · CLASSIFIED</span>
             </div>
+            <div class="case-docket-badge">
+              <span class="docket-prefix">ÁN LỆ SỐ:</span>
+              <span class="docket-id">#DPLL-2026</span>
+            </div>
             <div class="agency-badge">
               <span class="badge-indicator"></span>
-              <span>BAN ĐIỀU TRA LOGIC MỆNH ĐỀ DPLL</span>
+              <span>CỤC SUY LUẬN MỆNH ĐỀ DPLL</span>
             </div>
           </div>
 
-          <h1 class="hero-title">Hồ Sơ Logic: Griductive</h1>
-          <p class="hero-subtitle">Phá án bằng suy luận mệnh đề thuần túy — Tuyệt đối không đoán mò</p>
+          <!-- Tiêu đề hồ sơ án lệ nhũ vàng -->
+          <div class="hero-title-block">
+            <h1 class="hero-title">Hồ Sơ Logic: Griductive</h1>
+            <p class="hero-subtitle">Phá án bằng suy luận mệnh đề thuần túy — Tuyệt đối không đoán mò</p>
+          </div>
 
-          <p class="hero-brief">
-            Chào mừng Thám tử đến với hiện trường trọng án logic. Mỗi nghi phạm trên bàn cờ \(N \times N\)
-            nắm giữ một lời khai định mệnh. Bằng thuật toán <strong>DPLL SAT</strong> và phương pháp <strong>phản chứng</strong>,
-            hãy bóc tách từng mâu thuẫn để tìm ra kẻ thủ ác duy nhất.
-          </p>
+          <!-- Chỉ thị nghiệp vụ & Tóm tắt vụ án (Đã sửa lỗi hiển thị LaTeX) -->
+          <div class="hero-directive-box">
+            <div class="directive-seal-tag">CHỈ THỊ NGHIỆP VỤ</div>
+            <p class="hero-brief">
+              Chào mừng Thám tử đến với hiện trường trọng án logic. Mỗi nghi phạm trên bàn cờ <strong>N × N</strong>
+              nắm giữ một lời khai định mệnh. Bằng thuật toán <strong>DPLL SAT</strong> và phương pháp <strong>chứng minh phản chứng</strong>,
+              hãy bóc tách từng mâu thuẫn để tìm ra kẻ thủ ác duy nhất.
+            </p>
+          </div>
 
-          <!-- Bảng Xếp Hạng & Tiến Độ Thám Tử -->
+          <!-- Thẻ Ngành Thám Tử & Phù Hiệu Bằng Đồng Cao Cấp -->
           <div class="detective-profile-bar" id="startDetectiveBar">
-            <div class="profile-rank-badge">
-              <div class="brass-star-icon">★</div>
-              <span id="lblDetectiveRank">CẤP BẬC: THÁM TỬ TẬP SỰ</span>
+            <div class="credential-shield-col">
+              <div class="brass-police-shield">
+                <svg class="shield-svg" viewBox="0 0 24 28" fill="none">
+                  <path d="M12 1L2 5V12C2 18.5 6.3 24.5 12 27C17.7 24.5 22 18.5 22 12V5L12 1Z" fill="url(#shieldGrad)" stroke="#FDE68A" stroke-width="1.2"/>
+                  <polygon points="12 6.5 13.8 10.5 18 11 14.8 14 15.7 18.2 12 16 8.3 18.2 9.2 14 6 11 10.2 10.5" fill="#FEF08A"/>
+                  <defs>
+                    <linearGradient id="shieldGrad" x1="2" y1="1" x2="22" y2="27" gradientUnits="userSpaceOnUse">
+                      <stop stop-color="#D97706"/>
+                      <stop offset="0.5" stop-color="#92400E"/>
+                      <stop offset="1" stop-color="#451A03"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </div>
             </div>
-            <div class="profile-progress-group">
-              <span class="profile-progress-lbl" id="lblDetectiveProgress">Tiến độ: 0/6 vụ án chuẩn</span>
-              <div class="profile-progress-track">
-                <div class="profile-progress-fill" id="startProgressBarFill" style="width: 0%;"></div>
+
+            <div class="credential-info-col">
+              <div class="profile-rank-badge">
+                <span class="credential-serial-tag">ID: DT-007</span>
+                <span id="lblDetectiveRank" class="rank-name-text">CẤP BẬC: THÁM TỬ TẬP SỰ</span>
+              </div>
+              <div class="profile-progress-group">
+                <div class="progress-meta-row">
+                  <span class="profile-progress-lbl" id="lblDetectiveProgress">Tiến độ: 0/6 vụ án chuẩn</span>
+                  <span class="progress-tier-hint">Hệ Thống Phá Án Chuẩn</span>
+                </div>
+                <div class="profile-progress-track">
+                  <div class="profile-progress-fill" id="startProgressBarFill" style="width: 0%;"></div>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Cụm Nút Hành Động Trọng Tâm -->
+          <!-- Cụm Nút Hành Động Trọng Tâm (Lệnh Khởi Tố & Kho Lưu Trữ) -->
           <div class="hero-primary-actions">
+            <!-- Nút Chính: Lệnh Phá Án Khẩn -->
             <button type="button" class="btn-hero-launch" onclick="launchSpotlightCase('3x3_classic')">
               <div class="launch-icon-circle">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                  <polygon points="5 3 19 12 5 21 5 3"/>
+                  <polygon points="6 3 20 12 6 21 6 3"/>
                 </svg>
               </div>
               <div class="launch-text-group">
+                <div class="launch-warrant-tag">
+                  <span class="warrant-dot"></span>
+                  <span>LỆNH KHỞI TỐ ĐẶC BIỆT</span>
+                </div>
                 <span class="launch-main-lbl">BẮT ĐẦU ĐIỀU TRA NGAY</span>
                 <span class="launch-sub-lbl">Khởi động Án Lệ #01 · Ma trận 3×3 căn bản</span>
               </div>
+              <div class="launch-arrow-emblem">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </div>
             </button>
 
+            <!-- Cặp Nút Phụ: Kẹp Hồ Sơ Kho & Tải File -->
             <div class="hero-secondary-row">
-              <button type="button" class="btn-start-action" onclick="showScreen('screenCases')">
-                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
-                </svg>
-                <span>KHO LƯU TRỮ HỒ SƠ VỤ ÁN</span>
+              <button type="button" class="btn-start-action btn-dossier-archive" onclick="showScreen('screenCases')">
+                <div class="btn-action-icon">
+                  <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                  </svg>
+                </div>
+                <div class="btn-action-label-box">
+                  <span class="action-btn-main">KHO LƯU TRỮ HỒ SƠ VỤ ÁN</span>
+                  <span class="action-btn-sub">9 án lệ mẫu & tùy biến ma trận</span>
+                </div>
               </button>
 
-              <label class="btn-start-action" for="uploadJsonStart" style="cursor:pointer;">
-                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
-                </svg>
-                <span>TẢI FILE JSON</span>
+              <label class="btn-start-action btn-dossier-upload" for="uploadJsonStart" style="cursor:pointer;">
+                <div class="btn-action-icon">
+                  <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+                  </svg>
+                </div>
+                <div class="btn-action-label-box">
+                  <span class="action-btn-main">TẢI FILE JSON</span>
+                  <span class="action-btn-sub">Tiếp nhận hồ sơ chứng cứ mới</span>
+                </div>
               </label>
               <input id="uploadJsonStart" type="file" accept=".json" style="display:none" />
             </div>
           </div>
 
-          <!-- Dải Thông Số Kỹ Thuật Nghiệp Vụ -->
+          <!-- Dải Tem Kiểm Định Khoa Học Hình Sự & Thuật Toán -->
           <div class="bureau-specs-strip">
-            <div class="spec-item">
+            <div class="spec-item" title="Thuật toán chuẩn DPLL Pure Python, không phụ thuộc thư viện SAT bên ngoài">
               <span class="spec-dot gold"></span>
-              <span>DPLL Solver Pure Python</span>
+              <span class="spec-name">DPLL Solver Pure Python</span>
             </div>
-            <div class="spec-item">
+            <div class="spec-item" title="Hỗ trợ đầy đủ 8 dạng quy tắc lời khai chuẩn hóa CNF">
               <span class="spec-dot emerald"></span>
-              <span>8 Dạng Lời Khai CNF</span>
+              <span class="spec-name">8 Dạng Lời Khai CNF</span>
             </div>
-            <div class="spec-item">
+            <div class="spec-item" title="Trực quan hóa diễn giải suy luận 4 tầng minh bạch">
               <span class="spec-dot ruby"></span>
-              <span>Trực quan 4 tầng suy diễn</span>
+              <span class="spec-name">Trực quan 4 tầng suy diễn</span>
             </div>
           </div>
         </div>
