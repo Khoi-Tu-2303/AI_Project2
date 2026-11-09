@@ -1,13 +1,29 @@
 /* =========================================================================
-   HỒ SƠ LOGIC: GRIDUCTIVE — LOGIC TƯƠNG TÁC FRONTEND (APP.JS)
+   HỒ SƠ LOGIC: GRIDUCTIVE — LOGIC TƯƠNG TÁC & TRỰC QUAN HÓA LUỒNG DPLL (APP.JS)
    ========================================================================= */
 
 let currentState = null;
 let autoTimer = null;
 let lastAnimatedCell = null;
 let lastAnimationKind = null;
-let currentCaseFilter = "all";
+let currentCaseFilter = "official";
 let victoryShownForSession = null;
+let selectedVisualStep = null; // null = tự động bám theo bước mới nhất; 0..k = bước đang xem
+let visualizerOpen = true;
+
+const OFFICIAL_SIX_IDS = [
+  "chain_demo",
+  "3x3_chain",
+  "3x3_classic",
+  "4x4_detective",
+  "4x4_crossfire",
+  "5x5_mastermind",
+  "5x5_syndicate",
+];
+
+function isOfficialSix(caseId) {
+  return OFFICIAL_SIX_IDS.includes(caseId);
+}
 
 function getSolvedCases() {
   try {
@@ -57,6 +73,18 @@ function toggleDrawer(open) {
   }
 }
 
+function toggleVisualizerPanel(forceOpen) {
+  if (typeof forceOpen === "boolean") {
+    visualizerOpen = forceOpen;
+  } else {
+    visualizerOpen = !visualizerOpen;
+  }
+  const panel = document.getElementById("liveVisualizer");
+  const btn = document.getElementById("btnToggleVisualizer");
+  if (panel) panel.classList.toggle("hidden", !visualizerOpen);
+  if (btn) btn.classList.toggle("active", visualizerOpen);
+}
+
 function toggleTheme() {
   const html = document.documentElement;
   const next = html.dataset.theme === "noir" ? "paper" : "noir";
@@ -93,6 +121,7 @@ function renderCaseSelection(puzzles) {
   const solved = getSolvedCases();
 
   const filtered = puzzles.filter(p => {
+    if (currentCaseFilter === "official") return isOfficialSix(p.case_id);
     if (currentCaseFilter === "all") return true;
     if (currentCaseFilter === "edge") return p.kind !== "normal" && p.kind !== "stress";
     return String(p.n) === currentCaseFilter && (p.kind === "normal" || p.kind === "stress");
@@ -123,6 +152,7 @@ function renderCaseSelection(puzzles) {
       </div>
     `;
     card.addEventListener("click", async () => {
+      selectedVisualStep = null;
       const data = await apiCall("/api/load", { case_id: p.case_id });
       render(data);
       showScreen("screenGame");
@@ -206,6 +236,229 @@ async function apiCall(path, body = {}) {
   return await res.json();
 }
 
+/* =========================================================================
+   VẼ BẢNG TRỰC QUAN HÓA CÔNG THỨC & LUỒNG CHẠY DPLL (4 TẦNG)
+   ========================================================================= */
+function renderLiveVisualizer(data) {
+  const steps = data.deduction_steps || [];
+  const initClues = data.initial_clues || [];
+  const totalSteps = steps.length;
+
+  let activeStepIdx = selectedVisualStep !== null ? selectedVisualStep : totalSteps;
+  if (activeStepIdx > totalSteps) activeStepIdx = totalSteps;
+
+  const counterEl = document.getElementById("lvStepCounter");
+  if (counterEl) {
+    counterEl.textContent = activeStepIdx === 0
+      ? `Khởi điểm KB₀ (${totalSteps} bước đã giải)`
+      : `Bước #${activeStepIdx} / ${totalSteps}`;
+  }
+
+  const pulseDot = document.getElementById("lvPulseDot");
+  if (pulseDot) {
+    pulseDot.classList.toggle("running", Boolean(autoTimer));
+  }
+
+  // 1. Dải mắt xích Timeline
+  const strip = document.getElementById("lvTimelineStrip");
+  if (strip) {
+    strip.innerHTML = "";
+    const kb0Chip = document.createElement("button");
+    kb0Chip.type = "button";
+    kb0Chip.className = "step-chip" + (activeStepIdx === 0 ? " active" : "");
+    kb0Chip.innerHTML = `<span>KB₀ (${initClues.length} ô mở sẵn)</span>`;
+    kb0Chip.addEventListener("click", () => {
+      selectedVisualStep = 0;
+      renderLiveVisualizer(currentState);
+    });
+    strip.appendChild(kb0Chip);
+
+    steps.forEach((st) => {
+      const arrow = document.createElement("span");
+      arrow.className = "step-arrow";
+      arrow.textContent = "→";
+      strip.appendChild(arrow);
+
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "step-chip" + (activeStepIdx === st.step_no ? " active" : "");
+      const dotCls = st.verdict === "INNOCENT" ? "innocent" : "criminal";
+      chip.innerHTML = `<span class="step-chip-dot ${dotCls}"></span><span>#${st.step_no} ${st.cell}</span>`;
+      chip.addEventListener("click", () => {
+        selectedVisualStep = st.step_no;
+        renderLiveVisualizer(currentState);
+      });
+      strip.appendChild(chip);
+    });
+    strip.scrollLeft = strip.scrollWidth;
+  }
+
+  // 2. Sơ đồ luồng chạy 4 tầng (Flow Body)
+  const flowBody = document.getElementById("lvFlowBody");
+  if (!flowBody) return;
+
+  if (activeStepIdx === 0) {
+    // Hiển thị Cơ sở Tri thức Khởi điểm KB_0
+    const initItemsHtml = initClues.map(ic => {
+      const unitLit = ic.status === "CRIMINAL" ? `(C_${ic.cell})` : `(¬C_${ic.cell})`;
+      const stLabel = ic.status === "CRIMINAL" ? "THỦ PHẠM" : "VÔ TỘI";
+      return `
+        <div class="formula-item">
+          <div class="formula-item-top">
+            <span class="formula-owner">${ic.owner} (${ic.cell}) · ${stLabel}</span>
+            <span class="formula-type-tag">${ic.type} · ${ic.clause_count} CNF</span>
+          </div>
+          <div class="formula-math">Mệnh đề đơn vị: ${unitLit}  |  Công thức: ${ic.math_formula}</div>
+          <div class="formula-cnf">Mã hóa CNF: ${ic.cnf_preview}</div>
+        </div>
+      `;
+    }).join("");
+
+    flowBody.innerHTML = `
+      <div class="flow-stage stage-highlight">
+        <div class="flow-stage-hdr">
+          <span class="flow-stage-num">TẦNG 1</span>
+          <span class="flow-stage-title">Dữ Kiện Mở Sẵn Ban Đầu (Initial Facts)</span>
+          <span class="flow-stage-meta">${initClues.length} thẻ</span>
+        </div>
+        <div class="formula-list">
+          ${initItemsHtml || '<div class="branch-desc">Chưa có thẻ mở sẵn.</div>'}
+        </div>
+      </div>
+
+      <div class="flow-arrow-down">↓ BIÊN DỊCH TỰ ĐỘNG SANG MỆNH ĐỀ HỘI (CNF)</div>
+
+      <div class="flow-stage">
+        <div class="flow-stage-hdr">
+          <span class="flow-stage-num">TẦNG 2</span>
+          <span class="flow-stage-title">Cơ Sở Tri Thức Khởi Điểm KB₀</span>
+          <span class="flow-stage-meta">${data.telemetry.num_clauses} mệnh đề</span>
+        </div>
+        <div class="formula-item">
+          <div class="formula-math">KB₀ = CNF(Lời khai đã mở) ∧ UnitClauses(Thân phận đã biết)</div>
+          <div class="formula-cnf">Biến chính: ${data.telemetry.num_primary} (C_A1 .. C_${String.fromCharCode(64 + data.n)}${data.n}) · Biến phụ trợ mạch đếm: ${data.telemetry.num_aux}</div>
+        </div>
+      </div>
+
+      <div class="flow-arrow-down">↓ QUY TẮC SUY DIỄN PHẢN CHỨNG DPLL</div>
+
+      <div class="flow-stage">
+        <div class="flow-stage-hdr">
+          <span class="flow-stage-num">TẦNG 3</span>
+          <span class="flow-stage-title">Sẵn Sàng Duyệt Tìm Ô Bị Ép Buộc Logic</span>
+        </div>
+        <div class="branch-desc" style="padding: 2px 0;">
+          Bấm nút <strong>“Tự động phá án”</strong> hoặc <strong>“Giải 1 bước”</strong> ở thanh trên cùng để xem bộ giải DPLL chạy kiểm chứng phản chứng <code>KB_t ∧ ¬L ⟹ UNSAT</code> và vẽ luồng suy diễn từng bước.
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const st = steps[activeStepIdx - 1];
+  if (!st) return;
+
+  const supHtml = (st.supporting_clues || []).map(sc => `
+    <div class="formula-item">
+      <div class="formula-item-top">
+        <span class="formula-owner">Lời khai ${sc.owner} (${sc.cell})</span>
+        <span class="formula-type-tag">${sc.type}</span>
+      </div>
+      <div class="formula-math">${sc.math_formula}</div>
+      <div class="formula-cnf">CNF: ${sc.cnf_preview}</div>
+    </div>
+  `).join("");
+
+  const isInn = st.verdict === "INNOCENT";
+  const verdictCls = isInn ? "innocent" : "criminal";
+  const newClueHtml = st.new_clue ? `
+    <div class="formula-item">
+      <div class="formula-item-top">
+        <span class="formula-owner">Lời khai mới [${st.new_clue.id}] từ ${st.name} (${st.cell})</span>
+        <span class="formula-type-tag">${st.new_clue.type} · +${st.new_clue.clause_count} CNF</span>
+      </div>
+      <div class="branch-desc" style="margin-bottom:4px;">“${st.new_clue.text}”</div>
+      <div class="formula-math">Công thức: ${st.new_clue.math_formula}</div>
+      <div class="formula-cnf">Mã hóa CNF: ${st.new_clue.cnf_preview}</div>
+    </div>
+  ` : `<div class="branch-desc">Đã mở toàn bộ lời khai.</div>`;
+
+  flowBody.innerHTML = `
+    <div class="flow-stage">
+      <div class="flow-stage-hdr">
+        <span class="flow-stage-num">1 · CƠ SỞ TRI THỨC KB_${st.step_no - 1}</span>
+        <span class="flow-stage-title">Chứng cứ dẫn xuất tới ô ${st.cell} (${st.name})</span>
+      </div>
+      <div class="formula-list">
+        ${supHtml}
+      </div>
+    </div>
+
+    <div class="flow-arrow-down">↓ ĐƯA VÀO BỘ GIẢI DPLL KIỂM CHỨNG PHẢN CHỨNG</div>
+
+    <div class="flow-stage stage-highlight">
+      <div class="flow-stage-hdr">
+        <span class="flow-stage-num">2 · PHẢN CHỨNG DPLL</span>
+        <span class="flow-stage-title">Kiểm tra hai giả thiết đối lập cho ${st.cell}</span>
+        <span class="flow-stage-meta">${st.telemetry.runtime_ms}ms</span>
+      </div>
+      <div class="refutation-branches">
+        <div class="branch-card unsat">
+          <div class="branch-formula">✕ Bác bỏ: ${st.refutation_query}</div>
+          <div class="branch-desc">${st.refutation_desc}</div>
+        </div>
+        <div class="branch-card sat">
+          <div class="branch-formula">✓ Nhất quán: ${st.consistency_query}</div>
+          <div class="branch-desc">Giả thiết thuận thỏa mãn mọi mệnh đề CNF trong KB_${st.step_no - 1}.</div>
+        </div>
+      </div>
+      <div class="dpll-mini-metrics">
+        <div class="dpll-mini-box">
+          <div class="dpll-mini-val">${st.telemetry.propagations}</div>
+          <div class="dpll-mini-lbl">Unit Prop</div>
+        </div>
+        <div class="dpll-mini-box">
+          <div class="dpll-mini-val">${st.telemetry.decisions}</div>
+          <div class="dpll-mini-lbl">Decisions</div>
+        </div>
+        <div class="dpll-mini-box">
+          <div class="dpll-mini-val">${st.telemetry.backtracks}</div>
+          <div class="dpll-mini-lbl">Backtracks</div>
+        </div>
+        <div class="dpll-mini-box">
+          <div class="dpll-mini-val">${st.telemetry.sat_calls}</div>
+          <div class="dpll-mini-lbl">SAT Calls</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-arrow-down">↓ SUY DIỄN LOGIC TẤT YẾU (LOGICAL ENTAILMENT)</div>
+
+    <div class="flow-stage">
+      <div class="flow-stage-hdr">
+        <span class="flow-stage-num">3 · KẾT LUẬN BƯỚC #${st.step_no}</span>
+        <span class="flow-stage-title">Phán quyết không đoán mò</span>
+        <span class="flow-stage-meta">+Unit ${st.unit_clause}</span>
+      </div>
+      <div class="entailment-verdict-box">
+        <span class="entailment-eq">${st.entailment_formula}</span>
+        <span class="entailment-target ${verdictCls}">${st.name} (${st.cell}) = ${st.verdict_vn}</span>
+      </div>
+    </div>
+
+    <div class="flow-arrow-down">↓ LẬT THẺ &amp; NẠP LỜI KHAI MỚI VÀO KB_${st.step_no}</div>
+
+    <div class="flow-stage">
+      <div class="flow-stage-hdr">
+        <span class="flow-stage-num">4 · CẬP NHẬT KB_${st.step_no}</span>
+        <span class="flow-stage-title">Biên dịch lời khai mới sang CNF</span>
+        <span class="flow-stage-meta">Tổng ${st.telemetry.num_clauses} CNF</span>
+      </div>
+      ${newClueHtml}
+    </div>
+  `;
+}
+
 function render(data) {
   currentState = data;
 
@@ -216,6 +469,11 @@ function render(data) {
   const qSel = document.getElementById("quickPuzzleSelect");
   if (data.puzzles && qSel) {
     qSel.innerHTML = "";
+    const grpOfficial = document.createElement("optgroup");
+    grpOfficial.label = "6 Hồ Sơ Chính Thức (Unique Solution)";
+    const grpExtra = document.createElement("optgroup");
+    grpExtra.label = "Hồ Sơ Mở Rộng & Kiểm Thử Biên AI";
+
     data.puzzles.forEach(p => {
       const opt = document.createElement("option");
       opt.value = p.case_id;
@@ -223,8 +481,14 @@ function render(data) {
       if (p.case_id === data.puzzle_id || data.puzzle_id.includes(p.case_id)) {
         opt.selected = true;
       }
-      qSel.appendChild(opt);
+      if (isOfficialSix(p.case_id)) {
+        grpOfficial.appendChild(opt);
+      } else {
+        grpExtra.appendChild(opt);
+      }
     });
+    qSel.appendChild(grpOfficial);
+    qSel.appendChild(grpExtra);
     renderCaseSelection(data.puzzles);
   }
 
@@ -314,11 +578,16 @@ function render(data) {
         const badgeText = isInn ? "VÔ TỘI" : "THỦ PHẠM";
         const clueText = n === 5 ? item.clue.short_text : item.clue.text;
         const isSelected = Boolean(item.is_selected_clue);
+        const rStep = item.reveal_step || 0;
+        const stepBadgeHtml = rStep === 0
+          ? `<span class="step-order-badge">MỞ SẴN</span>`
+          : `<span class="step-order-badge step-deduced">BƯỚC #${rStep}</span>`;
 
         card.innerHTML = `
           <div class="card-top">
             <div class="card-top-left">
               <span class="coord-pill">${item.cell}</span>
+              ${stepBadgeHtml}
               ${hlTopTag}
             </div>
             <span class="stamp-badge ${badgeClass}">${badgeText}</span>
@@ -385,10 +654,14 @@ function render(data) {
   lastAnimatedCell = null;
   lastAnimationKind = null;
 
+  renderLiveVisualizer(data);
+
   const t = data.telemetry;
   document.getElementById("mPrimary").textContent = t.num_primary;
   document.getElementById("mAux").textContent = t.num_aux;
   document.getElementById("mClauses").textContent = t.num_clauses;
+  const mSteps = document.getElementById("mSteps");
+  if (mSteps) mSteps.textContent = t.deduction_steps !== undefined ? t.deduction_steps : (data.deduction_steps || []).length;
   document.getElementById("mQueries").textContent = t.sat_calls;
   document.getElementById("mDecisions").textContent = t.decisions;
   document.getElementById("mProps").textContent = t.propagations;
@@ -401,7 +674,10 @@ function render(data) {
     data.revealed_clues.forEach(rc => {
       const item = document.createElement("div");
       item.className = "clue-drawer-item" + (rc.selected ? " active" : "");
-      item.innerHTML = `<span class="clue-drawer-tag">[${rc.cell} · ${rc.owner}]</span>${rc.text}`;
+      item.innerHTML = `
+        <div><span class="clue-drawer-tag">[${rc.cell} · ${rc.owner}]</span>${rc.text}</div>
+        <div class="formula-cnf" style="margin-top:3px;">Công thức: ${rc.math_formula || ""} | CNF: ${rc.cnf_preview || ""}</div>
+      `;
       item.addEventListener("click", () => selectClue(rc.selected ? null : rc.cell));
       cList.appendChild(item);
     });
@@ -424,7 +700,7 @@ function render(data) {
     document.getElementById("vStatCells").textContent = `${data.revealed_count}/${data.total_cells}`;
     document.getElementById("vStatClauses").textContent = t.num_clauses;
     document.getElementById("vStatProps").textContent = t.propagations;
-    setTimeout(() => openModal("modalVictory"), 420);
+    setTimeout(() => openModal("modalVictory"), 520);
   }
 }
 
@@ -435,6 +711,7 @@ async function selectClue(cell) {
 
 async function submitVerdict(cell, verdict) {
   stopAutoSolve();
+  selectedVisualStep = null;
   const data = await apiCall("/api/verdict", { cell, verdict });
   if (data.last_outcome) {
     lastAnimatedCell = cell;
@@ -450,6 +727,8 @@ async function requestHint() {
 }
 
 async function stepSolve() {
+  toggleVisualizerPanel(true);
+  selectedVisualStep = null;
   const data = await apiCall("/api/step", {});
   if (data.last_outcome && data.last_outcome.cell) {
     lastAnimatedCell = data.last_outcome.cell;
@@ -466,6 +745,8 @@ function stopAutoSolve() {
   }
   const lblAuto = document.getElementById("lblAuto");
   if (lblAuto) lblAuto.textContent = "Tự động phá án";
+  const pulseDot = document.getElementById("lvPulseDot");
+  if (pulseDot) pulseDot.classList.remove("running");
 }
 
 async function loopAutoSolve() {
@@ -475,7 +756,7 @@ async function loopAutoSolve() {
     stopAutoSolve();
     return;
   }
-  const speed = parseInt(document.getElementById("speedSelect").value, 10) || 480;
+  const speed = parseInt(document.getElementById("speedSelect").value, 10) || 850;
   autoTimer = setTimeout(loopAutoSolve, speed);
 }
 
@@ -485,6 +766,7 @@ async function playNextCase() {
   const list = currentState.puzzles;
   const idx = list.findIndex(p => p.case_id === currentState.puzzle_id);
   const nextItem = list[(idx + 1) % list.length];
+  selectedVisualStep = null;
   const data = await apiCall("/api/load", { case_id: nextItem.case_id });
   render(data);
 }
@@ -494,8 +776,10 @@ document.getElementById("btnAuto").addEventListener("click", () => {
     stopAutoSolve();
     return;
   }
+  toggleVisualizerPanel(true);
+  selectedVisualStep = null;
   document.getElementById("lblAuto").textContent = "Tạm dừng";
-  autoTimer = setTimeout(loopAutoSolve, 60);
+  autoTimer = setTimeout(loopAutoSolve, 80);
 });
 
 document.getElementById("btnHint").addEventListener("click", requestHint);
@@ -503,26 +787,35 @@ document.getElementById("btnStep").addEventListener("click", () => { stopAutoSol
 document.getElementById("btnRestart").addEventListener("click", async () => {
   stopAutoSolve();
   victoryShownForSession = null;
+  selectedVisualStep = null;
   render(await apiCall("/api/restart", {}));
 });
 
 document.getElementById("quickPuzzleSelect").addEventListener("change", async (e) => {
   stopAutoSolve();
   victoryShownForSession = null;
+  selectedVisualStep = null;
   render(await apiCall("/api/load", { case_id: e.target.value }));
 });
 
-document.getElementById("uploadJsonCases").addEventListener("change", async (e) => {
+async function handleJsonFileUpload(e) {
   const file = e.target.files[0];
   if (!file) return;
   stopAutoSolve();
   victoryShownForSession = null;
+  selectedVisualStep = null;
   const text = await file.text();
   const data = await apiCall("/api/load_raw", { content: text });
   render(data);
   showScreen("screenGame");
   e.target.value = "";
-});
+}
+
+document.getElementById("uploadJsonCases").addEventListener("change", handleJsonFileUpload);
+const uploadTopbar = document.getElementById("uploadJsonTopbar");
+if (uploadTopbar) {
+  uploadTopbar.addEventListener("change", handleJsonFileUpload);
+}
 
 // Tải dữ liệu trạng thái khi mở trang
 apiCall("/api/state", {}).then(render);

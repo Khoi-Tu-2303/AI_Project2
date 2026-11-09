@@ -153,6 +153,42 @@
       }
     },
     {
+      "case_id": "5x5_syndicate",
+      "path": "examples/5x5_syndicate.json",
+      "kind": "stress",
+      "expected": {
+        "load": "VALID",
+        "full_clue_uniqueness": "UNIQUE",
+        "run": "SOLVED",
+        "reference_matches": true,
+        "accepted_order": [
+          "B1",
+          "C1",
+          "D1",
+          "E1",
+          "A2",
+          "B2",
+          "C2",
+          "D2",
+          "E2",
+          "A3",
+          "B3",
+          "C3",
+          "D3",
+          "E3",
+          "A4",
+          "B4",
+          "C4",
+          "D4",
+          "E4",
+          "A5",
+          "B5",
+          "C5",
+          "D5"
+        ]
+      }
+    },
+    {
       "case_id": "3x3_stuck",
       "path": "examples/3x3_stuck.json",
       "kind": "stuck",

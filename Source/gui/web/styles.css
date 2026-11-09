@@ -887,36 +887,393 @@ html, body {
 }
 
 /* =========================================================================
-   SÂN KHẤU BÀN CỜ & LƯỚI THẺ NGHI PHẠM N×N THUẦN TÚY
+   SÂN KHẤU BÀN CỜ & BẢNG TRỰC QUAN HÓA LUỒNG CÔNG THỨC DPLL (SPLIT VIEW)
    ========================================================================= */
 .board-stage {
   flex: 1;
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: 10px 24px 32px;
+  padding: 10px 20px 32px;
   width: 100%;
   overflow: visible;
 }
 
+.workspace-split {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 18px;
+  width: 100%;
+  max-width: 1420px;
+  margin: 0 auto;
+}
+@media (max-width: 1060px) {
+  .workspace-split {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
 .board-shell {
+  flex: 1;
   width: 100%;
   height: auto;
   max-height: none;
   margin: 0 auto;
 }
-.board-shell[data-n="3"] { max-width: 820px; }
-.board-shell[data-n="4"] { max-width: 980px; }
-.board-shell[data-n="5"] { max-width: 1140px; }
+.board-shell[data-n="3"] { max-width: 780px; }
+.board-shell[data-n="4"] { max-width: 900px; }
+.board-shell[data-n="5"] { max-width: 980px; }
 
 .board-rows-wrap {
   display: grid;
-  gap: 14px;
+  gap: 12px;
   width: 100%;
   align-items: stretch;
 }
-.board-shell[data-n="4"] .board-rows-wrap { gap: 11px; }
+.board-shell[data-n="4"] .board-rows-wrap { gap: 10px; }
 .board-shell[data-n="5"] .board-rows-wrap { gap: 8px; }
+
+/* Nút bật/tắt bảng Luồng Công Thức */
+.btn-flow-toggle.active {
+  border-color: var(--gold-bright);
+  background: var(--gold-soft);
+  color: var(--gold-bright);
+}
+
+/* =========================================================================
+   BẢNG TRỰC QUAN HÓA CÔNG THỨC & LUỒNG CHẠY DPLL (LIVE VISUALIZER)
+   ========================================================================= */
+.live-visualizer {
+  width: 440px;
+  min-width: 380px;
+  max-width: 100%;
+  border-radius: 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex-shrink: 0;
+  transition: all 0.22s ease;
+}
+.live-visualizer.hidden {
+  display: none;
+}
+@media (max-width: 1060px) {
+  .live-visualizer {
+    width: 100%;
+    max-width: 780px;
+  }
+}
+
+.lv-header {
+  padding: 12px 16px;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.lv-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.lv-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--innocent);
+}
+.lv-pulse-dot.running {
+  background: var(--gold-bright);
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.25);
+}
+.lv-title {
+  font-family: var(--font-display);
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--ink-primary);
+}
+.lv-step-counter {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 5px;
+  background: var(--gold-soft);
+  color: var(--gold-bright);
+  border: 1px solid var(--border-strong);
+}
+
+/* Dải mắt xích các bước suy diễn */
+.lv-timeline-strip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 14px;
+  background: var(--bg-deep);
+  border-bottom: 1px solid var(--border-subtle);
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.step-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-elevated);
+  color: var(--ink-secondary);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.14s ease;
+}
+.step-chip:hover {
+  border-color: var(--gold-bright);
+  color: var(--ink-primary);
+}
+.step-chip.active {
+  background: var(--gold-bright);
+  border-color: var(--gold-bright);
+  color: #090B10;
+}
+.step-chip-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+.step-chip-dot.innocent { background: var(--innocent); }
+.step-chip-dot.criminal { background: var(--criminal); }
+.step-chip.active .step-chip-dot { background: #090B10; }
+.step-arrow {
+  color: var(--ink-muted);
+  font-size: 11px;
+  user-select: none;
+}
+
+/* Sơ đồ luồng chạy 4 tầng bên trong Visualizer */
+.lv-flow-body {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.flow-stage {
+  border-radius: 10px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  padding: 11px 13px;
+  position: relative;
+}
+.flow-stage.stage-highlight {
+  border-color: var(--border-strong);
+}
+.flow-stage-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 7px;
+}
+.flow-stage-num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--gold-soft);
+  color: var(--gold-bright);
+  letter-spacing: 0.04em;
+}
+.flow-stage-title {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--ink-primary);
+  flex: 1;
+}
+.flow-stage-meta {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--ink-muted);
+}
+
+.flow-arrow-down {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 14px;
+  color: var(--gold-bright);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1;
+}
+
+.formula-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.formula-item {
+  padding: 7px 9px;
+  border-radius: 7px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border-subtle);
+}
+.formula-item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 3px;
+}
+.formula-owner {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--gold-bright);
+}
+.formula-type-tag {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--ink-secondary);
+}
+.formula-math {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--ink-primary);
+  margin-bottom: 2px;
+  word-break: break-word;
+}
+.formula-cnf {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--ink-muted);
+  word-break: break-word;
+}
+
+/* Nhánh kiểm chứng phản chứng DPLL (UNSAT vs SAT) */
+.refutation-branches {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.branch-card {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-deep);
+}
+.branch-card.unsat {
+  border-color: rgba(244, 63, 94, 0.45);
+  background: rgba(244, 63, 94, 0.08);
+}
+.branch-card.sat {
+  border-color: rgba(16, 185, 129, 0.45);
+  background: rgba(16, 185, 129, 0.08);
+}
+.branch-formula {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+.branch-card.unsat .branch-formula { color: var(--criminal); }
+.branch-card.sat .branch-formula { color: var(--innocent); }
+.branch-desc {
+  font-size: 11px;
+  color: var(--ink-secondary);
+  line-height: 1.38;
+}
+
+.dpll-mini-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+  margin-top: 8px;
+}
+.dpll-mini-box {
+  padding: 5px 6px;
+  border-radius: 6px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border-subtle);
+  text-align: center;
+}
+.dpll-mini-val {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gold-bright);
+}
+.dpll-mini-lbl {
+  font-size: 9.5px;
+  color: var(--ink-muted);
+}
+
+/* Tầng kết luận suy diễn */
+.entailment-verdict-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 11px;
+  border-radius: 8px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border-strong);
+}
+.entailment-eq {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--gold-bright);
+}
+.entailment-target {
+  font-size: 12px;
+  font-weight: 800;
+  padding: 3px 9px;
+  border-radius: 5px;
+}
+.entailment-target.innocent {
+  background: var(--innocent-soft);
+  color: var(--innocent);
+  border: 1px solid var(--innocent);
+}
+.entailment-target.criminal {
+  background: var(--criminal-soft);
+  color: var(--criminal);
+  border: 1px solid var(--criminal);
+}
+
+/* Nhãn thứ tự bước trên thẻ nghi phạm đã mở */
+.step-order-badge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1.5px 5px;
+  border-radius: 4px;
+  background: rgba(15, 23, 42, 0.07);
+  color: #475569;
+}
+.step-order-badge.step-deduced {
+  background: rgba(217, 119, 6, 0.16);
+  color: #92400E;
+  border: 1px solid rgba(217, 119, 6, 0.35);
+}
 
 /* =========================================================================
    THẺ NGHI PHẠM (CHƯA MỞ / ĐÃ MỞ HỒ SƠ)

@@ -20,7 +20,7 @@
     <nav class="start-navbar">
       <div class="brand-mark">
         <span class="brand-dot"></span>
-        <span class="brand-code">CSC14003 · PROJECT 02 · GRIDUCTIVE</span>
+        <span class="brand-code">CSC14003 · PROJECT 02 · GRIDUCTIVE SOLVER</span>
       </div>
       <div class="start-top-controls">
         <button type="button" class="btn" onclick="toggleTheme()">
@@ -40,7 +40,6 @@
 
     <div class="start-container">
       <div class="start-editorial-grid">
-        <!-- Cột trái: Tiêu đề biên tập & Điều hướng chính -->
         <div class="start-left-col">
           <div class="agency-badge">
             <span class="badge-indicator"></span>
@@ -50,7 +49,7 @@
           <h1 class="hero-title">Hồ Sơ Logic: Griductive</h1>
           <p class="hero-subtitle">Phá án bằng suy luận mệnh đề — tuyệt đối không đoán mò</p>
           <p class="hero-desc">
-            Mỗi nghi phạm đã lộ diện trên bàn cờ cung cấp một lời khai được biên dịch thành
+            Mỗi nghi phạm đã lộ diện trên bàn cờ cung cấp một lời khai được biên dịch tự động thành
             <strong>mệnh đề logic dạng chuẩn hội (CNF)</strong>. Bạn chỉ được phép kết luận một nghi phạm là
             <strong>Vô tội</strong> hoặc <strong>Thủ phạm</strong> khi phán quyết đó được chứng minh tất yếu từ các chứng cứ đã mở.
           </p>
@@ -66,7 +65,7 @@
               <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
               </svg>
-              <span>KHO HỒ SƠ VỤ ÁN (9 MÀN)</span>
+              <span>KHO HỒ SƠ VỤ ÁN (6 MÀN CHUẨN + MỞ RỘNG)</span>
             </button>
             <button type="button" class="btn-hero-secondary" onclick="openModal('modalRules')">
               <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -78,23 +77,22 @@
 
           <div class="start-specs-strip">
             <div class="spec-item">
-              <span class="spec-mono">KB ∧ ¬L = UNSAT</span>
-              <span class="spec-lbl">Kiểm chứng phản chứng tự động</span>
+              <span class="spec-mono">KB_t ∧ ¬L ⟹ UNSAT</span>
+              <span class="spec-lbl">Kiểm chứng phản chứng DPLL</span>
             </div>
             <div class="spec-divider"></div>
             <div class="spec-item">
-              <span class="spec-mono">8 MẪU LỜI KHAI</span>
-              <span class="spec-lbl">Khoanh vùng trực quan trên lưới</span>
+              <span class="spec-mono">8 MẪU LỜI KHAI CNF</span>
+              <span class="spec-lbl">Trực quan hóa công thức &amp; luồng chạy</span>
             </div>
             <div class="spec-divider"></div>
             <div class="spec-item">
               <span class="spec-mono">3×3 · 4×4 · 5×5</span>
-              <span class="spec-lbl">9 hồ sơ vụ án &amp; kiểm thử biên</span>
+              <span class="spec-lbl">Đủ 2 màn chuẩn mỗi kích thước</span>
             </div>
           </div>
         </div>
 
-        <!-- Cột phải: Bàn cờ mẫu trực quan (Interactive Case Preview) -->
         <div class="start-right-col">
           <div class="preview-dossier-frame">
             <div class="preview-frame-header">
@@ -106,7 +104,6 @@
             </div>
 
             <div class="preview-board-grid">
-              <!-- Ô mẫu A1: Đã mở - Vô tội -->
               <div class="suspect-card revealed-innocent preview-card">
                 <div class="card-top">
                   <span class="coord-pill">A1</span>
@@ -129,7 +126,6 @@
                 </div>
               </div>
 
-              <!-- Ô mẫu B1: Đã mở - Thủ phạm -->
               <div class="suspect-card revealed-criminal preview-card">
                 <div class="card-top">
                   <span class="coord-pill">B1</span>
@@ -148,11 +144,10 @@
                   </div>
                 </div>
                 <div class="clue-bubble">
-                  “Hàng 1 có đúng 1 người Vô tội.”
+                  “Trong Hàng 1 có đúng 1 Thủ phạm.”
                 </div>
               </div>
 
-              <!-- Ô mẫu A2: Đang thẩm vấn -->
               <div class="suspect-card unsolved preview-card">
                 <div class="card-top">
                   <span class="coord-pill">A2</span>
@@ -168,7 +163,6 @@
                 </div>
               </div>
 
-              <!-- Ô mẫu B2: Đang thẩm vấn -->
               <div class="suspect-card unsolved preview-card">
                 <div class="card-top">
                   <span class="coord-pill">B2</span>
@@ -186,7 +180,7 @@
             </div>
 
             <div class="preview-frame-footer">
-              <span class="preview-formula">Mệnh đề đơn vị: <code>¬X(B1)</code> ∧ <code>X(A1)</code> ⇒ Suy diễn bước tiếp theo</span>
+              <span class="preview-formula">Phản chứng: <code>KB_t ∧ ¬C_B1 ⟹ UNSAT</code> ⇒ Suy diễn <code>B1 = THỦ PHẠM</code></span>
             </div>
           </div>
         </div>
@@ -202,7 +196,7 @@
       <div class="cases-header">
         <div class="cases-title-block">
           <h1>KHO LƯU TRỮ HỒ SƠ VỤ ÁN</h1>
-          <p>Chọn một hồ sơ vụ án dưới đây để bắt đầu thẩm vấn hoặc tải lên file cấu hình JSON tùy chỉnh</p>
+          <p>Bộ 6 hồ sơ chuẩn (mỗi cấp độ 3×3, 4×4, 5×5 có 2 màn nghiệm duy nhất) kèm bộ kiểm thử mở rộng</p>
         </div>
         <div class="cases-header-actions">
           <label class="btn" for="uploadJsonCases" style="cursor:pointer;">
@@ -226,11 +220,12 @@
 
       <div class="filter-bar">
         <div class="filter-tabs" id="caseFilterTabs">
-          <button type="button" class="filter-tab active" data-filter="all" onclick="setCaseFilter('all')">Tất cả hồ sơ (9)</button>
+          <button type="button" class="filter-tab active" data-filter="official" onclick="setCaseFilter('official')">6 Hồ Sơ Chuẩn (2× 3×3, 4×4, 5×5)</button>
           <button type="button" class="filter-tab" data-filter="3" onclick="setCaseFilter('3')">Cấp độ 3×3</button>
           <button type="button" class="filter-tab" data-filter="4" onclick="setCaseFilter('4')">Cấp độ 4×4</button>
           <button type="button" class="filter-tab" data-filter="5" onclick="setCaseFilter('5')">Siêu cấp 5×5</button>
           <button type="button" class="filter-tab" data-filter="edge" onclick="setCaseFilter('edge')">Kiểm thử biên AI</button>
+          <button type="button" class="filter-tab" data-filter="all" onclick="setCaseFilter('all')">Tất cả (10)</button>
         </div>
       </div>
 
@@ -239,10 +234,9 @@
   </section>
 
   <!-- ===================================================================
-       MÀN HÌNH 3: MÀN HÌNH ĐIỀU TRA BÀN CỜ (GAMEPLAY SCREEN)
+       MÀN HÌNH 3: MÀN HÌNH ĐIỀU TRA BÀN CỜ & TRỰC QUAN HÓA LUỒNG SUY DIỄN
        =================================================================== -->
   <section id="screenGame" class="screen">
-    <!-- Thanh công cụ phía trên đã tối ưu hóa chống tràn -->
     <header class="game-topbar">
       <div class="topbar-left">
         <button type="button" class="btn" onclick="showScreen('screenCases')" title="Quay về Kho Hồ Sơ Vụ Án">
@@ -252,7 +246,6 @@
           <span>Kho Hồ Sơ</span>
         </button>
 
-        <!-- Giữ phần tử ẩn tương thích ngược nếu cần truy cập mã/tiêu đề -->
         <div class="case-header-pill" style="display:none;" aria-hidden="true">
           <span id="hdrCaseCode">HỒ SƠ #02</span>
           <span id="hdrCaseTitle">Đêm Gala Thượng Lưu</span>
@@ -260,8 +253,16 @@
 
         <select id="quickPuzzleSelect" class="ctrl-select puzzle-select" aria-label="Đổi nhanh vụ án"></select>
 
+        <label class="btn" for="uploadJsonTopbar" style="cursor:pointer;" title="Tải file JSON puzzle (3×3, 4×4, 5×5) từ máy tính">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          <span>Tải JSON</span>
+        </label>
+        <input id="uploadJsonTopbar" type="file" accept=".json" style="display:none" />
+
         <div class="progress-widget" title="Tiến độ xác minh nghi phạm">
-          <span id="progressLabel">2/9</span>
+          <span id="progressLabel">2/9 ô</span>
           <div class="progress-bar-track">
             <div class="progress-bar-fill" id="progressBarFill" style="width: 22%;"></div>
           </div>
@@ -276,22 +277,22 @@
             </svg>
             <span>Gợi ý</span>
           </button>
-          <button type="button" class="btn dock-btn" id="btnStep" title="AI tự động lật 1 ô chắc chắn đúng">
+          <button type="button" class="btn dock-btn" id="btnStep" title="AI tự động giải 1 bước và vẽ luồng công thức">
             <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/>
             </svg>
             <span>Giải 1 bước</span>
           </button>
-          <button type="button" class="btn btn-gold dock-btn" id="btnAuto" title="AI tự động phá án tuần tự">
+          <button type="button" class="btn btn-gold dock-btn" id="btnAuto" title="AI tự động phá án tuần tự kèm trực quan hóa công thức &amp; luồng DPLL">
             <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
               <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
             </svg>
             <span id="lblAuto">Tự động phá án</span>
           </button>
-          <select id="speedSelect" class="ctrl-select dock-select" aria-label="Tốc độ giải tự động" title="Tốc độ giải tự động">
-            <option value="220">Nhanh</option>
-            <option value="480" selected>Vừa</option>
-            <option value="850">Chậm</option>
+          <select id="speedSelect" class="ctrl-select dock-select" aria-label="Tốc độ giải tự động" title="Tốc độ chạy mô phỏng từng bước">
+            <option value="420">Nhanh</option>
+            <option value="850" selected>Vừa</option>
+            <option value="1400">Chậm</option>
           </select>
           <button type="button" class="btn dock-btn" id="btnRestart" title="Làm mới lại màn chơi này">
             <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -303,18 +304,23 @@
       </div>
 
       <div class="topbar-right">
+        <button type="button" class="btn btn-flow-toggle active" id="btnToggleVisualizer" onclick="toggleVisualizerPanel()" title="Bật/tắt bảng Trực quan hóa Công thức &amp; Luồng chạy DPLL">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><path d="M10 6.5h4M17.5 10v4"/>
+          </svg>
+          <span>Luồng Công Thức</span>
+        </button>
         <button type="button" class="btn btn-ai-drawer" onclick="toggleDrawer(true)">
           <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
           </svg>
-          <span>Phân tích AI</span>
+          <span>Thống kê</span>
           <span class="badge-count" id="badgeClauseCount">0 CNF</span>
         </button>
         <button type="button" class="btn btn-icon-only" onclick="openModal('modalRules')" title="Xem luật chơi &amp; cơ chế SAT">
           <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
           </svg>
-          <span class="btn-label-hide-sm">Luật</span>
         </button>
         <button type="button" class="btn btn-icon-only" onclick="toggleTheme()" title="Đổi chế độ Sáng / Tối">
           <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -329,7 +335,7 @@
       <div class="spotlight-inner" id="spotlightInner" data-kind="READY">
         <div class="status-msg-group">
           <span class="status-badge" id="statusBadge" data-kind="READY">ĐANG ĐIỀU TRA</span>
-          <span class="status-text" id="statusText">Đọc lời khai trên các thẻ sáng màu để suy luận, hoặc bấm nút "Soi vùng lời khai" để xem các ô liên quan.</span>
+          <span class="status-text" id="statusText">Đọc lời khai trên các thẻ sáng màu để suy luận, hoặc bấm "Tự động phá án" để xem luồng công thức DPLL.</span>
         </div>
         <div class="active-clue-pill" id="activeCluePill" style="display:none;">
           <span class="active-clue-owner" id="activeClueOwner">An (A1):</span>
@@ -339,16 +345,35 @@
       </div>
     </div>
 
-    <!-- Bàn Cờ Nghi Phạm Lưới N×N Thuần Túy -->
+    <!-- Không gian làm việc chia đôi: Bàn cờ N×N (Trái) + Bảng Trực Quan Hóa Công Thức & Luồng DPLL (Phải) -->
     <main class="board-stage">
-      <div class="board-shell" id="boardShell" data-n="3">
-        <div class="board-rows-wrap" id="boardRowsWrap"></div>
+      <div class="workspace-split" id="workspaceSplit">
+        <div class="board-shell" id="boardShell" data-n="3">
+          <div class="board-rows-wrap" id="boardRowsWrap"></div>
+        </div>
+
+        <!-- BẢNG TRỰC QUAN HÓA CÔNG THỨC & LUỒNG SUY DIỄN DPLL (LIVE FORMULA & FLOW VISUALIZER) -->
+        <aside class="live-visualizer" id="liveVisualizer">
+          <div class="lv-header">
+            <div class="lv-title-row">
+              <span class="lv-pulse-dot" id="lvPulseDot"></span>
+              <span class="lv-title">LUỒNG SUY DIỄN DPLL &amp; MÃ HÓA CNF</span>
+            </div>
+            <span class="lv-step-counter" id="lvStepCounter">Bước 0/0</span>
+          </div>
+
+          <!-- Dải mắt xích các bước suy diễn (bấm vào từng bước để xem lại) -->
+          <div class="lv-timeline-strip" id="lvTimelineStrip"></div>
+
+          <!-- Sơ đồ luồng chạy 4 tầng (4-Stage Deduction Pipeline) -->
+          <div class="lv-flow-body" id="lvFlowBody"></div>
+        </aside>
       </div>
     </main>
   </section>
 
   <!-- ===================================================================
-       NGĂN KÉO TRƯỢT PHÂN TÍCH AI (CNF & DPLL TELEMETRY DRAWER)
+       NGĂN KÉO TRƯỢT THỐNG KÊ THỰC NGHIỆM (CNF & DPLL TELEMETRY DRAWER)
        =================================================================== -->
   <div class="drawer-backdrop" id="drawerBackdrop" onclick="toggleDrawer(false)"></div>
   <aside class="ai-drawer" id="aiDrawer">
@@ -357,27 +382,28 @@
         <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
         </svg>
-        <span>Bảng Phân Tích Logic CNF &amp; DPLL SAT</span>
+        <span>Bảng Thống Kê Thực Nghiệm (Mục 4.5)</span>
       </div>
       <button type="button" class="btn" onclick="toggleDrawer(false)">Đóng</button>
     </div>
     <div class="drawer-body">
       <div>
-        <div class="drawer-section-title">Thông số Cơ sở Tri thức CNF &amp; Bộ giải DPLL</div>
+        <div class="drawer-section-title">6 Nhóm Chỉ Số Thực Nghiệm CNF &amp; Bộ Giải DPLL</div>
         <div class="telemetry-grid">
           <div class="metric-box"><span class="metric-lbl">Biến chính (N²)</span><span class="metric-val" id="mPrimary">0</span></div>
           <div class="metric-box"><span class="metric-lbl">Biến phụ trợ</span><span class="metric-val" id="mAux">0</span></div>
           <div class="metric-box"><span class="metric-lbl">Mệnh đề CNF</span><span class="metric-val" id="mClauses">0</span></div>
+          <div class="metric-box"><span class="metric-lbl">Bước suy diễn</span><span class="metric-val" id="mSteps">0</span></div>
           <div class="metric-box"><span class="metric-lbl">Truy vấn SAT</span><span class="metric-val" id="mQueries">0</span></div>
           <div class="metric-box"><span class="metric-lbl">Phân nhánh</span><span class="metric-val" id="mDecisions">0</span></div>
           <div class="metric-box"><span class="metric-lbl">Lan truyền đơn vị</span><span class="metric-val" id="mProps">0</span></div>
           <div class="metric-box"><span class="metric-lbl">Quay lui (Backtrack)</span><span class="metric-val" id="mBacktracks">0</span></div>
-          <div class="metric-box"><span class="metric-lbl">Thời gian giải</span><span class="metric-val" id="mRuntime">0.0ms</span></div>
+          <div class="metric-box" style="grid-column: span 2;"><span class="metric-lbl">Thời gian giải DPLL tích lũy</span><span class="metric-val" id="mRuntime">0.0ms</span></div>
         </div>
       </div>
 
       <div>
-        <div class="drawer-section-title">Danh sách Lời khai Đã mở (Bấm để khoanh vùng)</div>
+        <div class="drawer-section-title">Danh sách Lời khai &amp; Công thức CNF Đã mở</div>
         <div class="clue-drawer-list" id="clueDrawerList"></div>
       </div>
 
@@ -395,28 +421,26 @@
     <div class="modal-card">
       <h2>Luật Chơi &amp; Cơ Chế Suy Diễn SAT</h2>
       <p>
-        <strong>Hồ Sơ Logic: Griductive</strong> là trò chơi trinh thám dựa trên <strong>Logic Mệnh Đề (Propositional Logic)</strong>
-        và bộ giải <strong>DPLL SAT Solver</strong>, lấy cảm hứng từ <em>Clues by Sam</em>.
+        <strong>Hồ Sơ Logic: Griductive</strong> là trò chơi suy luận dựa trên <strong>Logic Mệnh Đề (Propositional Logic)</strong>,
+        mã hóa <strong>CNF</strong> và bộ giải <strong>DPLL SAT Solver</strong>.
       </p>
       <ul class="rule-list">
         <li>
-          <strong>1. Hai thân phận duy nhất:</strong> Mỗi nghi phạm trên bàn cờ <code>N×N</code> chỉ có thể là
-          <strong style="color:var(--innocent)">VÔ TỘI (INNOCENT)</strong> hoặc
-          <strong style="color:var(--criminal)">THỦ PHẠM (CRIMINAL)</strong>.
+          <strong>1. Biến mệnh đề (Section 3.1):</strong> Mỗi nghi phạm tại ô $i$ được biểu diễn bằng biến Boolean $C_i$
+          ($C_i = \text{True}$ nếu là <strong style="color:var(--criminal)">THỦ PHẠM</strong>,
+          $C_i = \text{False}$ nếu là <strong style="color:var(--innocent)">VÔ TỘI</strong>).
         </li>
         <li>
-          <strong>2. Mọi lời khai đều là sự thật:</strong> Ngay cả Thủ phạm hay người Vô tội, một khi hồ sơ đã được lật mở,
-          nội dung lời khai trên thẻ của họ luôn luôn đúng 100%.
+          <strong>2. Mọi lời khai đã mở đều đúng:</strong> Mỗi lời khai được dịch tự động sang các mệnh đề CNF để tạo thành cơ sở tri thức $\text{KB}_t$.
         </li>
         <li>
-          <strong>3. Nguyên tắc vàng — Cấm đoán mò:</strong> Bạn chỉ được phép kết luận một nghi phạm khi trạng thái của họ
-          <strong>bắt buộc phải đúng trong mọi nghiệm hợp lệ</strong> của các lời khai hiện có:
-          <br/>• Phán quyết đúng tất yếu → <strong>CHẤP NHẬN</strong> &amp; lật thẻ mở lời khai mới.
-          <br/>• Phán quyết khi chưa đủ chứng cứ → Cảnh báo <strong>CHƯA ĐỦ BẰNG CHỨNG</strong>.
-          <br/>• Phán quyết trái ngược lời khai → Cảnh báo <strong>MÂU THUẪN LOGIC</strong>.
+          <strong>3. Suy diễn phản chứng (Section 3.4):</strong> Một ô chỉ được kết luận khi đúng trong mọi mô hình của $\text{KB}_t$:
+          <br/>• $\text{KB}_t \wedge \neg C_i = \text{UNSAT} \implies \text{KB}_t \models C_i$ (Bắt buộc là <strong>THỦ PHẠM</strong>).
+          <br/>• $\text{KB}_t \wedge C_i = \text{UNSAT} \implies \text{KB}_t \models \neg C_i$ (Bắt buộc là <strong>VÔ TỘI</strong>).
+          <br/>• Nếu cả hai đều khả thỏa ($\text{SAT}$) $\implies$ Cảnh báo <strong>CHƯA ĐỦ BẰNG CHỨNG</strong>.
         </li>
         <li>
-          <strong>4. Khoanh vùng trực quan:</strong> Bấm vào bất kỳ thẻ sáng màu nào đã mở để chiếu sáng các ô mà lời khai đó đang nhắc tới trên bàn cờ.
+          <strong>4. Trực quan hóa luồng chạy:</strong> Bấm <strong>Tự động phá án</strong> hoặc <strong>Giải 1 bước</strong> để xem sơ đồ 4 tầng vẽ trực tiếp công thức phản chứng và quá trình lan truyền đơn vị (Unit Propagation).
         </li>
       </ul>
       <div style="display:flex; justify-content:flex-end;">
@@ -453,7 +477,7 @@
         </div>
       </div>
       <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
-        <button type="button" class="btn" onclick="closeModal('modalVictory')">Xem lại bàn cờ</button>
+        <button type="button" class="btn" onclick="closeModal('modalVictory')">Xem lại luồng công thức</button>
         <button type="button" class="btn" onclick="closeModal('modalVictory'); showScreen('screenCases')">Về Kho Hồ Sơ</button>
         <button type="button" class="btn btn-gold" onclick="playNextCase()">Hồ Sơ Tiếp Theo →</button>
       </div>

@@ -24,6 +24,7 @@ from common.types import (
     VerdictResult,
 )
 from engine.game_engine import GameEngine
+from gui.clue_formatter import format_clue, format_clue_formula
 from logic.encoder import CNFEncoder
 from logic.entailment import EntailmentClassifier
 
@@ -53,16 +54,8 @@ CASE_METADATA_VN: dict[str, dict[str, Any]] = {
         "difficulty": 1,
         "badge": "Cơ bản 3×3",
     },
-    "3x3_extensions": {
-        "code": "HỒ SƠ #03",
-        "title": "Mật Mã Chẵn Lẻ & Đối Chiếu",
-        "subtitle": "Mệnh đề mở rộng PARITY & COMPARE (3×3)",
-        "story": "Hung thủ để lại những lời khai mã hóa dưới dạng tính chẵn/lẻ (PARITY) và đối chiếu tương quan số lượng giữa các hàng cột (COMPARE).",
-        "difficulty": 2,
-        "badge": "Mở rộng 3×3",
-    },
     "4x4_detective": {
-        "code": "HỒ SƠ #04",
+        "code": "HỒ SƠ #03",
         "title": "Chuyên Án Dinh Thự Cổ",
         "subtitle": "Đội hình 16 nghi phạm đa ngành nghề (4×4)",
         "story": "16 vị khách bị cô lập trong dinh thự cổ sau cơn bão lớn. Kết hợp các ràng buộc số lượng trên từng hàng và cột để lật tẩy mạng lưới ngầm.",
@@ -70,7 +63,7 @@ CASE_METADATA_VN: dict[str, dict[str, Any]] = {
         "badge": "Thám tử 4×4",
     },
     "4x4_crossfire": {
-        "code": "HỒ SƠ #05",
+        "code": "HỒ SƠ #04",
         "title": "Mạng Lưới Giao Thoa",
         "subtitle": "Giao thoa Hàng - Cột với PARITY & COMPARE (4×4)",
         "story": "Những lời khai đan chéo giữa Cột A và Hàng 1 tạo nên vùng giao thoa hóc búa. Chỉ có suy diễn CNF chuẩn xác mới không rơi vào bẫy suy đoán.",
@@ -78,12 +71,28 @@ CASE_METADATA_VN: dict[str, dict[str, Any]] = {
         "badge": "Chuyên sâu 4×4",
     },
     "5x5_mastermind": {
-        "code": "HỒ SƠ #06",
+        "code": "HỒ SƠ #05",
         "title": "Trùm Cuối Tuyệt Mật",
         "subtitle": "Đại án 25 nghi phạm — Thử thách đỉnh cao (5×5)",
-        "story": "Hồ sơ lớn nhất của Cục Điều Tra với 25 nghi phạm từ Ngoại giao, Pháp y đến Chuyên gia mật mã. Kiểm chứng sức mạnh lan truyền đơn vị (Unit Propagation) trên lưới 5×5.",
+        "story": "Hồ sơ lớn của Cục Điều Tra với 25 nghi phạm từ Ngoại giao, Pháp y đến Chuyên gia mật mã. Kiểm chứng sức mạnh lan truyền đơn vị (Unit Propagation) trên lưới 5×5.",
         "difficulty": 3,
         "badge": "Siêu cấp 5×5",
+    },
+    "5x5_syndicate": {
+        "code": "HỒ SƠ #06",
+        "title": "Mạng Lưới Ngầm 5×5",
+        "subtitle": "Tổ hợp 8 mẫu lời khai & Giao thoa vùng trên lưới 5×5",
+        "story": "Chuyên án 5×5 thứ hai tích hợp đầy đủ các ràng buộc Chẵn/Lẻ (PARITY), Đối chiếu vùng (COMPARE) và Láng giềng 8 hướng trên 25 nghi phạm với nghiệm duy nhất.",
+        "difficulty": 3,
+        "badge": "Siêu cấp 5×5",
+    },
+    "3x3_extensions": {
+        "code": "MỞ RỘNG #07",
+        "title": "Mật Mã Chẵn Lẻ & Đối Chiếu",
+        "subtitle": "Mệnh đề mở rộng PARITY & COMPARE (3×3)",
+        "story": "Hung thủ để lại những lời khai mã hóa dưới dạng tính chẵn/lẻ (PARITY) và đối chiếu tương quan số lượng giữa các hàng cột (COMPARE).",
+        "difficulty": 2,
+        "badge": "Mở rộng 3×3",
     },
     "3x3_stuck": {
         "code": "KIỂM THỬ #07",
@@ -178,10 +187,20 @@ class GUIController:
         self._active_hint: Hint | None = None
         self._trace: list[TraceEntry] = []
         self._telemetry: TelemetrySnapshot = TelemetrySnapshot()
+        self._reveal_step_by_cell: dict[Cell, int] = {}
+        self._deduction_steps: list[dict[str, Any]] = []
 
         if puzzles_dir is None:
             puzzles_dir = Path(__file__).resolve().parent.parent / "puzzles"
         self._puzzles_dir = puzzles_dir
+
+    @property
+    def reveal_step_by_cell(self) -> dict[Cell, int]:
+        return dict(self._reveal_step_by_cell)
+
+    @property
+    def deduction_steps(self) -> tuple[dict[str, Any], ...]:
+        return tuple(self._deduction_steps)
 
     @property
     def is_loaded(self) -> bool:
@@ -287,6 +306,8 @@ class GUIController:
         self._selected_clue_cell = None
         self._active_hint = None
         self._trace.clear()
+        self._deduction_steps.clear()
+        self._reveal_step_by_cell = {c: 0 for c in state.known_statuses}
 
         self._refresh_kb_telemetry(state)
         self._append_trace(
@@ -308,6 +329,8 @@ class GUIController:
         self._selected_clue_cell = None
         self._active_hint = None
         self._trace.clear()
+        self._deduction_steps.clear()
+        self._reveal_step_by_cell = {c: 0 for c in state.known_statuses}
         self._refresh_kb_telemetry(state)
         self._append_trace(
             action="RESTART",
@@ -381,6 +404,7 @@ class GUIController:
         self._require_engine()
         assert self._engine is not None
 
+        state_before = self._engine.get_public_state()
         outcome = self._engine.submit_verdict(cell, verdict)
         state = self._engine.get_public_state()
         self._refresh_solver_telemetry(state)
@@ -389,6 +413,93 @@ class GUIController:
         if outcome.result is VerdictResult.ACCEPTED:
             if self._active_hint is not None and self._active_hint.cell == cell:
                 self._active_hint = None
+            step_idx = len(self._deduction_steps) + 1
+            self._reveal_step_by_cell[cell] = step_idx
+
+            char_map = {ch.cell: ch for ch in state_before.characters}
+            target_ch = char_map.get(cell)
+            target_name = target_ch.name if target_ch else cell
+            target_prof = target_ch.profession if target_ch else ""
+
+            supporting: list[dict[str, Any]] = []
+            for c_cell, cl in state_before.revealed_clues.items():
+                refs = referenced_cells(cl, state_before.n)
+                if cell in refs:
+                    f_info = format_clue_formula(cl, state_before.n)
+                    supporting.append({
+                        "cell": c_cell,
+                        "owner": char_map[c_cell].name if c_cell in char_map else c_cell,
+                        "id": cl.id,
+                        "type": cl.type.value,
+                        "text": format_clue(cl, state_before, compact=True),
+                        "math_formula": f_info["math_formula"],
+                        "cnf_preview": f_info["cnf_preview"],
+                    })
+            if not supporting:
+                for c_cell, cl in list(state_before.revealed_clues.items())[-2:]:
+                    f_info = format_clue_formula(cl, state_before.n)
+                    supporting.append({
+                        "cell": c_cell,
+                        "owner": char_map[c_cell].name if c_cell in char_map else c_cell,
+                        "id": cl.id,
+                        "type": cl.type.value,
+                        "text": format_clue(cl, state_before, compact=True),
+                        "math_formula": f_info["math_formula"],
+                        "cnf_preview": f_info["cnf_preview"],
+                    })
+
+            if verdict is Status.CRIMINAL:
+                ref_q = f"KB_{step_idx - 1} ∧ ¬C_{cell}  ⟹  UNSAT"
+                ref_desc = f"Giả sử {target_name} ({cell}) Vô tội (¬C_{cell}) → Xung đột mệnh đề (UNSAT)"
+                con_q = f"KB_{step_idx - 1} ∧ C_{cell}  ⟹  SAT"
+                ent_f = f"KB_{step_idx - 1} ⊨ C_{cell}"
+                unit_c = f"(C_{cell})"
+            else:
+                ref_q = f"KB_{step_idx - 1} ∧ C_{cell}  ⟹  UNSAT"
+                ref_desc = f"Giả sử {target_name} ({cell}) Thủ phạm (C_{cell}) → Xung đột mệnh đề (UNSAT)"
+                con_q = f"KB_{step_idx - 1} ∧ ¬C_{cell}  ⟹  SAT"
+                ent_f = f"KB_{step_idx - 1} ⊨ ¬C_{cell}"
+                unit_c = f"(¬C_{cell})"
+
+            new_clue_data = None
+            if outcome.new_clue is not None:
+                nf = format_clue_formula(outcome.new_clue, state.n)
+                new_clue_data = {
+                    "id": outcome.new_clue.id,
+                    "type": outcome.new_clue.type.value,
+                    "text": format_clue(outcome.new_clue, state, compact=False),
+                    "math_formula": nf["math_formula"],
+                    "cnf_preview": nf["cnf_preview"],
+                    "clause_count": nf["clause_count"],
+                }
+
+            tel = self._telemetry
+            self._deduction_steps.append({
+                "step_no": step_idx,
+                "cell": cell,
+                "name": target_name,
+                "profession": target_prof,
+                "verdict": verdict.value,
+                "verdict_vn": verdict_vn,
+                "refutation_query": ref_q,
+                "refutation_desc": ref_desc,
+                "consistency_query": con_q,
+                "entailment_formula": ent_f,
+                "unit_clause": unit_c,
+                "supporting_clues": supporting[:3],
+                "new_clue": new_clue_data,
+                "telemetry": {
+                    "num_clauses": tel.num_clauses,
+                    "num_primary": tel.num_primary,
+                    "num_aux": tel.num_aux,
+                    "sat_calls": tel.sat_calls,
+                    "decisions": tel.decisions,
+                    "propagations": tel.propagations,
+                    "backtracks": tel.backtracks,
+                    "runtime_ms": round(tel.runtime_ms, 2),
+                },
+            })
+
             clue_id = outcome.new_clue.id if outcome.new_clue is not None else None
             self._append_trace(
                 action="VERDICT",

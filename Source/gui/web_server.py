@@ -22,7 +22,7 @@ from common.errors import GriductiveError, ReasoningFailure
 from common.puzzle_io import puzzle_from_dict
 from common.regions import all_cells
 from common.types import Status
-from gui.clue_formatter import format_clue
+from gui.clue_formatter import format_clue, format_clue_formula
 from gui.controller import CASE_METADATA_VN, GUIController
 
 WEB_ASSETS_DIR = Path(__file__).resolve().parent / "web"
@@ -42,6 +42,7 @@ def serialize_state_payload(
     breakdown = controller.get_clue_region_breakdown()
     hint = controller.active_hint
 
+    reveal_map = controller.reveal_step_by_cell
     cells_payload: list[dict[str, Any]] = []
     for cell in all_cells(state.n):
         ch = char_by_cell[cell]
@@ -50,11 +51,15 @@ def serialize_state_payload(
         clue = state.revealed_clues.get(cell)
         clue_dict = None
         if clue is not None:
+            f_info = format_clue_formula(clue, state.n)
             clue_dict = {
                 "id": clue.id,
                 "type": clue.type.value,
                 "text": format_clue(clue, state, compact=False),
                 "short_text": format_clue(clue, state, compact=(state.n == 5)),
+                "math_formula": f_info["math_formula"],
+                "cnf_preview": f_info["cnf_preview"],
+                "clause_count": f_info["clause_count"],
             }
 
         hl_role = None
@@ -73,6 +78,7 @@ def serialize_state_payload(
             "profession": ch.profession,
             "revealed": is_revealed,
             "status": status_str,
+            "reveal_step": reveal_map.get(cell, 0) if is_revealed else None,
             "clue": clue_dict,
             "is_selected_clue": controller.selected_clue_cell == cell,
             "highlight_role": hl_role,
@@ -80,18 +86,29 @@ def serialize_state_payload(
         })
 
     revealed_list: list[dict[str, Any]] = []
+    initial_clues: list[dict[str, Any]] = []
     for cell in all_cells(state.n):
         if cell in state.revealed_clues:
             clue = state.revealed_clues[cell]
-            revealed_list.append({
+            f_info = format_clue_formula(clue, state.n)
+            r_step = reveal_map.get(cell, 0)
+            entry = {
                 "cell": cell,
                 "owner": char_by_cell[cell].name,
                 "profession": char_by_cell[cell].profession,
+                "status": state.known_statuses[cell].value if cell in state.known_statuses else "INNOCENT",
+                "reveal_step": r_step,
                 "id": clue.id,
                 "type": clue.type.value,
                 "text": format_clue(clue, state, compact=False),
+                "math_formula": f_info["math_formula"],
+                "cnf_preview": f_info["cnf_preview"],
+                "clause_count": f_info["clause_count"],
                 "selected": controller.selected_clue_cell == cell,
-            })
+            }
+            revealed_list.append(entry)
+            if r_step == 0:
+                initial_clues.append(entry)
 
     sel_cell = controller.selected_clue_cell
     selected_inspector = None
@@ -165,8 +182,11 @@ def serialize_state_payload(
             "decisions": tel.decisions,
             "propagations": tel.propagations,
             "backtracks": tel.backtracks,
+            "deduction_steps": len(controller.deduction_steps),
             "runtime_ms": round(tel.runtime_ms, 2),
         },
+        "initial_clues": initial_clues,
+        "deduction_steps": list(controller.deduction_steps),
         "trace": [
             {
                 "step_no": tr.step_no,

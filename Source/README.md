@@ -148,3 +148,23 @@ SemanticEvaluator(n) đánh giá clue trực tiếp trên assignment đầy đ�
 Chạy `python -m tools.verify_project --scope b --require-real` để nghiệm thu B.
 Xem `../docs/handoff-B.md` và `../report/B-encoding.md` để biết API và phép biến đổi.
 
+
+---
+
+## 7. Khởi chạy Giao diện Web Tiếng Việt (`main.py`)
+
+Chương trình không yêu cầu cài đặt thêm thư viện ngoài cho lúc chạy (chỉ sử dụng thư viện chuẩn Python 3.11+):
+
+```bash
+# Chạy từ thư mục gốc dự án (tự động mở trình duyệt tại http://127.0.0.1:8080):
+python Source/main.py
+
+# Hoặc chạy từ bên trong thư mục Source/:
+cd Source
+python main.py
+
+# Tùy chọn dòng lệnh:
+python main.py --port 8080                                   # Đổi cổng Web Server
+python main.py --puzzle puzzles/examples/4x4_detective.json  # Mở sẵn một hồ sơ cụ thể
+python main.py --desktop                                     # Mở giao diện Tkinter Desktop
+```
