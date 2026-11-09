@@ -85,12 +85,12 @@ class AtmosphereEngine {
       this.spotY += (this.mouseY - this.spotY) * 0.07;
     }
 
-    // 2. Nền bàn thám tử phong cách Noir cổ điển (Rich Vintage Film Noir Atmosphere)
-    const baseGrad = ctx.createLinearGradient(0, 0, 0, this.height);
-    baseGrad.addColorStop(0, "#080B12");
-    baseGrad.addColorStop(0.5, "#0E1422");
-    baseGrad.addColorStop(1, "#0A0D16");
-    ctx.fillStyle = baseGrad;
+    // 2. Lớp phủ khí quyển điện ảnh bán trong suốt (không che khuất ảnh nền)
+    const tintGrad = ctx.createLinearGradient(0, 0, 0, this.height);
+    tintGrad.addColorStop(0, "rgba(6, 9, 15, 0.40)");
+    tintGrad.addColorStop(0.5, "rgba(10, 14, 24, 0.28)");
+    tintGrad.addColorStop(1, "rgba(6, 9, 15, 0.50)");
+    ctx.fillStyle = tintGrad;
     ctx.fillRect(0, 0, this.width, this.height);
 
     // 3. Vệt sáng rèm cửa sổ chớp đặc trưng phim noir (Venetian Blinds Effect)
