@@ -439,6 +439,73 @@ function updateStartScreenStats() {
   }
 }
 
+const DOSSIER_DATA = {
+  "3x3": {
+    id: "3x3_classic",
+    stamp: "ÁN LỆ #01 · PHẢN CHỨNG",
+    diff: "⭐☆☆ ĐỘ KHÓ: CĂN BẢN",
+    title: "Chuỗi Suy Luận Phản Chứng",
+    n: 3,
+    specs: ["📐 Kích Thước: <strong>3×3 (9 Ô)</strong>", "👤 Nghi Phạm: <strong>9 Người</strong>", "🎯 Kẻ Chủ Mưu: <strong>1 Thủ Phạm</strong>"],
+    quote: "Nghi phạm ban đầu chỉ điểm kẻ đồng lõa, kích hoạt chuỗi suy luận phản chứng liên hoàn trên bàn cờ 9 ô để bóc tách kẻ nói dối."
+  },
+  "4x4": {
+    id: "4x4_detective",
+    stamp: "ÁN LỆ #03 · GALA THƯỢNG LƯU",
+    diff: "⭐⭐☆ ĐỘ KHÓ: NÂNG CAO",
+    title: "Thám Tử Gala Thượng Lưu",
+    n: 4,
+    specs: ["📐 Kích Thước: <strong>4×4 (16 Ô)</strong>", "👤 Nghi Phạm: <strong>16 Người</strong>", "🔍 Ràng Buộc: <strong>Vùng Lân Cận</strong>"],
+    quote: "Vụ án mạng tại dạ tiệc thượng lưu với các lời khai so sánh vùng lân cận và đếm số lượng phức tạp trên 16 ô."
+  },
+  "5x5": {
+    id: "5x5_mastermind",
+    stamp: "ÁN LỆ #05 · ĐẠI MA TRẬN",
+    diff: "⭐⭐⭐ ĐỘ KHÓ: THỬ THÁCH",
+    title: "Bậc Thầy Trí Tuệ Logic",
+    n: 5,
+    specs: ["📐 Kích Thước: <strong>5×5 (25 Ô)</strong>", "👤 Nghi Phạm: <strong>25 Người</strong>", "⚡ Thách Thức: <strong>Bộ Giải DPLL</strong>"],
+    quote: "Ma trận 25 nghi phạm với hàng chục biến phụ trợ và mạng lưới lời khai quy mô lớn, thử thách bộ giải DPLL đỉnh cao."
+  }
+};
+
+function switchDossierTab(tier) {
+  playSfx("click");
+  document.querySelectorAll(".dossier-pill-btn").forEach(btn => btn.classList.remove("active"));
+  const btnId = tier === "3x3" ? "tabDossier3" : (tier === "4x4" ? "tabDossier4" : "tabDossier5");
+  const btn = document.getElementById(btnId);
+  if (btn) btn.classList.add("active");
+
+  const data = DOSSIER_DATA[tier] || DOSSIER_DATA["3x3"];
+  const stampEl = document.getElementById("dossierStamp");
+  const diffEl = document.getElementById("dossierDiff");
+  const titleEl = document.getElementById("dossierTitle");
+  const specsEl = document.getElementById("dossierSpecs");
+  const quoteEl = document.getElementById("dossierQuote");
+  const playBtn = document.getElementById("btnPlayDossier");
+  const gridEl = document.getElementById("dossierMiniGrid");
+
+  if (stampEl) stampEl.textContent = data.stamp;
+  if (diffEl) diffEl.textContent = data.diff;
+  if (titleEl) titleEl.textContent = data.title;
+  if (specsEl) specsEl.innerHTML = data.specs.map(s => `<span class="spec-chip">${s}</span>`).join("");
+  if (quoteEl) quoteEl.textContent = `"${data.quote}"`;
+  if (playBtn) playBtn.onclick = () => launchSpotlightCase(data.id);
+
+  if (gridEl) {
+    gridEl.innerHTML = "";
+    gridEl.style.gridTemplateColumns = `repeat(${data.n}, 1fr)`;
+    const totalCells = data.n * data.n;
+    for (let i = 0; i < totalCells; i++) {
+      const cell = document.createElement("div");
+      cell.className = "mini-cell";
+      if (i === 0) cell.classList.add("revealed");
+      if (i === Math.floor(totalCells / 2)) cell.classList.add("target");
+      gridEl.appendChild(cell);
+    }
+  }
+}
+
 async function launchSpotlightCase(caseId) {
   stopAutoSolve();
   selectedVisualStep = null;
@@ -1516,6 +1583,9 @@ window.addEventListener("drop", async (e) => {
 // Khởi tạo icon âm thanh theo thiết lập
 updateSoundIcon();
 updateStartScreenStats();
+if (document.getElementById("dossierTitle")) {
+  switchDossierTab('3x3');
+}
 
 // Khởi tạo nền động khí quyển điện ảnh (Cinematic Atmosphere Canvas)
 let atmosphere = null;

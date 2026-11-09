@@ -4,8 +4,8 @@
    ========================================================================= */
 
 :root, [data-theme="noir"] {
-  --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
-  --font-display: 'Playfair Display', 'Be Vietnam Pro', Georgia, serif;
+  --font-serif: 'Lora', 'Be Vietnam Pro', Georgia, 'Times New Roman', serif;
+  --font-display: 'Lora', 'Be Vietnam Pro', Georgia, serif;
   --font-sans: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
@@ -51,8 +51,8 @@
 }
 
 [data-theme="paper"] {
-  --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
-  --font-display: 'Playfair Display', 'Be Vietnam Pro', Georgia, serif;
+  --font-serif: 'Lora', 'Be Vietnam Pro', Georgia, 'Times New Roman', serif;
+  --font-display: 'Lora', 'Be Vietnam Pro', Georgia, serif;
   --font-sans: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
@@ -243,120 +243,418 @@ html, body {
   gap: 10px;
 }
 
+/* =========================================================================
+   MÀN HÌNH 1: ĐẠI BẢN DOANH ĐIỀU TRA (BUREAU COMMAND & DOSSIER DESK)
+   ========================================================================= */
 .start-container {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1260px;
   margin: 0 auto;
-  padding: 28px 24px 48px;
+  padding: 32px 24px 48px;
 }
 
-.start-hub-layout {
-  display: flex;
-  flex-direction: column;
+.bureau-layout {
+  display: grid;
+  grid-template-columns: 1.12fr 0.98fr;
+  gap: 40px;
   align-items: center;
   width: 100%;
-  gap: 28px;
-  text-align: center;
 }
 
-/* Cụm Tiêu Đề & Huy Hiệu Agency */
-.start-hero-header {
+@media (max-width: 980px) {
+  .bureau-layout {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+
+/* Cột Trái: Phòng Chỉ Huy & Tóm Tắt Nhiệm Vụ */
+.bureau-command-panel {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  max-width: 840px;
-  margin: 0 auto;
+  align-items: flex-start;
+  text-align: left;
+  gap: 16px;
 }
 
 .hero-stamps-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
-  gap: 14px;
-  margin-bottom: 14px;
-}
-
-.secret-stamp-badge {
-  display: inline-flex;
-  align-items: center;
-  border: 2.5px solid #dc2626;
-  color: #ef4444;
-  padding: 3px 12px;
-  border-radius: 4px;
-  font-family: var(--font-serif);
-  font-weight: 900;
-  font-size: 11.5px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  transform: rotate(-3deg);
-  background: rgba(220, 38, 38, 0.08);
-  box-shadow: inset 0 0 0 1px rgba(220, 38, 38, 0.25), 0 3px 8px rgba(220, 38, 38, 0.25);
-}
-
-.agency-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 5px 12px;
-  border-radius: 999px;
-  background: var(--gold-soft);
-  border: 1px solid var(--border-strong);
-  color: var(--gold-bright);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-}
-.badge-indicator {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--gold-bright);
+  gap: 12px;
+  margin-bottom: 2px;
 }
 
 .hero-title {
   font-family: var(--font-serif);
-  font-size: clamp(2.3rem, 4.5vw, 3.5rem);
-  font-weight: 900;
-  line-height: 1.15;
-  letter-spacing: 0.025em;
-  text-transform: uppercase;
-  background: linear-gradient(135deg, #FFFFFF 0%, #FDE68A 35%, #F59E0B 75%, #D97706 100%);
+  font-size: clamp(2.2rem, 3.8vw, 3.4rem);
+  font-weight: 700;
+  line-height: 1.18;
+  letter-spacing: 0.015em;
+  color: #FFFFFF;
+  background: linear-gradient(135deg, #FFFFFF 0%, #FEE685 30%, #F59E0B 75%, #D97706 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 4px 24px rgba(245, 158, 11, 0.28));
-  margin-bottom: 8px;
+  filter: drop-shadow(0 4px 20px rgba(245, 158, 11, 0.28));
+  margin: 0;
 }
 
 .hero-subtitle {
-  font-family: var(--font-sans);
-  font-size: clamp(1rem, 1.5vw, 1.2rem);
-  font-weight: 500;
+  font-family: var(--font-serif);
   font-style: italic;
+  font-size: clamp(1.05rem, 1.4vw, 1.25rem);
+  font-weight: 500;
   color: var(--gold-bright);
-  margin-bottom: 16px;
+  margin: 0;
   letter-spacing: 0.02em;
 }
 
-/* Bảng Tiến Độ & Cấp Bậc Thám Tử */
+.hero-brief {
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--ink-secondary);
+  max-width: 580px;
+  margin: 4px 0 6px;
+}
+.hero-brief strong {
+  color: #F8FAFC;
+}
+
+/* Bảng Tiến Độ Thám Tử */
 .detective-profile-bar {
   display: inline-flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
-  gap: 16px;
-  padding: 8px 20px;
+  gap: 14px;
+  padding: 8px 18px;
   border-radius: 999px;
   background: rgba(18, 24, 38, 0.85);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: 1px solid var(--border-strong);
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+}
+
+/* Cụm Nút Hành Động Trọng Tâm */
+.hero-primary-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  max-width: 540px;
+  margin-top: 6px;
+}
+
+.btn-hero-launch {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 22px;
+  border-radius: 13px;
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  border: 1.5px solid rgba(254, 240, 138, 0.5);
+  box-shadow: 0 10px 28px rgba(217, 119, 6, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  color: #0B0E14;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  width: 100%;
+  text-align: left;
+}
+.btn-hero-launch:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 36px rgba(217, 119, 6, 0.5), 0 0 24px rgba(245, 158, 11, 0.45);
+}
+.launch-icon-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: rgba(11, 14, 20, 0.15);
+  border: 1px solid rgba(11, 14, 20, 0.25);
+  color: #0B0E14;
+  flex-shrink: 0;
+}
+.launch-text-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.launch-main-lbl {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: #0B0E14;
+}
+.launch-sub-lbl {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: rgba(11, 14, 20, 0.78);
+  font-weight: 600;
+}
+
+.hero-secondary-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Dải Thông Số Kỹ Thuật */
+.bureau-specs-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-secondary);
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle);
+  width: 100%;
+  max-width: 540px;
+}
+.spec-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.spec-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+.spec-dot.gold { background: #F59E0B; box-shadow: 0 0 8px #F59E0B; }
+.spec-dot.emerald { background: #10B981; box-shadow: 0 0 8px #10B981; }
+.spec-dot.ruby { background: #F43F5E; box-shadow: 0 0 8px #F43F5E; }
+
+/* Cột Phải: Bàn Hồ Sơ Manila Đang Mở */
+.bureau-dossier-panel {
+  width: 100%;
+}
+
+.dossier-desk-frame {
+  position: relative;
+  background: linear-gradient(168deg, rgba(22, 28, 44, 0.92) 0%, rgba(13, 17, 28, 0.98) 100%);
+  border: 1.5px solid rgba(217, 119, 6, 0.45);
+  border-top: 3px solid var(--gold-bright);
+  border-radius: 16px;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.65), 0 0 32px rgba(245, 158, 11, 0.12);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  padding: 24px 26px 22px;
+}
+[data-theme="paper"] .dossier-desk-frame {
+  background: linear-gradient(168deg, rgba(250, 244, 232, 0.94) 0%, rgba(240, 230, 212, 0.98) 100%);
+  border: 1.5px solid rgba(180, 83, 9, 0.4);
+  border-top: 3px solid var(--gold);
+}
+
+.desk-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px dashed rgba(245, 158, 11, 0.28);
+  margin-bottom: 18px;
+}
+.desk-header-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--gold-bright);
+  letter-spacing: 0.1em;
+}
+
+.dossier-tab-pills {
+  display: inline-flex;
+  gap: 6px;
+  background: rgba(11, 14, 22, 0.55);
+  padding: 3px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+}
+.dossier-pill-btn {
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--ink-secondary);
+  font-family: var(--font-sans);
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.dossier-pill-btn:hover {
+  color: var(--ink-primary);
+  background: rgba(245, 158, 11, 0.12);
+}
+.dossier-pill-btn.active {
+  background: var(--gold-bright);
+  color: #0B0E14;
+}
+
+.active-dossier-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dossier-top-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.dossier-stamp-seal {
+  display: inline-flex;
+  align-items: center;
+  border: 2px solid #dc2626;
+  color: #ef4444;
+  padding: 2px 10px;
+  border-radius: 4px;
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  transform: rotate(-2deg);
+  background: rgba(220, 38, 38, 0.08);
+}
+
+.dossier-difficulty-badge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--gold-bright);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.dossier-case-title {
+  font-family: var(--font-serif);
+  font-size: 1.45rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #FFFFFF;
+  margin: 0;
+}
+[data-theme="paper"] .dossier-case-title {
+  color: #0F172A;
+}
+
+.dossier-meta-specs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.spec-chip {
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(245, 158, 11, 0.09);
+  border: 1px solid rgba(245, 158, 11, 0.28);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-secondary);
+}
+.spec-chip strong {
+  color: var(--gold-bright);
+}
+
+.dossier-clue-preview {
+  position: relative;
+  background: rgba(11, 14, 22, 0.6);
+  border-left: 3px solid var(--gold-bright);
+  padding: 12px 16px 12px 34px;
+  border-radius: 0 8px 8px 0;
+}
+[data-theme="paper"] .dossier-clue-preview {
+  background: rgba(242, 232, 214, 0.7);
+}
+.preview-quote-icon {
+  position: absolute;
+  left: 10px;
+  top: 6px;
+  font-family: var(--font-serif);
+  font-size: 26px;
+  color: var(--gold-bright);
+  opacity: 0.55;
+  line-height: 1;
+}
+.preview-quote-text {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-secondary);
+  margin: 0;
+}
+
+/* Sa Bàn Mini Trực Quan */
+.mini-grid-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 12px 0 6px;
+}
+.mini-grid-container {
+  display: grid;
+  gap: 5px;
+  width: 140px;
+  height: 140px;
+  padding: 8px;
+  background: rgba(11, 14, 22, 0.7);
+  border-radius: 8px;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+.mini-cell {
+  background: rgba(30, 41, 59, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+.mini-cell.revealed {
+  background: rgba(16, 185, 129, 0.4);
+  border-color: #10B981;
+}
+.mini-cell.target {
+  background: rgba(244, 63, 94, 0.35);
+  border-color: #F43F5E;
+}
+
+.dossier-actions-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-subtle);
+}
+.btn-view-all {
+  background: transparent;
+  border: none;
+  color: var(--gold-bright);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: background 0.15s ease;
+}
+.btn-view-all:hover {
+  background: rgba(245, 158, 11, 0.1);
 }
 .profile-rank-badge {
   display: inline-flex;

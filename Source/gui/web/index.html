@@ -6,8 +6,8 @@
   <title>Hồ Sơ Logic: Griductive — Phá Án Không Đoán Mò</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=JetBrains+Mono:wght@500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/styles.css?v=20261109_03" />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=JetBrains+Mono:wght@500;600;700&family=Lora:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css?v=20261109_04" />
 </head>
 <body>
   <!-- Nền Động Khí Quyển Điện Ảnh (Cinematic Ambient Spotlight & Particles Canvas) -->
@@ -65,20 +65,27 @@
     </nav>
 
     <div class="start-container">
-      <div class="start-hub-layout">
-        <!-- Cụm Tiêu Đề Trung Tâm -->
-        <header class="start-hero-header">
+      <div class="bureau-layout">
+        <!-- CỘT TRÁI: ĐẠI BẢN DOANH ĐIỀU TRA (COMMAND & BRIEFING) -->
+        <div class="bureau-command-panel">
           <div class="hero-stamps-row">
             <div class="secret-stamp-badge">
               <span>TUYỆT MẬT · CLASSIFIED</span>
             </div>
             <div class="agency-badge">
               <span class="badge-indicator"></span>
-              <span>HỘI ĐỒNG ĐIỀU TRA LOGIC MỆNH ĐỀ · DPLL SAT SOLVER</span>
+              <span>BAN ĐIỀU TRA LOGIC MỆNH ĐỀ DPLL</span>
             </div>
           </div>
+
           <h1 class="hero-title">Hồ Sơ Logic: Griductive</h1>
-          <p class="hero-subtitle">Phá án bằng suy luận mệnh đề — Tuyệt đối không đoán mò</p>
+          <p class="hero-subtitle">Phá án bằng suy luận mệnh đề thuần túy — Tuyệt đối không đoán mò</p>
+
+          <p class="hero-brief">
+            Chào mừng Thám tử đến với hiện trường trọng án logic. Mỗi nghi phạm trên bàn cờ \(N \times N\)
+            nắm giữ một lời khai định mệnh. Bằng thuật toán <strong>DPLL SAT</strong> và phương pháp <strong>phản chứng</strong>,
+            hãy bóc tách từng mâu thuẫn để tìm ra kẻ thủ ác duy nhất.
+          </p>
 
           <!-- Bảng Xếp Hạng & Tiến Độ Thám Tử -->
           <div class="detective-profile-bar" id="startDetectiveBar">
@@ -93,128 +100,114 @@
               </div>
             </div>
           </div>
-        </header>
 
-        <!-- Lưới 3 Thẻ Tiêu Điểm Vụ Án Chơi Ngay (Spotlight Cases Grid - Manila Dossier Folders) -->
-        <section class="spotlight-section">
-          <div class="section-title-tag">CHỌN NHANH HỒ SƠ PHÁ ÁN (MANILA DOSSIERS)</div>
-          <div class="spotlight-grid">
-            <!-- Thẻ 1: 3x3 Căn Bản -->
-            <div class="spotlight-card dossier-folder" onclick="launchSpotlightCase('3x3_classic')">
-              <div class="dossier-tab">HỒ SƠ #01</div>
-              <div class="spotlight-top">
-                <span class="spotlight-badge tier-3">CĂN BẢN · 3×3</span>
-                <span class="spotlight-diff">⭐☆☆</span>
+          <!-- Cụm Nút Hành Động Trọng Tâm -->
+          <div class="hero-primary-actions">
+            <button type="button" class="btn-hero-launch" onclick="launchSpotlightCase('3x3_classic')">
+              <div class="launch-icon-circle">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="5 3 19 12 5 21 5 3"/>
+                </svg>
               </div>
-              <h3 class="spotlight-title">Chuỗi Suy Luận Phản Chứng</h3>
-              <p class="spotlight-desc">
-                Nghi phạm ban đầu chỉ điểm kẻ đồng lõa, kích hoạt chuỗi suy luận phản chứng liên hoàn trên bàn cờ 9 ô.
-              </p>
-              <div class="spotlight-meta">
-                <span>9 Nghi phạm</span>
-                <span>1 Thủ phạm</span>
+              <div class="launch-text-group">
+                <span class="launch-main-lbl">BẮT ĐẦU ĐIỀU TRA NGAY</span>
+                <span class="launch-sub-lbl">Khởi động Án Lệ #01 · Ma trận 3×3 căn bản</span>
               </div>
-              <button type="button" class="btn-spotlight-play">
-                <span>BẮT ĐẦU ĐIỀU TRA NGAY</span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-              </button>
-            </div>
+            </button>
 
-            <!-- Thẻ 2: 4x4 Nâng Cao -->
-            <div class="spotlight-card dossier-folder featured" onclick="launchSpotlightCase('4x4_detective')">
-              <div class="dossier-tab">HỒ SƠ #03</div>
-              <div class="spotlight-top">
-                <span class="spotlight-badge tier-4">NÂNG CAO · 4×4</span>
-                <span class="spotlight-diff">⭐⭐☆</span>
-              </div>
-              <h3 class="spotlight-title">Thám Tử Gala Thượng Lưu</h3>
-              <p class="spotlight-desc">
-                Vụ án mạng tại dạ tiệc với các lời khai so sánh vùng lân cận và đếm số lượng phức tạp trên 16 ô.
-              </p>
-              <div class="spotlight-meta">
-                <span>16 Nghi phạm</span>
-                <span>Ràng buộc vùng</span>
-              </div>
-              <button type="button" class="btn-spotlight-play gold">
-                <span>BẮT ĐẦU ĐIỀU TRA NGAY</span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <div class="hero-secondary-row">
+              <button type="button" class="btn-start-action" onclick="showScreen('screenCases')">
+                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                </svg>
+                <span>KHO LƯU TRỮ HỒ SƠ VỤ ÁN</span>
               </button>
-            </div>
 
-            <!-- Thẻ 3: 5x5 Thử Thách -->
-            <div class="spotlight-card dossier-folder" onclick="launchSpotlightCase('5x5_mastermind')">
-              <div class="dossier-tab">HỒ SƠ #05</div>
-              <div class="spotlight-top">
-                <span class="spotlight-badge tier-5">THỬ THÁCH · 5×5</span>
-                <span class="spotlight-diff">⭐⭐⭐</span>
-              </div>
-              <h3 class="spotlight-title">Bậc Thầy Trí Tuệ Logic</h3>
-              <p class="spotlight-desc">
-                Ma trận 25 nghi phạm với hàng chục biến phụ trợ và mạng lưới lời khai quy mô lớn, thử thách bộ giải DPLL.
-              </p>
-              <div class="spotlight-meta">
-                <span>25 Nghi phạm</span>
-                <span>Thách thức SAT</span>
-              </div>
-              <button type="button" class="btn-spotlight-play">
-                <span>BẮT ĐẦU ĐIỀU TRA NGAY</span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-              </button>
+              <label class="btn-start-action" for="uploadJsonStart" style="cursor:pointer;">
+                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                <span>TẢI FILE JSON</span>
+              </label>
+              <input id="uploadJsonStart" type="file" accept=".json" style="display:none" />
             </div>
           </div>
-        </section>
 
-        <!-- Các Nút Hành Động Phụ & Cột Trụ Công Nghệ -->
-        <div class="start-actions-row">
-          <button type="button" class="btn-start-action" onclick="showScreen('screenCases')">
-            <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
-            </svg>
-            <span>KHO LƯU TRỮ (TẤT CẢ 10 VỤ ÁN)</span>
-          </button>
-          <label class="btn-start-action" for="uploadJsonStart" style="cursor:pointer;">
-            <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
-            </svg>
-            <span>TẢI FILE JSON TÙY CHỈNH</span>
-          </label>
-          <input id="uploadJsonStart" type="file" accept=".json" style="display:none" />
-          <button type="button" class="btn-start-action" onclick="openModal('modalRules')">
-            <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
-            </svg>
-            <span>CƠ CHẾ DPLL &amp; LUẬT CHƠI</span>
-          </button>
+          <!-- Dải Thông Số Kỹ Thuật Nghiệp Vụ -->
+          <div class="bureau-specs-strip">
+            <div class="spec-item">
+              <span class="spec-dot gold"></span>
+              <span>DPLL Solver Pure Python</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-dot emerald"></span>
+              <span>8 Dạng Lời Khai CNF</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-dot ruby"></span>
+              <span>Trực quan 4 tầng suy diễn</span>
+            </div>
+          </div>
         </div>
 
-        <!-- 3 Cột Trụ Công Nghệ AI (Technology Highlights) -->
-        <div class="pillars-grid">
-          <div class="pillar-card">
-            <div class="pillar-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-              </svg>
+        <!-- CỘT PHẢI: BÀN HỒ SƠ TÀI LIỆU TRỌNG ÁN (INTERACTIVE DOSSIER DESK) -->
+        <div class="bureau-dossier-panel">
+          <div class="dossier-desk-frame">
+            <div class="desk-header">
+              <div class="desk-header-title">
+                <span class="paperclip-icon">📎</span>
+                <span>HỒ SƠ ÁN LỆ TIÊU ĐIỂM (MANILA DOSSIER)</span>
+              </div>
+              <!-- Tab chuyển đổi nhanh 3 vụ án -->
+              <div class="dossier-tab-pills" role="tablist">
+                <button type="button" class="dossier-pill-btn active" id="tabDossier3" onclick="switchDossierTab('3x3')">3×3 Căn Bản</button>
+                <button type="button" class="dossier-pill-btn" id="tabDossier4" onclick="switchDossierTab('4x4')">4×4 Nâng Cao</button>
+                <button type="button" class="dossier-pill-btn" id="tabDossier5" onclick="switchDossierTab('5x5')">5×5 Thử Thách</button>
+              </div>
             </div>
-            <h4>Bộ Giải DPLL Pure Python</h4>
-            <p>Kiểm chứng phản chứng <code>KB_t ∧ ¬L ⟹ UNSAT</code>, lan truyền đơn vị và phân nhánh tìm nghiệm tất yếu.</p>
-          </div>
-          <div class="pillar-card">
-            <div class="pillar-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6v6H9z"/>
-              </svg>
+
+            <!-- Nội dung Hồ Sơ Manila Đang Mở -->
+            <div class="active-dossier-card" id="activeDossierCard">
+              <div class="dossier-inner-content">
+                <div class="dossier-top-meta">
+                  <div class="dossier-stamp-seal" id="dossierStamp">ÁN LỆ #01 · PHẢN CHỨNG</div>
+                  <div class="dossier-difficulty-badge" id="dossierDiff">⭐☆☆ ĐỘ KHÓ: CĂN BẢN</div>
+                </div>
+
+                <h2 class="dossier-case-title" id="dossierTitle">Chuỗi Suy Luận Phản Chứng</h2>
+                <div class="dossier-meta-specs" id="dossierSpecs">
+                  <span class="spec-chip">📐 Kích Thước: <strong>3×3 (9 Ô)</strong></span>
+                  <span class="spec-chip">👤 Nghi Phạm: <strong>9 Người</strong></span>
+                  <span class="spec-chip">🎯 Kẻ Chủ Mưu: <strong>1 Thủ Phạm</strong></span>
+                </div>
+
+                <div class="dossier-clue-preview">
+                  <div class="preview-quote-icon">“</div>
+                  <p class="preview-quote-text" id="dossierQuote">
+                    "Nghi phạm ban đầu chỉ điểm kẻ đồng lõa, kích hoạt chuỗi suy luận phản chứng liên hoàn trên bàn cờ 9 ô để bóc tách kẻ nói dối."
+                  </p>
+                </div>
+
+                <!-- Sa bàn mini trực quan dạng lưới tế vi -->
+                <div class="mini-grid-wrapper">
+                  <div class="mini-grid-container" id="dossierMiniGrid">
+                    <!-- Được vẽ tự động bởi switchDossierTab -->
+                  </div>
+                </div>
+
+                <div class="dossier-actions-footer">
+                  <button type="button" class="btn btn-spotlight-play gold" id="btnPlayDossier" onclick="launchSpotlightCase('3x3_classic')">
+                    <span>BẮT ĐẦU ĐIỀU TRA NGAY</span>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                      <polygon points="5 3 19 12 5 21 5 3"/>
+                    </svg>
+                  </button>
+                  <button type="button" class="btn btn-view-all" onclick="showScreen('screenCases')">
+                    <span>Xem Tất Cả 10 Vụ Án Trong Kho Hồ Sơ →</span>
+                  </button>
+                </div>
+              </div>
             </div>
-            <h4>8 Dạng Lời Khai Mệnh Đề</h4>
-            <p>Biên dịch tự động lời khai đếm, so sánh vùng, tương đương logic sang các mệnh đề hội CNF chuẩn tắc.</p>
-          </div>
-          <div class="pillar-card">
-            <div class="pillar-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="6" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/>
-              </svg>
-            </div>
-            <h4>Trực Quan Hóa Từng Bước</h4>
-            <p>Dây chỉ đỏ liên kết, con dấu mộc phán quyết và bộ điều khiển tua lại luồng suy luận trực quan.</p>
           </div>
         </div>
       </div>
@@ -564,6 +557,6 @@
     </div>
   </div>
 
-  <script src="/app.js?v=20261109_03"></script>
+  <script src="/app.js?v=20261109_04"></script>
 </body>
 </html>
