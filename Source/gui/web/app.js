@@ -11,6 +11,146 @@ let victoryShownForSession = null;
 let selectedVisualStep = null; // null = tự động bám theo bước mới nhất; 0..k = bước đang xem
 let visualizerOpen = true;
 
+// Các trạng thái mở rộng: Âm thanh, Ghi chú nháp, Dây chỉ đỏ SVG, Playback
+let audioCtx = null;
+let soundEnabled = localStorage.getItem("griductive_sound") !== "off";
+let pencilNotes = {}; // cell -> "innocent" | "criminal"
+let pencilModeActive = false;
+let crimeStringsEnabled = true;
+let playbackTimer = null;
+let playbackSpeed = 1.0;
+
+function initAudio() {
+  if (!audioCtx) {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (AudioContextClass) audioCtx = new AudioContextClass();
+  }
+  if (audioCtx && audioCtx.state === "suspended") {
+    audioCtx.resume();
+  }
+}
+
+function playSfx(type) {
+  if (!soundEnabled) return;
+  try {
+    initAudio();
+    if (!audioCtx) return;
+    const now = audioCtx.currentTime;
+    if (type === "click") {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(800, now);
+      osc.frequency.exponentialRampToValueAtTime(300, now + 0.04);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.04);
+    } else if (type === "stamp_innocent") {
+      [523.25, 659.25].forEach((freq, i) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, now + i * 0.04);
+        gain.gain.setValueAtTime(0.15, now + i * 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.04 + 0.18);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now + i * 0.04);
+        osc.stop(now + i * 0.04 + 0.18);
+      });
+    } else if (type === "stamp_criminal") {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(220, now);
+      osc.frequency.exponentialRampToValueAtTime(90, now + 0.15);
+      gain.gain.setValueAtTime(0.22, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.16);
+    } else if (type === "not_provable") {
+      [350, 260].forEach((freq, i) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "square";
+        osc.frequency.setValueAtTime(freq, now + i * 0.08);
+        gain.gain.setValueAtTime(0.08, now + i * 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.12);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now + i * 0.08);
+        osc.stop(now + i * 0.08 + 0.12);
+      });
+    } else if (type === "victory") {
+      [261.63, 329.63, 392.00, 523.25].forEach((freq, i) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, now + i * 0.09);
+        gain.gain.setValueAtTime(0.18, now + i * 0.09);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.09 + 0.45);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now + i * 0.09);
+        osc.stop(now + i * 0.09 + 0.45);
+      });
+    }
+  } catch (e) {}
+}
+
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  localStorage.setItem("griductive_sound", soundEnabled ? "on" : "off");
+  updateSoundIcon();
+  if (soundEnabled) playSfx("click");
+}
+
+function updateSoundIcon() {
+  const iconOn = document.getElementById("iconSoundOn");
+  const iconOff = document.getElementById("iconSoundOff");
+  if (iconOn && iconOff) {
+    iconOn.style.display = soundEnabled ? "block" : "none";
+    iconOff.style.display = soundEnabled ? "none" : "block";
+  }
+}
+
+function togglePencilMode() {
+  pencilModeActive = !pencilModeActive;
+  const btn = document.getElementById("btnPencilMode");
+  if (btn) btn.classList.toggle("active", pencilModeActive);
+  playSfx("click");
+}
+
+function cyclePencilNote(cell) {
+  const cur = pencilNotes[cell];
+  if (!cur) {
+    pencilNotes[cell] = "innocent";
+  } else if (cur === "innocent") {
+    pencilNotes[cell] = "criminal";
+  } else {
+    delete pencilNotes[cell];
+  }
+  playSfx("click");
+  if (currentState) render(currentState);
+}
+
+function toggleCrimeStrings() {
+  crimeStringsEnabled = !crimeStringsEnabled;
+  const btn = document.getElementById("btnStringsToggle");
+  if (btn) btn.classList.toggle("active", crimeStringsEnabled);
+  const layer = document.getElementById("crimeStringsLayer");
+  if (layer) {
+    if (!crimeStringsEnabled) layer.innerHTML = "";
+    else renderCrimeStrings(currentState);
+  }
+  playSfx("click");
+}
+
 const OFFICIAL_SIX_IDS = [
   "chain_demo",
   "3x3_chain",
@@ -259,6 +399,25 @@ function renderLiveVisualizer(data) {
     pulseDot.classList.toggle("running", Boolean(autoTimer));
   }
 
+  // Cập nhật Bộ điều khiển tua lại luồng suy diễn (Playback Dock)
+  const scrubber = document.getElementById("lvScrubber");
+  if (scrubber) {
+    scrubber.max = String(totalSteps);
+    scrubber.value = String(activeStepIdx);
+  }
+  const pbStepText = document.getElementById("pbStepText");
+  if (pbStepText) {
+    pbStepText.textContent = activeStepIdx === 0 ? "KB₀" : `#${activeStepIdx}`;
+  }
+  const pbPlayIcon = document.getElementById("pbPlayIcon");
+  if (pbPlayIcon) {
+    pbPlayIcon.textContent = playbackTimer ? "⏸" : "▶";
+  }
+  const pbSpeedLabel = document.getElementById("pbSpeedLabel");
+  if (pbSpeedLabel) {
+    pbSpeedLabel.textContent = `${playbackSpeed.toFixed(1)}×`;
+  }
+
   // 1. Dải mắt xích Timeline
   const strip = document.getElementById("lvTimelineStrip");
   if (strip) {
@@ -459,6 +618,198 @@ function renderLiveVisualizer(data) {
   `;
 }
 
+/* =========================================================================
+   CÁC HÀM ĐIỀU KHIỂN TUA LẠI LUỒNG SUY DIỄN (PLAYBACK CONTROLLER)
+   ========================================================================= */
+function playbackGoTo(idx) {
+  if (!currentState) return;
+  const total = (currentState.deduction_steps || []).length;
+  selectedVisualStep = Math.max(0, Math.min(idx, total));
+  playSfx("click");
+  renderLiveVisualizer(currentState);
+  renderCrimeStrings(currentState);
+}
+
+function playbackStepPrev() {
+  if (!currentState) return;
+  const total = (currentState.deduction_steps || []).length;
+  let cur = selectedVisualStep !== null ? selectedVisualStep : total;
+  playbackGoTo(cur - 1);
+}
+
+function playbackStepNext() {
+  if (!currentState) return;
+  const total = (currentState.deduction_steps || []).length;
+  let cur = selectedVisualStep !== null ? selectedVisualStep : total;
+  playbackGoTo(cur + 1);
+}
+
+function playbackGoToLatest() {
+  if (!currentState) return;
+  selectedVisualStep = null;
+  playSfx("click");
+  renderLiveVisualizer(currentState);
+  renderCrimeStrings(currentState);
+}
+
+function togglePlaybackPlay() {
+  if (playbackTimer) {
+    clearInterval(playbackTimer);
+    playbackTimer = null;
+    playSfx("click");
+    renderLiveVisualizer(currentState);
+    return;
+  }
+  if (!currentState) return;
+  const total = (currentState.deduction_steps || []).length;
+  if (total === 0) return;
+  if (selectedVisualStep === null || selectedVisualStep >= total) {
+    selectedVisualStep = 0;
+  }
+  playSfx("click");
+  renderLiveVisualizer(currentState);
+  renderCrimeStrings(currentState);
+
+  const intervalMs = Math.round(1100 / playbackSpeed);
+  playbackTimer = setInterval(() => {
+    if (!currentState) {
+      clearInterval(playbackTimer);
+      playbackTimer = null;
+      return;
+    }
+    const maxSteps = (currentState.deduction_steps || []).length;
+    if (selectedVisualStep < maxSteps) {
+      selectedVisualStep++;
+      playSfx("click");
+      renderLiveVisualizer(currentState);
+      renderCrimeStrings(currentState);
+    } else {
+      clearInterval(playbackTimer);
+      playbackTimer = null;
+      renderLiveVisualizer(currentState);
+    }
+  }, intervalMs);
+}
+
+function cyclePlaybackSpeed() {
+  if (playbackSpeed === 1.0) playbackSpeed = 2.0;
+  else if (playbackSpeed === 2.0) playbackSpeed = 0.5;
+  else playbackSpeed = 1.0;
+  playSfx("click");
+  const pbSpeedLabel = document.getElementById("pbSpeedLabel");
+  if (pbSpeedLabel) pbSpeedLabel.textContent = `${playbackSpeed.toFixed(1)}×`;
+  if (playbackTimer) {
+    clearInterval(playbackTimer);
+    playbackTimer = null;
+    togglePlaybackPlay();
+  }
+}
+
+function onScrubberInput(val) {
+  if (!currentState) return;
+  selectedVisualStep = parseInt(val, 10);
+  renderLiveVisualizer(currentState);
+  renderCrimeStrings(currentState);
+}
+
+/* =========================================================================
+   VẼ MẠNG LƯỚI "DÂY CHỈ ĐỎ THÁM TỬ" (SVG CRIME BOARD STRINGS)
+   ========================================================================= */
+function renderCrimeStrings(data) {
+  const svg = document.getElementById("crimeStringsLayer");
+  if (!svg) return;
+  svg.innerHTML = "";
+  if (!crimeStringsEnabled || !data) return;
+
+  const shell = document.getElementById("boardShell");
+  if (!shell) return;
+  const shellRect = shell.getBoundingClientRect();
+  if (shellRect.width === 0 || shellRect.height === 0) return;
+
+  svg.setAttribute("viewBox", `0 0 ${shellRect.width} ${shellRect.height}`);
+
+  const steps = data.deduction_steps || [];
+  const totalSteps = steps.length;
+  let activeStepIdx = selectedVisualStep !== null ? selectedVisualStep : totalSteps;
+  if (activeStepIdx > totalSteps) activeStepIdx = totalSteps;
+
+  let sourceCell = null;
+  let targetCellsWithRoles = []; // [{cell, role}]
+
+  if (data.selected_inspector) {
+    sourceCell = data.selected_inspector.cell;
+    const insp = data.selected_inspector;
+    (insp.overlap || []).forEach(c => targetCellsWithRoles.push({ cell: c, role: "overlap-line" }));
+    (insp.left || []).forEach(c => targetCellsWithRoles.push({ cell: c, role: "left-line" }));
+    (insp.right || []).forEach(c => targetCellsWithRoles.push({ cell: c, role: "right-line" }));
+    (insp.referenced || []).forEach(c => {
+      if (!targetCellsWithRoles.find(x => x.cell === c)) {
+        targetCellsWithRoles.push({ cell: c, role: "ref-line" });
+      }
+    });
+  } else if (activeStepIdx > 0 && steps[activeStepIdx - 1]) {
+    const st = steps[activeStepIdx - 1];
+    sourceCell = st.cell;
+    (st.premise_clues || []).forEach(pc => {
+      targetCellsWithRoles.push({ cell: pc.cell, role: "ref-line" });
+    });
+  }
+
+  if (!sourceCell || !targetCellsWithRoles.length) return;
+
+  const getCenter = (cStr) => {
+    const el = document.querySelector(`[data-cell-id="${cStr}"]`);
+    if (!el) return null;
+    const r = el.getBoundingClientRect();
+    return {
+      x: r.left - shellRect.left + r.width / 2,
+      y: r.top - shellRect.top + r.height / 2,
+    };
+  };
+
+  const sPt = getCenter(sourceCell);
+  if (!sPt) return;
+
+  targetCellsWithRoles.forEach(({ cell, role }) => {
+    if (cell === sourceCell) return;
+    const tPt = getCenter(cell);
+    if (!tPt) return;
+
+    const dx = tPt.x - sPt.x;
+    const dy = tPt.y - sPt.y;
+    const dist = Math.hypot(dx, dy);
+    if (dist < 5) return;
+
+    const midX = (sPt.x + tPt.x) / 2;
+    const midY = (sPt.y + tPt.y) / 2;
+    const curvature = Math.min(dist * 0.18, 36);
+    const nx = -dy / dist;
+    const ny = dx / dist;
+    const cx = midX + nx * curvature;
+    const cy = midY + ny * curvature;
+
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("d", `M ${sPt.x} ${sPt.y} Q ${cx} ${cy} ${tPt.x} ${tPt.y}`);
+    path.setAttribute("class", `crime-string-path ${role}`);
+    svg.appendChild(path);
+
+    [sPt, tPt].forEach((pt, pIdx) => {
+      const pin = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      pin.setAttribute("cx", pt.x);
+      pin.setAttribute("cy", pt.y);
+      pin.setAttribute("r", pIdx === 0 ? "4.5" : "3.5");
+      pin.setAttribute("fill", pIdx === 0 ? "#F59E0B" : "#F43F5E");
+      pin.setAttribute("stroke", "#FFFFFF");
+      pin.setAttribute("stroke-width", "1.2");
+      svg.appendChild(pin);
+    });
+  });
+}
+
+window.addEventListener("resize", () => {
+  if (currentState) renderCrimeStrings(currentState);
+});
+
 function render(data) {
   currentState = data;
 
@@ -552,6 +903,7 @@ function render(data) {
       scene.className = "suspect-scene";
 
       const card = document.createElement("div");
+      card.dataset.cellId = item.cell;
       const classes = ["suspect-card"];
       if (item.revealed) {
         classes.push(item.status === "INNOCENT" ? "revealed-innocent" : "revealed-criminal");
@@ -613,6 +965,7 @@ function render(data) {
         if (helperBtn) {
           helperBtn.addEventListener("click", (ev) => {
             ev.stopPropagation();
+            playSfx("click");
             selectClue(isSelected ? null : item.cell);
           });
         }
@@ -620,10 +973,16 @@ function render(data) {
         const topRight = item.is_hinted
           ? `<span class="stamp-badge hint-pill">AI GỢI Ý</span>`
           : `<span class="stamp-badge unsolved-pill">CHƯA MỞ</span>`;
+        const pNote = pencilNotes[item.cell];
+        const pencilBadgeHtml = pNote
+          ? `<span class="pencil-tag pencil-${pNote}" title="Ghi chú nháp (Click phải đổi/xóa)">? ${pNote === 'innocent' ? 'Vô tội' : 'Thủ phạm'}</span>`
+          : '';
+
         card.innerHTML = `
           <div class="card-top">
             <div class="card-top-left">
               <span class="coord-pill">${item.cell}</span>
+              ${pencilBadgeHtml}
               ${hlTopTag}
             </div>
             ${topRight}
@@ -638,6 +997,15 @@ function render(data) {
             <button type="button" class="btn-verdict criminal" data-cell="${item.cell}" data-v="CRIMINAL">Thủ phạm</button>
           </div>
         `;
+        card.addEventListener("contextmenu", (ev) => {
+          ev.preventDefault();
+          cyclePencilNote(item.cell);
+        });
+        card.addEventListener("click", (ev) => {
+          if (pencilModeActive && !ev.target.closest(".btn-verdict")) {
+            cyclePencilNote(item.cell);
+          }
+        });
         card.querySelectorAll(".btn-verdict").forEach(btn => {
           btn.addEventListener("click", (ev) => {
             ev.stopPropagation();
@@ -655,6 +1023,7 @@ function render(data) {
   lastAnimationKind = null;
 
   renderLiveVisualizer(data);
+  renderCrimeStrings(data);
 
   const t = data.telemetry;
   document.getElementById("mPrimary").textContent = t.num_primary;
@@ -697,6 +1066,7 @@ function render(data) {
 
   if (data.is_complete && victoryShownForSession !== data.session_id) {
     victoryShownForSession = data.session_id;
+    playSfx("victory");
     document.getElementById("vStatCells").textContent = `${data.revealed_count}/${data.total_cells}`;
     document.getElementById("vStatClauses").textContent = t.num_clauses;
     document.getElementById("vStatProps").textContent = t.propagations;
@@ -716,6 +1086,11 @@ async function submitVerdict(cell, verdict) {
   if (data.last_outcome) {
     lastAnimatedCell = cell;
     lastAnimationKind = data.last_outcome.result === "ACCEPTED" ? "anim-flip" : "anim-shake";
+    if (data.last_outcome.result === "ACCEPTED") {
+      playSfx(verdict === "INNOCENT" ? "stamp_innocent" : "stamp_criminal");
+    } else {
+      playSfx("not_provable");
+    }
   }
   render(data);
 }
@@ -723,6 +1098,7 @@ async function submitVerdict(cell, verdict) {
 async function requestHint() {
   stopAutoSolve();
   const data = await apiCall("/api/hint", {});
+  playSfx("click");
   render(data);
 }
 
@@ -733,6 +1109,9 @@ async function stepSolve() {
   if (data.last_outcome && data.last_outcome.cell) {
     lastAnimatedCell = data.last_outcome.cell;
     lastAnimationKind = data.last_outcome.result === "ACCEPTED" ? "anim-flip" : "anim-shake";
+    if (data.last_outcome.result === "ACCEPTED") {
+      playSfx(data.last_outcome.verdict === "INNOCENT" ? "stamp_innocent" : "stamp_criminal");
+    }
   }
   render(data);
   return data;
@@ -788,6 +1167,7 @@ document.getElementById("btnRestart").addEventListener("click", async () => {
   stopAutoSolve();
   victoryShownForSession = null;
   selectedVisualStep = null;
+  playSfx("click");
   render(await apiCall("/api/restart", {}));
 });
 
@@ -795,6 +1175,7 @@ document.getElementById("quickPuzzleSelect").addEventListener("change", async (e
   stopAutoSolve();
   victoryShownForSession = null;
   selectedVisualStep = null;
+  playSfx("click");
   render(await apiCall("/api/load", { case_id: e.target.value }));
 });
 
@@ -806,6 +1187,7 @@ async function handleJsonFileUpload(e) {
   selectedVisualStep = null;
   const text = await file.text();
   const data = await apiCall("/api/load_raw", { content: text });
+  playSfx("click");
   render(data);
   showScreen("screenGame");
   e.target.value = "";
@@ -816,6 +1198,57 @@ const uploadTopbar = document.getElementById("uploadJsonTopbar");
 if (uploadTopbar) {
   uploadTopbar.addEventListener("change", handleJsonFileUpload);
 }
+
+// Lớp phủ Kéo Thả File JSON (Drag & Drop Dropzone Overlay)
+const dropOverlay = document.getElementById("dropzoneOverlay");
+let dragCounter = 0;
+
+window.addEventListener("dragenter", (e) => {
+  e.preventDefault();
+  dragCounter++;
+  if (dropOverlay) dropOverlay.classList.add("active");
+});
+
+window.addEventListener("dragleave", (e) => {
+  e.preventDefault();
+  dragCounter--;
+  if (dragCounter <= 0 && dropOverlay) {
+    dragCounter = 0;
+    dropOverlay.classList.remove("active");
+  }
+});
+
+window.addEventListener("dragover", (e) => {
+  e.preventDefault();
+});
+
+window.addEventListener("drop", async (e) => {
+  e.preventDefault();
+  dragCounter = 0;
+  if (dropOverlay) dropOverlay.classList.remove("active");
+  const files = e.dataTransfer ? e.dataTransfer.files : null;
+  if (!files || !files.length) return;
+  const file = files[0];
+  if (!file.name.endsWith(".json")) {
+    alert("Vui lòng thả file có định dạng .json hợp lệ!");
+    return;
+  }
+  stopAutoSolve();
+  victoryShownForSession = null;
+  selectedVisualStep = null;
+  const text = await file.text();
+  try {
+    const data = await apiCall("/api/load_raw", { content: text });
+    playSfx("click");
+    render(data);
+    showScreen("screenGame");
+  } catch (err) {
+    alert("Lỗi nạp file JSON: " + err);
+  }
+});
+
+// Khởi tạo icon âm thanh theo thiết lập
+updateSoundIcon();
 
 // Tải dữ liệu trạng thái khi mở trang
 apiCall("/api/state", {}).then(render);

@@ -1,67 +1,88 @@
 {
-  "timestamp": "2026-11-09T09:14:13.365449+00:00",
-  "scope": "e",
+  "timestamp": "2026-11-09T10:29:05.890416+00:00",
+  "scope": "p",
   "require_real": true,
   "overall_status": "PASS",
   "exit_code": 0,
   "gates": {
-    "G-E": {
-      "gate_id": "G-E",
-      "module_owner": "E (GUI & Main)",
+    "G-P": {
+      "gate_id": "G-P",
+      "module_owner": "C/E (Puzzle Suite)",
       "status": "PASS",
-      "passed_count": 7,
+      "passed_count": 10,
       "failed_count": 0,
       "blocked_count": 0,
-      "total_count": 7,
+      "total_count": 10,
       "subchecks": [
         {
-          "check_id": "test_e01_controller_load_restart",
-          "description": "E-01: GUIController tải và làm mới màn chơi qua PublicState mà không làm lộ solution.",
+          "check_id": "P-chain_demo",
+          "description": "Verify puzzle case 'chain_demo' (examples/3x3_chain.json)",
           "status": "PASS",
-          "evidence": "Real Module E implementation verified",
-          "duration_ms": 5.04
+          "evidence": "Case 'chain_demo' (3x3, normal) verified: uniqueness=UNIQUE, run=SOLVED",
+          "duration_ms": 12.43
         },
         {
-          "check_id": "test_e02_clue_highlighting_and_overlap",
-          "description": "E-02: Chọn lời khai trả về đúng vùng ô tham chiếu và phân tách Trái/Phải/Giao nhau của COMPARE.",
+          "check_id": "P-3x3_classic",
+          "description": "Verify puzzle case '3x3_classic' (examples/3x3_classic.json)",
           "status": "PASS",
-          "evidence": "Real Module E implementation verified",
-          "duration_ms": 6.71
+          "evidence": "Case '3x3_classic' (3x3, normal) verified: uniqueness=UNIQUE, run=SOLVED",
+          "duration_ms": 20.59
         },
         {
-          "check_id": "test_e03_manual_verdict_outcomes",
-          "description": "E-03: Phân biệt rõ NOT_PROVABLE, CONTRADICTED và ACCEPTED mà không đổi trạng thái khi bị từ chối.",
+          "check_id": "P-3x3_extensions",
+          "description": "Verify puzzle case '3x3_extensions' (examples/3x3_extensions.json)",
           "status": "PASS",
-          "evidence": "Real Module E implementation verified",
-          "duration_ms": 5.95
+          "evidence": "Case '3x3_extensions' (3x3, normal) verified: uniqueness=UNIQUE, run=SOLVED",
+          "duration_ms": 29.41
         },
         {
-          "check_id": "test_e04_hint_and_autosolve_isolation",
-          "description": "E-04: Gợi ý tìm đúng ô bị ép buộc mà không tự lật thẻ; Tự động phá án giải trọn vẹn.",
+          "check_id": "P-4x4_detective",
+          "description": "Verify puzzle case '4x4_detective' (examples/4x4_detective.json)",
           "status": "PASS",
-          "evidence": "Real Module E implementation verified",
-          "duration_ms": 21.59
+          "evidence": "Case '4x4_detective' (4x4, normal) verified: uniqueness=UNIQUE, run=SOLVED",
+          "duration_ms": 105.68
         },
         {
-          "check_id": "test_e05_clue_formatter_and_layout_metrics",
-          "description": "E-05: Trình dịch lời khai Tiếng Việt hỗ trợ đủ 8 mẫu ClueType và bố cục bàn cờ cân đối.",
+          "check_id": "P-4x4_crossfire",
+          "description": "Verify puzzle case '4x4_crossfire' (examples/4x4_crossfire.json)",
           "status": "PASS",
-          "evidence": "Real Module E implementation verified",
-          "duration_ms": 2.31
+          "evidence": "Case '4x4_crossfire' (4x4, normal) verified: uniqueness=UNIQUE, run=SOLVED",
+          "duration_ms": 145.99
         },
         {
-          "check_id": "test_e06_puzzle_suite_and_manifest_verification",
-          "description": "E-06: Toàn bộ 9 màn chơi trong puzzles/index.json khớp tính duy nhất nghiệm và thứ tự suy diễn.",
+          "check_id": "P-5x5_mastermind",
+          "description": "Verify puzzle case '5x5_mastermind' (examples/5x5_mastermind.json)",
           "status": "PASS",
-          "evidence": "Real Module E implementation verified",
-          "duration_ms": 673.22
+          "evidence": "Case '5x5_mastermind' (5x5, stress) verified: uniqueness=UNIQUE, run=SOLVED",
+          "duration_ms": 304.46
         },
         {
-          "check_id": "test_e07_web_gui_vietnamese_screens_and_api",
-          "description": "E-07: Giao diện Web Tiếng Việt có đủ 3 màn hình (Bắt đầu, Kho Hồ Sơ, Bàn cờ 3D) và các endpoint API.",
+          "check_id": "P-5x5_syndicate",
+          "description": "Verify puzzle case '5x5_syndicate' (examples/5x5_syndicate.json)",
           "status": "PASS",
-          "evidence": "Real Module E implementation verified",
-          "duration_ms": 48.05
+          "evidence": "Case '5x5_syndicate' (5x5, stress) verified: uniqueness=UNIQUE, run=SOLVED",
+          "duration_ms": 351.93
+        },
+        {
+          "check_id": "P-3x3_stuck",
+          "description": "Verify puzzle case '3x3_stuck' (examples/3x3_stuck.json)",
+          "status": "PASS",
+          "evidence": "Case '3x3_stuck' (3x3, stuck) verified: uniqueness=UNIQUE, run=STUCK",
+          "duration_ms": 4.54
+        },
+        {
+          "check_id": "P-3x3_multi",
+          "description": "Verify puzzle case '3x3_multi' (examples/3x3_multi.json)",
+          "status": "PASS",
+          "evidence": "Case '3x3_multi' (3x3, multi_solution) verified: uniqueness=MULTIPLE, run=STUCK",
+          "duration_ms": 15.28
+        },
+        {
+          "check_id": "P-3x3_inconsistent",
+          "description": "Verify puzzle case '3x3_inconsistent' (examples/3x3_inconsistent.json)",
+          "status": "PASS",
+          "evidence": "Case '3x3_inconsistent' (3x3, inconsistent) verified: uniqueness=UNSAT, run=INCONSISTENT",
+          "duration_ms": 3.04
         }
       ]
     }
