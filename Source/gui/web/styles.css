@@ -629,75 +629,119 @@ html, body {
 }
 
 .game-topbar {
+  height: 52px;
   min-height: 52px;
-  height: auto;
-  padding: 6px 16px;
+  padding: 0 16px;
   background: var(--bg-surface);
   backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--border-subtle);
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   justify-content: space-between;
-  gap: 8px 10px;
+  gap: 12px;
   flex-shrink: 0;
   position: sticky;
   top: 0;
-  z-index: 30;
+  z-index: 50;
+  overflow: visible;
 }
 
 .topbar-left, .topbar-center, .topbar-right {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .puzzle-select {
-  min-width: 175px;
-  max-width: 250px;
+  min-width: 150px;
+  max-width: 220px;
   text-overflow: ellipsis;
+  height: 34px;
 }
 
-.progress-widget {
-  display: flex;
-  align-items: center;
-  gap: 7px;
+.progress-pill {
   padding: 5px 9px;
   border-radius: 8px;
   background: var(--bg-elevated);
   border: 1px solid var(--border-subtle);
   font-family: var(--font-mono);
   font-size: 11.5px;
-  font-weight: 600;
-}
-.progress-bar-track {
-  width: 48px;
-  height: 6px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.1);
-  overflow: hidden;
-}
-[data-theme="paper"] .progress-bar-track {
-  background: rgba(15, 23, 42, 0.12);
-}
-.progress-bar-fill {
-  height: 100%;
-  background: var(--innocent);
-  border-radius: 999px;
-  transition: width 0.3s ease;
+  font-weight: 700;
+  color: var(--gold-bright);
+  white-space: nowrap;
 }
 
 /* Segmented Control Dock cho các nút điều khiển AI */
 .control-dock {
   display: inline-flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
   padding: 3px;
   border-radius: 9px;
   background: var(--bg-deep);
   border: 1px solid var(--border-subtle);
+}
+
+.utility-dock {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Popover Menu Công cụ & Cài đặt */
+.menu-popover-wrap {
+  position: relative;
+}
+.menu-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 230px;
+  background: var(--bg-surface);
+  backdrop-filter: blur(18px);
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.65);
+  padding: 6px;
+  display: none;
+  flex-direction: column;
+  gap: 3px;
+  z-index: 120;
+  animation: screenFadeIn 0.15s ease;
+}
+.menu-popover.open {
+  display: flex;
+}
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: transparent;
+  border: none;
+  color: var(--ink-secondary);
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: background-color 0.14s ease, color 0.14s ease;
+  user-select: none;
+}
+.menu-item:hover {
+  background: var(--bg-elevated);
+  color: var(--gold-bright);
+}
+.menu-item .icon-svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
 }
 
 /* Nút bấm công cụ */
@@ -970,7 +1014,7 @@ html, body {
 }
 
 .lv-header {
-  padding: 12px 16px;
+  padding: 10px 14px;
   background: var(--bg-elevated);
   border-bottom: 1px solid var(--border-subtle);
   display: flex;
@@ -1000,70 +1044,297 @@ html, body {
   letter-spacing: 0.04em;
   color: var(--ink-primary);
 }
-.lv-step-counter {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 5px;
-  background: var(--gold-soft);
-  color: var(--gold-bright);
-  border: 1px solid var(--border-strong);
-}
-
-/* Dải mắt xích các bước suy diễn */
-.lv-timeline-strip {
+.lv-header-actions {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 9px 14px;
-  background: var(--bg-deep);
-  border-bottom: 1px solid var(--border-subtle);
-  overflow-x: auto;
-  scrollbar-width: thin;
 }
-.step-chip {
+.btn-mini-play {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 4px 9px;
+  padding: 3px 8px;
   border-radius: 6px;
-  border: 1px solid var(--border-subtle);
-  background: var(--bg-elevated);
-  color: var(--ink-secondary);
-  font-family: var(--font-mono);
+  background: var(--gold-bright);
+  border: 1px solid var(--gold-bright);
+  color: #090B10;
+  font-family: var(--font-sans);
   font-size: 11px;
   font-weight: 700;
   cursor: pointer;
-  white-space: nowrap;
   transition: all 0.14s ease;
 }
-.step-chip:hover {
+.btn-mini-play:hover {
+  background: #FBBF24;
+}
+
+/* Thanh điều hướng bước tinh gọn (Clean Stepper Bar) */
+.lv-stepper-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--bg-deep);
+  border-bottom: 1px solid var(--border-subtle);
+  gap: 8px;
+}
+.stepper-arrow-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  color: var(--ink-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.14s ease;
+  flex-shrink: 0;
+}
+.stepper-arrow-btn:hover {
+  border-color: var(--gold-bright);
+  color: var(--ink-primary);
+  background: rgba(245, 158, 11, 0.1);
+}
+.stepper-center-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  overflow: hidden;
+}
+.stepper-step-lbl {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--gold-bright);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.stepper-dots-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+.step-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  color: var(--ink-muted);
+  cursor: pointer;
+  transition: all 0.14s ease;
+  user-select: none;
+}
+.step-dot:hover {
   border-color: var(--gold-bright);
   color: var(--ink-primary);
 }
-.step-chip.active {
+.step-dot.active {
   background: var(--gold-bright);
   border-color: var(--gold-bright);
   color: #090B10;
+  font-weight: 800;
+  transform: scale(1.15);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
 }
-.step-chip-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
+.step-dot.innocent {
+  border-color: rgba(16, 185, 129, 0.55);
 }
-.step-chip-dot.innocent { background: var(--innocent); }
-.step-chip-dot.criminal { background: var(--criminal); }
-.step-chip.active .step-chip-dot { background: #090B10; }
-.step-arrow {
-  color: var(--ink-muted);
-  font-size: 11px;
-  user-select: none;
+.step-dot.criminal {
+  border-color: rgba(244, 63, 94, 0.55);
 }
 
-/* Sơ đồ luồng chạy 4 tầng bên trong Visualizer */
+/* Thân Thẻ Phá Án Trinh Thám */
 .lv-flow-body {
-  padding: 14px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Thẻ Phán Quyết Nổi Bật (Hero Verdict Card) */
+.hero-verdict-card {
+  border-radius: 12px;
+  padding: 13px 15px;
+  background: var(--bg-elevated);
+  border: 1.5px solid var(--border-strong);
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+.hero-verdict-card.innocent {
+  background: linear-gradient(160deg, rgba(16, 185, 129, 0.08) 0%, rgba(18, 22, 32, 0.95) 100%);
+  border-color: rgba(16, 185, 129, 0.45);
+}
+.hero-verdict-card.criminal {
+  background: linear-gradient(160deg, rgba(244, 63, 94, 0.08) 0%, rgba(18, 22, 32, 0.95) 100%);
+  border-color: rgba(244, 63, 94, 0.45);
+}
+.hero-verdict-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.hero-suspect-profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.hero-suspect-name {
+  font-family: var(--font-display);
+  font-size: 14.5px;
+  font-weight: 800;
+  color: var(--ink-primary);
+}
+.hero-suspect-cell {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gold-bright);
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--gold-soft);
+  border: 1px solid var(--border-strong);
+}
+.hero-stamp-badge {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  padding: 4px 10px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.hero-stamp-badge.innocent {
+  background: #059669;
+  color: #FFFFFF;
+  border: 1.5px solid #10B981;
+  transform: rotate(-2.5deg);
+}
+.hero-stamp-badge.criminal {
+  background: #E11D48;
+  color: #FFFFFF;
+  border: 1.5px solid #F43F5E;
+  transform: rotate(2.5deg);
+}
+.hero-entailment-formula {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--gold-bright);
+  background: rgba(0, 0, 0, 0.3);
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Khung logic phản chứng trực quan (Storyboard 2 nhánh) */
+.refute-storyboard {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.story-branch {
+  border-radius: 9px;
+  padding: 9px 12px;
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.story-branch.unsat {
+  background: rgba(244, 63, 94, 0.07);
+  border-color: rgba(244, 63, 94, 0.32);
+}
+.story-branch.sat {
+  background: rgba(16, 185, 129, 0.07);
+  border-color: rgba(16, 185, 129, 0.32);
+}
+.story-branch-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 700;
+}
+.story-branch.unsat .story-branch-header { color: #FB7185; }
+.story-branch.sat .story-branch-header { color: #34D399; }
+.story-branch-desc {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--ink-secondary);
+}
+
+/* Thẻ Bằng chứng & Lời khai mới */
+.story-evidence-card, .story-unlocked-card {
+  border-radius: 9px;
+  padding: 9px 12px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.story-unlocked-card {
+  border-left: 3px solid var(--gold-bright);
+}
+.story-card-title {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--gold-bright);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.story-quote {
+  font-size: 12px;
+  font-style: italic;
+  color: var(--ink-primary);
+  line-height: 1.4;
+}
+
+/* Accordion chi tiết kỹ thuật CNF & DPLL (Thu gọn mặc định) */
+.dpll-tech-accordion {
+  border-radius: 9px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border-subtle);
+  overflow: hidden;
+}
+.dpll-tech-accordion summary {
+  padding: 8px 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink-muted);
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.14s ease;
+}
+.dpll-tech-accordion summary:hover {
+  color: var(--gold-bright);
+}
+.dpll-tech-body {
+  padding: 10px 12px;
+  border-top: 1px solid var(--border-subtle);
   display: flex;
   flex-direction: column;
   gap: 8px;

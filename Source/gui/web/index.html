@@ -251,117 +251,123 @@
        =================================================================== -->
   <section id="screenGame" class="screen">
     <header class="game-topbar">
+      <!-- Cụm Trái: Kho hồ sơ + Dropdown vụ án + Tiến độ -->
       <div class="topbar-left">
-        <button type="button" class="btn" onclick="showScreen('screenCases')" title="Quay về Kho Hồ Sơ Vụ Án">
+        <button type="button" class="btn btn-nav" onclick="showScreen('screenCases')" title="Quay về Kho Hồ Sơ Vụ Án">
           <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
           </svg>
-          <span>Kho Hồ Sơ</span>
+          <span class="btn-hide-mobile">Kho Hồ Sơ</span>
         </button>
 
-        <div class="case-header-pill" style="display:none;" aria-hidden="true">
-          <span id="hdrCaseCode">HỒ SƠ #02</span>
-          <span id="hdrCaseTitle">Đêm Gala Thượng Lưu</span>
-        </div>
+        <select id="quickPuzzleSelect" class="ctrl-select puzzle-select" aria-label="Đổi nhanh vụ án" title="Chọn vụ án"></select>
 
-        <select id="quickPuzzleSelect" class="ctrl-select puzzle-select" aria-label="Đổi nhanh vụ án"></select>
-
-        <label class="btn" for="uploadJsonTopbar" style="cursor:pointer;" title="Tải file JSON puzzle (3×3, 4×4, 5×5) từ máy tính">
-          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
-          </svg>
-          <span>Tải JSON</span>
-        </label>
-        <input id="uploadJsonTopbar" type="file" accept=".json" style="display:none" />
-
-        <div class="progress-widget" title="Tiến độ xác minh nghi phạm">
+        <div class="progress-pill" title="Tiến độ xác minh nghi phạm">
           <span id="progressLabel">2/9 ô</span>
-          <div class="progress-bar-track">
-            <div class="progress-bar-fill" id="progressBarFill" style="width: 22%;"></div>
-          </div>
         </div>
       </div>
 
+      <!-- Cụm Giữa: Segmented Dock Hành Động Chính (⚡ Tự động phá án | ▷ Giải 1 bước | ⊙ Gợi ý | ↺) -->
       <div class="topbar-center">
         <div class="control-dock">
-          <button type="button" class="btn dock-btn" id="btnHint" title="AI tìm 1 ô đã đủ chứng cứ suy diễn (không tự lật thẻ)">
-            <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/>
-            </svg>
-            <span>Gợi ý</span>
-          </button>
-          <button type="button" class="btn dock-btn" id="btnStep" title="AI tự động giải 1 bước và vẽ luồng công thức">
-            <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/>
-            </svg>
-            <span>Giải 1 bước</span>
-          </button>
           <button type="button" class="btn btn-gold dock-btn" id="btnAuto" title="AI tự động phá án tuần tự kèm trực quan hóa công thức &amp; luồng DPLL">
             <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
               <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
             </svg>
             <span id="lblAuto">Tự động phá án</span>
           </button>
-          <select id="speedSelect" class="ctrl-select dock-select" aria-label="Tốc độ giải tự động" title="Tốc độ chạy mô phỏng từng bước">
+          <button type="button" class="btn dock-btn" id="btnStep" title="AI tự động giải 1 bước">
+            <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/>
+            </svg>
+            <span>Giải 1 bước</span>
+          </button>
+          <button type="button" class="btn dock-btn" id="btnHint" title="AI tìm 1 ô đã đủ chứng cứ suy diễn (không tự lật thẻ)">
+            <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/>
+            </svg>
+            <span>Gợi ý</span>
+          </button>
+          <select id="speedSelect" class="ctrl-select dock-select" aria-label="Tốc độ giải tự động" title="Tốc độ phá án tự động">
             <option value="420">Nhanh</option>
             <option value="850" selected>Vừa</option>
             <option value="1400">Chậm</option>
           </select>
-          <button type="button" class="btn dock-btn" id="btnRestart" title="Làm mới lại màn chơi này">
+          <button type="button" class="btn dock-btn btn-icon-only" id="btnRestart" title="Khởi động lại màn chơi này">
             <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
             </svg>
-            <span>Chơi lại</span>
           </button>
         </div>
       </div>
 
+      <!-- Cụm Phải: Nút Luồng DPLL + Icon Dây chỉ đỏ + Icon Ghi chú + Icon Âm thanh + Popover Menu Công cụ -->
       <div class="topbar-right">
-        <button type="button" class="btn active" id="btnStringsToggle" onclick="toggleCrimeStrings()" title="Bật/Tắt đường chỉ đỏ liên kết lời khai">
-          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="6" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/>
-          </svg>
-          <span class="btn-hide-mobile">Chỉ đỏ</span>
-        </button>
-        <button type="button" class="btn" id="btnPencilMode" onclick="togglePencilMode()" title="Chế độ Ghi chú Nháp: Click chuột phải vào ô chưa mở để đánh dấu ? Vô tội / ? Thủ phạm">
-          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
-          </svg>
-          <span class="btn-hide-mobile" id="lblPencilMode">Ghi chú</span>
-        </button>
-        <button type="button" class="btn btn-icon-only" id="btnSoundToggle" onclick="toggleSound()" title="Bật/Tắt âm thanh tổng hợp">
-          <svg class="icon-svg" id="iconSoundOn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
-          </svg>
-          <svg class="icon-svg" id="iconSoundOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
-            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-            <line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>
-          </svg>
-        </button>
-        <button type="button" class="btn btn-flow-toggle active" id="btnToggleVisualizer" onclick="toggleVisualizerPanel()" title="Bật/tắt bảng Trực quan hóa Công thức &amp; Luồng chạy DPLL">
+        <button type="button" class="btn btn-flow-toggle active" id="btnToggleVisualizer" onclick="toggleVisualizerPanel()" title="Bật/tắt bảng Luồng Suy Diễn DPLL">
           <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><path d="M10 6.5h4M17.5 10v4"/>
           </svg>
           <span class="btn-hide-mobile">Luồng DPLL</span>
         </button>
-        <button type="button" class="btn btn-ai-drawer" onclick="toggleDrawer(true)">
-          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-          </svg>
-          <span class="btn-hide-mobile">Thống kê</span>
-          <span class="badge-count" id="badgeClauseCount">0 CNF</span>
-        </button>
-        <button type="button" class="btn btn-icon-only" onclick="openModal('modalRules')" title="Xem luật chơi &amp; cơ chế SAT">
-          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-          </svg>
-        </button>
-        <button type="button" class="btn btn-icon-only" onclick="toggleTheme()" title="Đổi chế độ Sáng / Tối">
-          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
-          </svg>
-        </button>
+
+        <div class="utility-dock">
+          <button type="button" class="btn btn-icon-only active" id="btnStringsToggle" onclick="toggleCrimeStrings()" title="Bật/Tắt Dây chỉ đỏ liên kết">
+            <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="6" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/>
+            </svg>
+          </button>
+          <button type="button" class="btn btn-icon-only" id="btnPencilMode" onclick="togglePencilMode()" title="Bật/Tắt chế độ Ghi chú nháp (hoặc click chuột phải vào ô)">
+            <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+            </svg>
+          </button>
+          <button type="button" class="btn btn-icon-only" id="btnSoundToggle" onclick="toggleSound()" title="Bật/Tắt hiệu ứng âm thanh">
+            <svg class="icon-svg" id="iconSoundOn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            </svg>
+            <svg class="icon-svg" id="iconSoundOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+              <line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>
+            </svg>
+          </button>
+
+          <!-- Nút Popover Menu Công cụ & Cài đặt gom gọn -->
+          <div class="menu-popover-wrap">
+            <button type="button" class="btn btn-icon-only" id="btnToolsMenu" onclick="toggleToolsMenu()" title="Công cụ &amp; Cài đặt khác">
+              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/><circle cx="5" cy="12" r="2"/>
+              </svg>
+            </button>
+            <div class="menu-popover" id="toolsPopover">
+              <label class="menu-item" for="uploadJsonTopbar" style="cursor:pointer;">
+                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                <span>Tải file JSON vụ án</span>
+              </label>
+              <input id="uploadJsonTopbar" type="file" accept=".json" style="display:none" />
+              <button type="button" class="menu-item" onclick="toggleDrawer(true); toggleToolsMenu(false);">
+                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                </svg>
+                <span>Bảng thống kê (<span id="badgeClauseCount">0 CNF</span>)</span>
+              </button>
+              <button type="button" class="menu-item" onclick="openModal('modalRules'); toggleToolsMenu(false);">
+                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+                <span>Luật chơi &amp; Cơ chế SAT</span>
+              </button>
+              <button type="button" class="menu-item" onclick="toggleTheme(); toggleToolsMenu(false);">
+                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+                </svg>
+                <span>Đổi giao diện Sáng / Tối</span>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </header>
 
@@ -394,41 +400,32 @@
           <div class="lv-header">
             <div class="lv-title-row">
               <span class="lv-pulse-dot" id="lvPulseDot"></span>
-              <span class="lv-title">LUỒNG SUY DIỄN DPLL &amp; MÃ HÓA CNF</span>
+              <span class="lv-title">LUỒNG SUY DIỄN DPLL</span>
             </div>
-            <span class="lv-step-counter" id="lvStepCounter">Bước 0/0</span>
-          </div>
-
-          <!-- BỘ ĐIỀU KHIỂN TUA LẠI LUỒNG SUY DIỄN (DEDUCTION PLAYBACK CONTROLLER) -->
-          <div class="lv-playback-dock" id="lvPlaybackDock">
-            <div class="playback-controls">
-              <button type="button" class="playback-btn" id="pbFirst" onclick="playbackGoTo(0)" title="Về cơ sở tri thức khởi điểm KB₀">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 20L9 12l10-8v16zM5 19V5h2v14H5z"/></svg>
-              </button>
-              <button type="button" class="playback-btn" id="pbPrev" onclick="playbackStepPrev()" title="Lùi 1 bước suy diễn">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 19L6 12l12-7v14z"/></svg>
-              </button>
-              <button type="button" class="playback-btn playback-main-btn" id="pbPlayPause" onclick="togglePlaybackPlay()" title="Tự động phát / Tạm dừng duyệt từng bước">
+            <div class="lv-header-actions">
+              <button type="button" class="btn-mini-play" id="pbPlayPause" onclick="togglePlaybackPlay()" title="Tự động duyệt qua từng bước suy diễn">
                 <span id="pbPlayIcon">▶</span>
+                <span class="btn-hide-mobile">Tự chạy</span>
               </button>
-              <button type="button" class="playback-btn" id="pbNext" onclick="playbackStepNext()" title="Tiến 1 bước suy diễn">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5l12 7-12 7V5z"/></svg>
-              </button>
-              <button type="button" class="playback-btn" id="pbLatest" onclick="playbackGoToLatest()" title="Đến bước suy diễn mới nhất">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 4l10 8-10 8V4zM17 5h2v14h-2V5z"/></svg>
-              </button>
-            </div>
-            <div class="playback-scrubber-row">
-              <span class="playback-step-text" id="pbStepText">KB₀</span>
-              <input type="range" class="playback-scrubber" id="lvScrubber" min="0" max="0" value="0" oninput="onScrubberInput(this.value)" aria-label="Thanh trượt bước suy diễn">
-              <span class="playback-speed-tag" id="pbSpeedLabel" onclick="cyclePlaybackSpeed()" title="Bấm để đổi tốc độ tua (1×, 2×, 0.5×)">1.0×</span>
+              <span class="playback-speed-tag" id="pbSpeedLabel" onclick="cyclePlaybackSpeed()" title="Bấm đổi tốc độ (1×, 2×, 0.5×)">1.0×</span>
             </div>
           </div>
 
-          <!-- Dải mắt xích các bước suy diễn (bấm vào từng bước để xem lại) -->
-          <div class="lv-timeline-strip" id="lvTimelineStrip"></div>
+          <!-- Thanh điều hướng bước tinh gọn (Clean Stepper Bar) -->
+          <div class="lv-stepper-bar" id="lvStepperBar">
+            <button type="button" class="stepper-arrow-btn" id="pbPrev" onclick="playbackStepPrev()" title="Lùi 1 bước">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+            </button>
+            <div class="stepper-center-info">
+              <span class="stepper-step-lbl" id="pbStepText">Khởi điểm KB₀</span>
+              <div class="stepper-dots-wrap" id="lvDotsWrap"></div>
+            </div>
+            <button type="button" class="stepper-arrow-btn" id="pbNext" onclick="playbackStepNext()" title="Tiến 1 bước">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+            </button>
+          </div>
 
-          <!-- Sơ đồ luồng chạy 4 tầng (4-Stage Deduction Pipeline) -->
+          <!-- Thân Thẻ Phá Án Trinh Thám (Hero Detective Storyboard) -->
           <div class="lv-flow-body" id="lvFlowBody"></div>
         </aside>
       </div>

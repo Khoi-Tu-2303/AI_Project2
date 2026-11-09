@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-09T10:29:05.890416+00:00",
+  "timestamp": "2026-11-09T10:38:55.754490+00:00",
   "scope": "p",
   "require_real": true,
   "overall_status": "PASS",
@@ -19,70 +19,70 @@
           "description": "Verify puzzle case 'chain_demo' (examples/3x3_chain.json)",
           "status": "PASS",
           "evidence": "Case 'chain_demo' (3x3, normal) verified: uniqueness=UNIQUE, run=SOLVED",
-          "duration_ms": 12.43
+          "duration_ms": 18.08
         },
         {
           "check_id": "P-3x3_classic",
           "description": "Verify puzzle case '3x3_classic' (examples/3x3_classic.json)",
           "status": "PASS",
           "evidence": "Case '3x3_classic' (3x3, normal) verified: uniqueness=UNIQUE, run=SOLVED",
-          "duration_ms": 20.59
+          "duration_ms": 32.63
         },
         {
           "check_id": "P-3x3_extensions",
           "description": "Verify puzzle case '3x3_extensions' (examples/3x3_extensions.json)",
           "status": "PASS",
           "evidence": "Case '3x3_extensions' (3x3, normal) verified: uniqueness=UNIQUE, run=SOLVED",
-          "duration_ms": 29.41
+          "duration_ms": 51.23
         },
         {
           "check_id": "P-4x4_detective",
           "description": "Verify puzzle case '4x4_detective' (examples/4x4_detective.json)",
           "status": "PASS",
           "evidence": "Case '4x4_detective' (4x4, normal) verified: uniqueness=UNIQUE, run=SOLVED",
-          "duration_ms": 105.68
+          "duration_ms": 164.04
         },
         {
           "check_id": "P-4x4_crossfire",
           "description": "Verify puzzle case '4x4_crossfire' (examples/4x4_crossfire.json)",
           "status": "PASS",
           "evidence": "Case '4x4_crossfire' (4x4, normal) verified: uniqueness=UNIQUE, run=SOLVED",
-          "duration_ms": 145.99
+          "duration_ms": 216.09
         },
         {
           "check_id": "P-5x5_mastermind",
           "description": "Verify puzzle case '5x5_mastermind' (examples/5x5_mastermind.json)",
           "status": "PASS",
           "evidence": "Case '5x5_mastermind' (5x5, stress) verified: uniqueness=UNIQUE, run=SOLVED",
-          "duration_ms": 304.46
+          "duration_ms": 494.05
         },
         {
           "check_id": "P-5x5_syndicate",
           "description": "Verify puzzle case '5x5_syndicate' (examples/5x5_syndicate.json)",
           "status": "PASS",
           "evidence": "Case '5x5_syndicate' (5x5, stress) verified: uniqueness=UNIQUE, run=SOLVED",
-          "duration_ms": 351.93
+          "duration_ms": 534.18
         },
         {
           "check_id": "P-3x3_stuck",
           "description": "Verify puzzle case '3x3_stuck' (examples/3x3_stuck.json)",
           "status": "PASS",
           "evidence": "Case '3x3_stuck' (3x3, stuck) verified: uniqueness=UNIQUE, run=STUCK",
-          "duration_ms": 4.54
+          "duration_ms": 12.05
         },
         {
           "check_id": "P-3x3_multi",
           "description": "Verify puzzle case '3x3_multi' (examples/3x3_multi.json)",
           "status": "PASS",
           "evidence": "Case '3x3_multi' (3x3, multi_solution) verified: uniqueness=MULTIPLE, run=STUCK",
-          "duration_ms": 15.28
+          "duration_ms": 24.86
         },
         {
           "check_id": "P-3x3_inconsistent",
           "description": "Verify puzzle case '3x3_inconsistent' (examples/3x3_inconsistent.json)",
           "status": "PASS",
           "evidence": "Case '3x3_inconsistent' (3x3, inconsistent) verified: uniqueness=UNSAT, run=INCONSISTENT",
-          "duration_ms": 3.04
+          "duration_ms": 4.86
         }
       ]
     }

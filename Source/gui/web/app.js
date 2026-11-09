@@ -377,7 +377,7 @@ async function apiCall(path, body = {}) {
 }
 
 /* =========================================================================
-   VẼ BẢNG TRỰC QUAN HÓA CÔNG THỨC & LUỒNG CHẠY DPLL (4 TẦNG)
+   VẼ BẢNG TRỰC QUAN HÓA CÔNG THỨC & LUỒNG CHẠY DPLL (THẺ PHÁ ÁN TRINH THÁM)
    ========================================================================= */
 function renderLiveVisualizer(data) {
   const steps = data.deduction_steps || [];
@@ -387,28 +387,11 @@ function renderLiveVisualizer(data) {
   let activeStepIdx = selectedVisualStep !== null ? selectedVisualStep : totalSteps;
   if (activeStepIdx > totalSteps) activeStepIdx = totalSteps;
 
-  const counterEl = document.getElementById("lvStepCounter");
-  if (counterEl) {
-    counterEl.textContent = activeStepIdx === 0
-      ? `Khởi điểm KB₀ (${totalSteps} bước đã giải)`
-      : `Bước #${activeStepIdx} / ${totalSteps}`;
-  }
-
   const pulseDot = document.getElementById("lvPulseDot");
   if (pulseDot) {
     pulseDot.classList.toggle("running", Boolean(autoTimer));
   }
 
-  // Cập nhật Bộ điều khiển tua lại luồng suy diễn (Playback Dock)
-  const scrubber = document.getElementById("lvScrubber");
-  if (scrubber) {
-    scrubber.max = String(totalSteps);
-    scrubber.value = String(activeStepIdx);
-  }
-  const pbStepText = document.getElementById("pbStepText");
-  if (pbStepText) {
-    pbStepText.textContent = activeStepIdx === 0 ? "KB₀" : `#${activeStepIdx}`;
-  }
   const pbPlayIcon = document.getElementById("pbPlayIcon");
   if (pbPlayIcon) {
     pbPlayIcon.textContent = playbackTimer ? "⏸" : "▶";
@@ -418,205 +401,225 @@ function renderLiveVisualizer(data) {
     pbSpeedLabel.textContent = `${playbackSpeed.toFixed(1)}×`;
   }
 
-  // 1. Dải mắt xích Timeline
-  const strip = document.getElementById("lvTimelineStrip");
-  if (strip) {
-    strip.innerHTML = "";
-    const kb0Chip = document.createElement("button");
-    kb0Chip.type = "button";
-    kb0Chip.className = "step-chip" + (activeStepIdx === 0 ? " active" : "");
-    kb0Chip.innerHTML = `<span>KB₀ (${initClues.length} ô mở sẵn)</span>`;
-    kb0Chip.addEventListener("click", () => {
-      selectedVisualStep = 0;
-      renderLiveVisualizer(currentState);
-    });
-    strip.appendChild(kb0Chip);
+  const st = activeStepIdx > 0 ? steps[activeStepIdx - 1] : null;
 
-    steps.forEach((st) => {
-      const arrow = document.createElement("span");
-      arrow.className = "step-arrow";
-      arrow.textContent = "→";
-      strip.appendChild(arrow);
-
-      const chip = document.createElement("button");
-      chip.type = "button";
-      chip.className = "step-chip" + (activeStepIdx === st.step_no ? " active" : "");
-      const dotCls = st.verdict === "INNOCENT" ? "innocent" : "criminal";
-      chip.innerHTML = `<span class="step-chip-dot ${dotCls}"></span><span>#${st.step_no} ${st.cell}</span>`;
-      chip.addEventListener("click", () => {
-        selectedVisualStep = st.step_no;
-        renderLiveVisualizer(currentState);
-      });
-      strip.appendChild(chip);
-    });
-    strip.scrollLeft = strip.scrollWidth;
+  // 1. Thanh điều hướng bước tinh gọn (Clean Stepper Bar)
+  const pbStepText = document.getElementById("pbStepText");
+  if (pbStepText) {
+    if (activeStepIdx === 0) {
+      pbStepText.textContent = `Khởi điểm KB₀ (${initClues.length} ô mở sẵn)`;
+    } else if (st) {
+      pbStepText.textContent = `Bước #${activeStepIdx} / ${totalSteps}: ${st.name} (${st.cell}) = ${st.verdict_vn}`;
+    }
   }
 
-  // 2. Sơ đồ luồng chạy 4 tầng (Flow Body)
+  const dotsWrap = document.getElementById("lvDotsWrap");
+  if (dotsWrap) {
+    dotsWrap.innerHTML = "";
+    const kb0Dot = document.createElement("button");
+    kb0Dot.type = "button";
+    kb0Dot.className = "step-dot" + (activeStepIdx === 0 ? " active" : "");
+    kb0Dot.textContent = "0";
+    kb0Dot.title = "KB₀ (Dữ kiện mở sẵn ban đầu)";
+    kb0Dot.addEventListener("click", () => playbackGoTo(0));
+    dotsWrap.appendChild(kb0Dot);
+
+    steps.forEach((s) => {
+      const dot = document.createElement("button");
+      dot.type = "button";
+      const dotKind = s.verdict === "INNOCENT" ? "innocent" : "criminal";
+      dot.className = `step-dot ${dotKind}` + (activeStepIdx === s.step_no ? " active" : "");
+      dot.textContent = String(s.step_no);
+      dot.title = `Bước #${s.step_no}: ${s.name} (${s.cell}) = ${s.verdict_vn}`;
+      dot.addEventListener("click", () => playbackGoTo(s.step_no));
+      dotsWrap.appendChild(dot);
+    });
+  }
+
+  // 2. Thân Thẻ Phá Án Trinh Thám (Hero Detective Storyboard)
   const flowBody = document.getElementById("lvFlowBody");
   if (!flowBody) return;
 
   if (activeStepIdx === 0) {
-    // Hiển thị Cơ sở Tri thức Khởi điểm KB_0
     const initItemsHtml = initClues.map(ic => {
       const unitLit = ic.status === "CRIMINAL" ? `(C_${ic.cell})` : `(¬C_${ic.cell})`;
       const stLabel = ic.status === "CRIMINAL" ? "THỦ PHẠM" : "VÔ TỘI";
       return `
-        <div class="formula-item">
-          <div class="formula-item-top">
-            <span class="formula-owner">${ic.owner} (${ic.cell}) · ${stLabel}</span>
-            <span class="formula-type-tag">${ic.type} · ${ic.clause_count} CNF</span>
+        <div class="story-evidence-card">
+          <div class="story-card-title">${ic.owner} (${ic.cell}) · ${stLabel}</div>
+          <div class="story-quote">“${ic.text}”</div>
+          <div style="font-family:var(--font-mono); font-size:11px; color:var(--ink-muted); margin-top:3px;">
+            Mệnh đề đơn vị: <code>${unitLit}</code> | CNF: <code>${ic.cnf_preview}</code>
           </div>
-          <div class="formula-math">Mệnh đề đơn vị: ${unitLit}  |  Công thức: ${ic.math_formula}</div>
-          <div class="formula-cnf">Mã hóa CNF: ${ic.cnf_preview}</div>
         </div>
       `;
     }).join("");
 
     flowBody.innerHTML = `
-      <div class="flow-stage stage-highlight">
-        <div class="flow-stage-hdr">
-          <span class="flow-stage-num">TẦNG 1</span>
-          <span class="flow-stage-title">Dữ Kiện Mở Sẵn Ban Đầu (Initial Facts)</span>
-          <span class="flow-stage-meta">${initClues.length} thẻ</span>
+      <div class="hero-verdict-card">
+        <div class="hero-verdict-top">
+          <div class="hero-suspect-profile">
+            <div>
+              <div class="hero-suspect-name">Cơ Sở Tri Thức Khởi Điểm KB₀</div>
+              <div style="font-size:11.5px; color:var(--ink-secondary); margin-top:2px;">
+                Chứa các sự thật mở sẵn và ràng buộc suy diễn của bàn cờ
+              </div>
+            </div>
+          </div>
+          <span class="hero-stamp-badge innocent">SẴN SÀNG</span>
         </div>
-        <div class="formula-list">
-          ${initItemsHtml || '<div class="branch-desc">Chưa có thẻ mở sẵn.</div>'}
-        </div>
-      </div>
-
-      <div class="flow-arrow-down">↓ BIÊN DỊCH TỰ ĐỘNG SANG MỆNH ĐỀ HỘI (CNF)</div>
-
-      <div class="flow-stage">
-        <div class="flow-stage-hdr">
-          <span class="flow-stage-num">TẦNG 2</span>
-          <span class="flow-stage-title">Cơ Sở Tri Thức Khởi Điểm KB₀</span>
-          <span class="flow-stage-meta">${data.telemetry.num_clauses} mệnh đề</span>
-        </div>
-        <div class="formula-item">
-          <div class="formula-math">KB₀ = CNF(Lời khai đã mở) ∧ UnitClauses(Thân phận đã biết)</div>
-          <div class="formula-cnf">Biến chính: ${data.telemetry.num_primary} (C_A1 .. C_${String.fromCharCode(64 + data.n)}${data.n}) · Biến phụ trợ mạch đếm: ${data.telemetry.num_aux}</div>
+        <div class="hero-entailment-formula">
+          <span>Công thức khởi điểm</span>
+          <span>${data.telemetry.num_clauses} mệnh đề CNF</span>
         </div>
       </div>
 
-      <div class="flow-arrow-down">↓ QUY TẮC SUY DIỄN PHẢN CHỨNG DPLL</div>
-
-      <div class="flow-stage">
-        <div class="flow-stage-hdr">
-          <span class="flow-stage-num">TẦNG 3</span>
-          <span class="flow-stage-title">Sẵn Sàng Duyệt Tìm Ô Bị Ép Buộc Logic</span>
+      <div class="refute-storyboard">
+        <div class="story-branch sat">
+          <div class="story-branch-header">
+            <span>Dữ kiện ban đầu (${initClues.length} thẻ mở sẵn)</span>
+          </div>
+          <div class="story-branch-desc">
+            Lời khai từ các nhân chứng này là tiền đề logic để bộ giải DPLL suy luận phản chứng các bước tiếp theo.
+          </div>
         </div>
-        <div class="branch-desc" style="padding: 2px 0;">
-          Bấm nút <strong>“Tự động phá án”</strong> hoặc <strong>“Giải 1 bước”</strong> ở thanh trên cùng để xem bộ giải DPLL chạy kiểm chứng phản chứng <code>KB_t ∧ ¬L ⟹ UNSAT</code> và vẽ luồng suy diễn từng bước.
+        ${initItemsHtml}
+      </div>
+
+      <div class="story-unlocked-card">
+        <div class="story-card-title">Hướng dẫn thao tác</div>
+        <div class="story-quote" style="font-style:normal; font-size:12px;">
+          Bấm nút <strong>“Tự động phá án”</strong> hoặc <strong>“Giải 1 bước”</strong> trên thanh công cụ để xem bộ giải chứng minh phản chứng từng ô!
         </div>
       </div>
     `;
     return;
   }
 
-  const st = steps[activeStepIdx - 1];
   if (!st) return;
 
-  const supHtml = (st.supporting_clues || []).map(sc => `
-    <div class="formula-item">
-      <div class="formula-item-top">
-        <span class="formula-owner">Lời khai ${sc.owner} (${sc.cell})</span>
-        <span class="formula-type-tag">${sc.type}</span>
+  const isInn = st.verdict === "INNOCENT";
+  const badgeClass = isInn ? "innocent" : "criminal";
+  const badgeText = isInn ? "VÔ TỘI" : "THỦ PHẠM";
+
+  // Lời khai tiền đề (Supporting Evidence)
+  const supCluesHtml = (st.supporting_clues || []).map(sc => `
+    <div class="story-evidence-card">
+      <div class="story-card-title">Lời khai từ ${sc.owner} (${sc.cell})</div>
+      <div class="story-quote">“${sc.text}”</div>
+      <div style="font-family:var(--font-mono); font-size:10.5px; color:var(--ink-muted); margin-top:2px;">
+        Công thức: <code>${sc.math_formula}</code>
       </div>
-      <div class="formula-math">${sc.math_formula}</div>
-      <div class="formula-cnf">CNF: ${sc.cnf_preview}</div>
     </div>
   `).join("");
 
-  const isInn = st.verdict === "INNOCENT";
-  const verdictCls = isInn ? "innocent" : "criminal";
+  // Lời khai mới mở khóa
   const newClueHtml = st.new_clue ? `
-    <div class="formula-item">
-      <div class="formula-item-top">
-        <span class="formula-owner">Lời khai mới [${st.new_clue.id}] từ ${st.name} (${st.cell})</span>
-        <span class="formula-type-tag">${st.new_clue.type} · +${st.new_clue.clause_count} CNF</span>
+    <div class="story-unlocked-card">
+      <div class="story-card-title">Lời khai mới hé lộ từ ${st.name} (${st.cell})</div>
+      <div class="story-quote">“${st.new_clue.text}”</div>
+      <div style="font-family:var(--font-mono); font-size:11px; color:var(--gold-bright); margin-top:3px;">
+        +${st.new_clue.clause_count} mệnh đề CNF nạp vào KB_${st.step_no}
       </div>
-      <div class="branch-desc" style="margin-bottom:4px;">“${st.new_clue.text}”</div>
-      <div class="formula-math">Công thức: ${st.new_clue.math_formula}</div>
-      <div class="formula-cnf">Mã hóa CNF: ${st.new_clue.cnf_preview}</div>
     </div>
-  ` : `<div class="branch-desc">Đã mở toàn bộ lời khai.</div>`;
+  ` : '';
 
   flowBody.innerHTML = `
-    <div class="flow-stage">
-      <div class="flow-stage-hdr">
-        <span class="flow-stage-num">1 · CƠ SỞ TRI THỨC KB_${st.step_no - 1}</span>
-        <span class="flow-stage-title">Chứng cứ dẫn xuất tới ô ${st.cell} (${st.name})</span>
+    <!-- 1. Thẻ Phán Quyết Nổi Bật -->
+    <div class="hero-verdict-card ${badgeClass}">
+      <div class="hero-verdict-top">
+        <div class="hero-suspect-profile">
+          <div>
+            <div class="hero-suspect-name">${st.name}</div>
+            <span class="hero-suspect-cell">Ô ${st.cell}</span>
+          </div>
+        </div>
+        <span class="hero-stamp-badge ${badgeClass}">${badgeText}</span>
       </div>
-      <div class="formula-list">
-        ${supHtml}
+      <div class="hero-entailment-formula">
+        <span>Suy diễn tất yếu</span>
+        <code>${st.entailment_formula}</code>
       </div>
     </div>
 
-    <div class="flow-arrow-down">↓ ĐƯA VÀO BỘ GIẢI DPLL KIỂM CHỨNG PHẢN CHỨNG</div>
-
-    <div class="flow-stage stage-highlight">
-      <div class="flow-stage-hdr">
-        <span class="flow-stage-num">2 · PHẢN CHỨNG DPLL</span>
-        <span class="flow-stage-title">Kiểm tra hai giả thiết đối lập cho ${st.cell}</span>
-        <span class="flow-stage-meta">${st.telemetry.runtime_ms}ms</span>
-      </div>
-      <div class="refutation-branches">
-        <div class="branch-card unsat">
-          <div class="branch-formula">✕ Bác bỏ: ${st.refutation_query}</div>
-          <div class="branch-desc">${st.refutation_desc}</div>
+    <!-- 2. Sơ Đồ Phản Chứng 2 Nhánh Trực Quan -->
+    <div class="refute-storyboard">
+      <div class="story-branch unsat">
+        <div class="story-branch-header">
+          <span>✕ Bác bỏ giả thiết: ${st.refutation_query}</span>
         </div>
-        <div class="branch-card sat">
-          <div class="branch-formula">✓ Nhất quán: ${st.consistency_query}</div>
-          <div class="branch-desc">Giả thiết thuận thỏa mãn mọi mệnh đề CNF trong KB_${st.step_no - 1}.</div>
+        <div class="story-branch-desc">
+          ${st.refutation_desc}
         </div>
       </div>
-      <div class="dpll-mini-metrics">
-        <div class="dpll-mini-box">
-          <div class="dpll-mini-val">${st.telemetry.propagations}</div>
-          <div class="dpll-mini-lbl">Unit Prop</div>
+      <div class="story-branch sat">
+        <div class="story-branch-header">
+          <span>✓ Khẳng định: ${st.consistency_query}</span>
         </div>
-        <div class="dpll-mini-box">
-          <div class="dpll-mini-val">${st.telemetry.decisions}</div>
-          <div class="dpll-mini-lbl">Decisions</div>
-        </div>
-        <div class="dpll-mini-box">
-          <div class="dpll-mini-val">${st.telemetry.backtracks}</div>
-          <div class="dpll-mini-lbl">Backtracks</div>
-        </div>
-        <div class="dpll-mini-box">
-          <div class="dpll-mini-val">${st.telemetry.sat_calls}</div>
-          <div class="dpll-mini-lbl">SAT Calls</div>
+        <div class="story-branch-desc">
+          Do giả thiết đối lập bị bác bỏ hoàn toàn, ${st.name} (${st.cell}) bắt buộc phải là <strong>${st.verdict_vn}</strong>!
         </div>
       </div>
     </div>
 
-    <div class="flow-arrow-down">↓ SUY DIỄN LOGIC TẤT YẾU (LOGICAL ENTAILMENT)</div>
-
-    <div class="flow-stage">
-      <div class="flow-stage-hdr">
-        <span class="flow-stage-num">3 · KẾT LUẬN BƯỚC #${st.step_no}</span>
-        <span class="flow-stage-title">Phán quyết không đoán mò</span>
-        <span class="flow-stage-meta">+Unit ${st.unit_clause}</span>
+    <!-- 3. Bằng chứng làm tiền đề -->
+    ${supCluesHtml ? `
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        <div style="font-size:11px; font-weight:800; color:var(--ink-muted); text-transform:uppercase; letter-spacing:0.04em;">Chứng cứ tiền đề đã dùng</div>
+        ${supCluesHtml}
       </div>
-      <div class="entailment-verdict-box">
-        <span class="entailment-eq">${st.entailment_formula}</span>
-        <span class="entailment-target ${verdictCls}">${st.name} (${st.cell}) = ${st.verdict_vn}</span>
-      </div>
-    </div>
+    ` : ''}
 
-    <div class="flow-arrow-down">↓ LẬT THẺ &amp; NẠP LỜI KHAI MỚI VÀO KB_${st.step_no}</div>
+    <!-- 4. Lời khai mới mở khóa -->
+    ${newClueHtml}
 
-    <div class="flow-stage">
-      <div class="flow-stage-hdr">
-        <span class="flow-stage-num">4 · CẬP NHẬT KB_${st.step_no}</span>
-        <span class="flow-stage-title">Biên dịch lời khai mới sang CNF</span>
-        <span class="flow-stage-meta">Tổng ${st.telemetry.num_clauses} CNF</span>
+    <!-- 5. Chi tiết thuật toán DPLL & Mệnh đề CNF (Thu gọn mặc định) -->
+    <details class="dpll-tech-accordion">
+      <summary>Chi tiết kỹ thuật CNF &amp; DPLL Solver (${st.telemetry.runtime_ms}ms) ▾</summary>
+      <div class="dpll-tech-body">
+        <div class="dpll-mini-metrics" style="display:grid; grid-template-columns:repeat(4,1fr); gap:6px;">
+          <div class="dpll-mini-box">
+            <div class="dpll-mini-val">${st.telemetry.propagations}</div>
+            <div class="dpll-mini-lbl">Unit Prop</div>
+          </div>
+          <div class="dpll-mini-box">
+            <div class="dpll-mini-val">${st.telemetry.decisions}</div>
+            <div class="dpll-mini-lbl">Decisions</div>
+          </div>
+          <div class="dpll-mini-box">
+            <div class="dpll-mini-val">${st.telemetry.backtracks}</div>
+            <div class="dpll-mini-lbl">Backtracks</div>
+          </div>
+          <div class="dpll-mini-box">
+            <div class="dpll-mini-val">${st.telemetry.sat_calls}</div>
+            <div class="dpll-mini-lbl">SAT Calls</div>
+          </div>
+        </div>
+        <div style="font-family:var(--font-mono); font-size:11px; color:var(--ink-muted);">
+          Mệnh đề đơn vị sinh ra: <code>${st.unit_clause}</code> | Tổng mệnh đề KB: <code>${st.telemetry.num_clauses}</code>
+        </div>
       </div>
-      ${newClueHtml}
-    </div>
+    </details>
   `;
 }
+
+function toggleToolsMenu(force) {
+  const pop = document.getElementById("toolsPopover");
+  if (!pop) return;
+  if (typeof force === "boolean") {
+    pop.classList.toggle("open", force);
+  } else {
+    pop.classList.toggle("open");
+  }
+}
+
+document.addEventListener("click", (e) => {
+  const wrap = document.querySelector(".menu-popover-wrap");
+  if (wrap && !wrap.contains(e.target)) {
+    const pop = document.getElementById("toolsPopover");
+    if (pop) pop.classList.remove("open");
+  }
+});
 
 /* =========================================================================
    CÁC HÀM ĐIỀU KHIỂN TUA LẠI LUỒNG SUY DIỄN (PLAYBACK CONTROLLER)
