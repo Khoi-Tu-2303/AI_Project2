@@ -365,11 +365,17 @@ class WebGUIApp:
 
     def serve(self, *, open_browser: bool = True) -> None:
         app_ref = self
-        static_routes = {
-            "/": ("index.html", "text/html; charset=utf-8"),
-            "/index.html": ("index.html", "text/html; charset=utf-8"),
-            "/styles.css": ("styles.css", "text/css; charset=utf-8"),
-            "/app.js": ("app.js", "application/javascript; charset=utf-8"),
+        mime_map = {
+            ".html": "text/html; charset=utf-8",
+            ".css": "text/css; charset=utf-8",
+            ".js": "application/javascript; charset=utf-8",
+            ".json": "application/json; charset=utf-8",
+            ".jpg": "image/jpeg",
+            ".jpeg": "image/jpeg",
+            ".png": "image/png",
+            ".webp": "image/webp",
+            ".svg": "image/svg+xml",
+            ".ico": "image/x-icon",
         }
 
         class Handler(BaseHTTPRequestHandler):
@@ -378,19 +384,29 @@ class WebGUIApp:
 
             def do_GET(self) -> None:
                 parsed = urlparse(self.path)
-                route = static_routes.get(parsed.path)
-                if route is not None:
-                    filename, content_type = route
-                    file_path = WEB_ASSETS_DIR / filename
-                    if file_path.is_file():
-                        data = file_path.read_bytes()
-                        self.send_response(HTTPStatus.OK)
-                        self.send_header("Content-Type", content_type)
-                        self.send_header("Cache-Control", "no-cache")
-                        self.send_header("Content-Length", str(len(data)))
-                        self.end_headers()
-                        self.wfile.write(data)
-                        return
+                req_path = parsed.path
+                if req_path in ("/", "/index.html"):
+                    req_path = "/index.html"
+
+                rel_str = req_path.lstrip("/\\")
+                target_file = (WEB_ASSETS_DIR / rel_str).resolve()
+                try:
+                    target_file.relative_to(WEB_ASSETS_DIR)
+                except ValueError:
+                    self.send_error(HTTPStatus.FORBIDDEN)
+                    return
+
+                if target_file.is_file():
+                    content_type = mime_map.get(target_file.suffix.lower(), "application/octet-stream")
+                    data = target_file.read_bytes()
+                    self.send_response(HTTPStatus.OK)
+                    self.send_header("Content-Type", content_type)
+                    self.send_header("Cache-Control", "no-cache")
+                    self.send_header("Content-Length", str(len(data)))
+                    self.end_headers()
+                    self.wfile.write(data)
+                    return
+
                 self.send_error(HTTPStatus.NOT_FOUND)
 
             def do_POST(self) -> None:
