@@ -1,0 +1,142 @@
+{
+  "schema_version": 2,
+  "n": 3,
+  "characters": [
+    {
+      "cell": "A1",
+      "name": "An",
+      "profession": "Thám tử"
+    },
+    {
+      "cell": "B1",
+      "name": "Bình",
+      "profession": "Đầu bếp"
+    },
+    {
+      "cell": "C1",
+      "name": "Châu",
+      "profession": "Thư ký"
+    },
+    {
+      "cell": "A2",
+      "name": "Dũng",
+      "profession": "Bác sĩ"
+    },
+    {
+      "cell": "B2",
+      "name": "Giang",
+      "profession": "Kỹ sư"
+    },
+    {
+      "cell": "C2",
+      "name": "Hải",
+      "profession": "Nghệ sĩ"
+    },
+    {
+      "cell": "A3",
+      "name": "Khánh",
+      "profession": "Bảo vệ"
+    },
+    {
+      "cell": "B3",
+      "name": "Linh",
+      "profession": "Thẩm phán"
+    },
+    {
+      "cell": "C3",
+      "name": "Minh",
+      "profession": "Phi công"
+    }
+  ],
+  "initial_revealed": {
+    "A1": "INNOCENT"
+  },
+  "clues": {
+    "A1": {
+      "id": "c_A1",
+      "type": "FACT",
+      "cells": [
+        "B1"
+      ],
+      "status": "CRIMINAL"
+    },
+    "B1": {
+      "id": "c_B1",
+      "type": "AT_LEAST",
+      "region": {
+        "kind": "ROW",
+        "arg": 2
+      },
+      "k": 1
+    },
+    "C1": {
+      "id": "c_C1",
+      "type": "EXACTLY",
+      "region": {
+        "kind": "ROW",
+        "arg": 1
+      },
+      "k": 1
+    },
+    "A2": {
+      "id": "c_A2",
+      "type": "FACT",
+      "cells": [
+        "A2"
+      ],
+      "status": "CRIMINAL"
+    },
+    "B2": {
+      "id": "c_B2",
+      "type": "FACT",
+      "cells": [
+        "B2"
+      ],
+      "status": "INNOCENT"
+    },
+    "C2": {
+      "id": "c_C2",
+      "type": "FACT",
+      "cells": [
+        "C2"
+      ],
+      "status": "CRIMINAL"
+    },
+    "A3": {
+      "id": "c_A3",
+      "type": "FACT",
+      "cells": [
+        "A3"
+      ],
+      "status": "INNOCENT"
+    },
+    "B3": {
+      "id": "c_B3",
+      "type": "FACT",
+      "cells": [
+        "B3"
+      ],
+      "status": "CRIMINAL"
+    },
+    "C3": {
+      "id": "c_C3",
+      "type": "FACT",
+      "cells": [
+        "C3"
+      ],
+      "status": "INNOCENT"
+    }
+  },
+  "solution": {
+    "A1": "INNOCENT",
+    "B1": "CRIMINAL",
+    "C1": "INNOCENT",
+    "A2": "CRIMINAL",
+    "B2": "INNOCENT",
+    "C2": "CRIMINAL",
+    "A3": "INNOCENT",
+    "B3": "CRIMINAL",
+    "C3": "INNOCENT"
+  },
+  "id": "3x3_stuck"
+}

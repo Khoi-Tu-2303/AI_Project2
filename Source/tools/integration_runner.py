@@ -262,6 +262,130 @@ class IntegrationRunner:
                           passed_count=passed, failed_count=failed,
                           total_count=len(subchecks), subchecks=subchecks)
 
+    def run_gate_p(self) -> GateResult:
+        """Execute Gate G-P: Puzzle suite manifest validation, uniqueness, and deductive order."""
+        subchecks: list[SubCheckResult] = []
+        try:
+            from common.errors import ReasoningFailure
+            from common.manifest_io import load_manifest
+            from common.puzzle_io import load_puzzle
+            from common.types import status_to_bool
+            from gui.controller import GUIController
+            from logic.encoder import CNFEncoder
+            from logic.entailment import EntailmentChecker, Uniqueness
+            from logic.evaluator import SemanticEvaluator
+
+            manifest_path = self.source_dir / "puzzles" / "index.json"
+            manifest = load_manifest(manifest_path)
+            cases = manifest.get("cases", [])
+            if len(cases) < 8:
+                raise AssertionError(f"Expected at least 8 cases in index.json, found {len(cases)}")
+
+            for case in cases:
+                cid = case["case_id"]
+                rel = case["path"]
+                expected = case["expected"]
+
+                def check_case(cid=cid, rel=rel, expected=expected) -> str:
+                    p_path = self.source_dir / "puzzles" / rel
+                    puzzle = load_puzzle(p_path)
+                    if puzzle.solution is not None:
+                        ev = SemanticEvaluator(puzzle.n)
+                        bmap = {c: status_to_bool(s) for c, s in puzzle.solution.items()}
+                        for c_cell, clue in puzzle.clues.items():
+                            assert ev.evaluate(clue, bmap), f"{cid}: clue {clue.id} false under solution"
+
+                    enc = CNFEncoder(puzzle.n)
+                    full_kb = enc.build_kb(tuple(puzzle.clues.values()), {})
+                    u_rep = EntailmentChecker(full_kb).check_uniqueness()
+                    actual_u = "UNSAT" if u_rep.status is Uniqueness.NONE else u_rep.status.value
+                    assert actual_u == expected["full_clue_uniqueness"], (
+                        f"{cid}: expected uniqueness {expected['full_clue_uniqueness']}, got {actual_u}"
+                    )
+
+                    ctrl = GUIController()
+                    ctrl.load_puzzle(p_path)
+                    if expected["run"] == "INCONSISTENT":
+                        try:
+                            ctrl.auto_solve_all()
+                            raise AssertionError(f"{cid}: expected ReasoningFailure(INCONSISTENT)")
+                        except ReasoningFailure:
+                            pass
+                    else:
+                        outcomes = ctrl.auto_solve_all()
+                        actual_order = [o.cell for o in outcomes]
+                        actual_run = "SOLVED" if ctrl.is_complete() else "STUCK"
+                        assert actual_run == expected["run"], f"{cid}: expected {expected['run']}, got {actual_run}"
+                        if expected["accepted_order"] is not None:
+                            assert actual_order == expected["accepted_order"], (
+                                f"{cid}: order {actual_order} != {expected['accepted_order']}"
+                            )
+                    return f"Case '{cid}' ({puzzle.n}x{puzzle.n}, {case['kind']}) verified: uniqueness={actual_u}, run={expected['run']}"
+
+                subchecks.append(
+                    self.run_check(
+                        f"P-{cid}",
+                        f"Verify puzzle case '{cid}' ({rel})",
+                        check_case,
+                    )
+                )
+        except Exception as exc:
+            subchecks.append(SubCheckResult("G-P-INIT", "Load Puzzle Suite & Manifest", "FAIL", str(exc)))
+
+        passed = sum(1 for c in subchecks if c.status == "PASS")
+        failed = len(subchecks) - passed
+        return GateResult(
+            gate_id=GATE_P,
+            module_owner="C/E (Puzzle Suite)",
+            status="FAIL" if failed else "PASS",
+            passed_count=passed,
+            failed_count=failed,
+            blocked_count=0,
+            total_count=len(subchecks),
+            subchecks=subchecks,
+        )
+
+    def run_gate_e(self) -> GateResult:
+        """Execute Gate G-E: Real GUI & Controller acceptance checks."""
+        try:
+            import pytest
+            from tests import test_gui_acceptance as checks
+
+            functions = [
+                (name, getattr(checks, name))
+                for name in sorted(dir(checks))
+                if name.startswith("test_e")
+            ]
+            if not functions:
+                raise RuntimeError("No Module E acceptance checks found")
+
+            def invoke(func):
+                try:
+                    func()
+                except (pytest.fail.Exception, pytest.skip.Exception) as exc:
+                    raise AssertionError(f"Acceptance check did not pass: {exc}") from exc
+                return "Real Module E implementation verified"
+
+            subchecks = [
+                self.run_check(name, func.__doc__ or name, lambda func=func: invoke(func))
+                for name, func in functions
+            ]
+        except Exception as exc:
+            subchecks = [SubCheckResult("G-E-IMPORT", "Load Module E checks", "FAIL", str(exc))]
+
+        passed = sum(1 for c in subchecks if c.status == "PASS")
+        failed = len(subchecks) - passed
+        return GateResult(
+            gate_id=GATE_E,
+            module_owner="E (GUI & Main)",
+            status="FAIL" if failed else "PASS",
+            passed_count=passed,
+            failed_count=failed,
+            blocked_count=0,
+            total_count=len(subchecks),
+            subchecks=subchecks,
+        )
+
     def create_blocked_gate(self, gate_id: str, owner: str, module_name: str) -> GateResult:
         """Create a standard BLOCKED gate report when a member's module is missing."""
         sub = SubCheckResult(
@@ -309,7 +433,7 @@ class IntegrationRunner:
             if not is_module_available("logic.encoder") or not is_module_available("logic.dpll"):
                 gates[GATE_P] = self.create_blocked_gate(GATE_P, "C (Puzzle Suite)", "puzzles (requires B & C)")
             else:
-                gates[GATE_P] = self.create_blocked_gate(GATE_P, "C (Puzzle Suite)", "puzzles (requires B & C)")
+                gates[GATE_P] = self.run_gate_p()
 
         # G-D
         if scope_lower in ("d", "all"):
@@ -323,7 +447,7 @@ class IntegrationRunner:
             if not is_module_available("gui.app") and not is_module_available("gui.controller"):
                 gates[GATE_E] = self.create_blocked_gate(GATE_E, "E (GUI & Main)", "gui.app / gui.controller")
             else:
-                gates[GATE_E] = self.create_blocked_gate(GATE_E, "E (GUI & Main)", "gui.app / gui.controller")
+                gates[GATE_E] = self.run_gate_e()
 
         # G-I
         if scope_lower in ("integration", "all"):

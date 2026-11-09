@@ -31,7 +31,6 @@ def test_fault_injection_always_unknown_cannot_solve() -> None:
         )
 
     engine.set_classifier(always_unknown)
-    # Attempting to submit verdict for any unsolved cell yields NOT_PROVABLE
     outcome = engine.submit_verdict("B1", Status.CRIMINAL)
     assert outcome.result is VerdictResult.NOT_PROVABLE
     assert not engine.is_complete()
@@ -43,7 +42,6 @@ def test_fault_injection_wrong_forced_caught_by_reference() -> None:
     engine = GameEngine()
     engine.load(chain_path)
 
-    # In 3x3_chain, B1 is CRIMINAL. Inject faulty classifier claiming B1 is INNOCENT
     def wrong_forced(state: PublicState, *, deadline: float | None = None) -> ClassificationReport:
         by_cell = {c: Classification.UNKNOWN for c in state.unsolved}
         by_cell["B1"] = Classification.INNOCENT
@@ -59,20 +57,20 @@ def test_runner_missing_module_yields_blocked(monkeypatch) -> None:
     source_dir = Path(__file__).resolve().parent.parent
     runner = IntegrationRunner(source_dir=source_dir, require_real=True)
 
-    # Simulate missing B even after delivery; preserve other module checks.
     from tools import integration_runner
     original = integration_runner.is_module_available
-    monkeypatch.setattr(integration_runner, "is_module_available",
-                        lambda name: False if name == "logic.encoder" else original(name))
+    monkeypatch.setattr(
+        integration_runner,
+        "is_module_available",
+        lambda name: False if name in ("logic.encoder", "gui.app", "gui.controller") else original(name),
+    )
 
-    # Scope B (logic.encoder is simulated missing)
     report_b = runner.run_scope("b")
     assert report_b.overall_status == "BLOCKED"
     assert report_b.exit_code == 2
     assert "G-B" in report_b.gates
     assert report_b.gates["G-B"].status == "BLOCKED"
 
-    # Scope All (missing modules cause BLOCKED)
     report_all = runner.run_scope("all")
     assert report_all.overall_status == "BLOCKED"
     assert report_all.exit_code == 2
@@ -92,4 +90,3 @@ def test_runner_rejects_broken_real_encoder(monkeypatch) -> None:
     assert report.overall_status == "FAIL"
     assert report.exit_code == 1
     assert report.gates["G-B"].failed_count > 0
-

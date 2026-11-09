@@ -1,0 +1,155 @@
+{
+  "schema_version": 2,
+  "n": 3,
+  "characters": [
+    {
+      "cell": "A1",
+      "name": "An",
+      "profession": "Thám tử"
+    },
+    {
+      "cell": "B1",
+      "name": "Bình",
+      "profession": "Đầu bếp"
+    },
+    {
+      "cell": "C1",
+      "name": "Châu",
+      "profession": "Thư ký"
+    },
+    {
+      "cell": "A2",
+      "name": "Dũng",
+      "profession": "Bác sĩ"
+    },
+    {
+      "cell": "B2",
+      "name": "Giang",
+      "profession": "Kỹ sư"
+    },
+    {
+      "cell": "C2",
+      "name": "Hải",
+      "profession": "Nghệ sĩ"
+    },
+    {
+      "cell": "A3",
+      "name": "Khánh",
+      "profession": "Bảo vệ"
+    },
+    {
+      "cell": "B3",
+      "name": "Linh",
+      "profession": "Thẩm phán"
+    },
+    {
+      "cell": "C3",
+      "name": "Minh",
+      "profession": "Phi công"
+    }
+  ],
+  "initial_revealed": {
+    "A1": "CRIMINAL",
+    "B1": "CRIMINAL"
+  },
+  "clues": {
+    "A1": {
+      "id": "c_A1",
+      "type": "FACT",
+      "cells": [
+        "A1"
+      ],
+      "status": "CRIMINAL"
+    },
+    "B1": {
+      "id": "c_B1",
+      "type": "PARITY",
+      "region": {
+        "kind": "ROW",
+        "arg": 1
+      },
+      "parity": "EVEN"
+    },
+    "C1": {
+      "id": "c_C1",
+      "type": "COMPARE",
+      "left": {
+        "kind": "ROW",
+        "arg": 1
+      },
+      "right": {
+        "kind": "COL",
+        "arg": "A"
+      },
+      "op": "GT"
+    },
+    "A2": {
+      "id": "c_A2",
+      "type": "EXACTLY",
+      "region": {
+        "kind": "COL",
+        "arg": "B"
+      },
+      "k": 2
+    },
+    "B2": {
+      "id": "c_B2",
+      "type": "PARITY",
+      "region": {
+        "kind": "ROW",
+        "arg": 2
+      },
+      "parity": "ODD"
+    },
+    "C2": {
+      "id": "c_C2",
+      "type": "DIFFERENT",
+      "cells": [
+        "B2",
+        "B3"
+      ]
+    },
+    "A3": {
+      "id": "c_A3",
+      "type": "COMPARE",
+      "left": {
+        "kind": "COL",
+        "arg": "B"
+      },
+      "right": {
+        "kind": "ROW",
+        "arg": 3
+      },
+      "op": "EQ"
+    },
+    "B3": {
+      "id": "c_B3",
+      "type": "DIFFERENT",
+      "cells": [
+        "B2",
+        "C3"
+      ]
+    },
+    "C3": {
+      "id": "c_C3",
+      "type": "EXACTLY",
+      "region": {
+        "kind": "COL",
+        "arg": "C"
+      },
+      "k": 2
+    }
+  },
+  "solution": {
+    "A1": "CRIMINAL",
+    "B1": "CRIMINAL",
+    "C1": "INNOCENT",
+    "A2": "INNOCENT",
+    "B2": "INNOCENT",
+    "C2": "CRIMINAL",
+    "A3": "INNOCENT",
+    "B3": "CRIMINAL",
+    "C3": "CRIMINAL"
+  },
+  "id": "3x3_extensions"
+}

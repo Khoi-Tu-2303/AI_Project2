@@ -1,0 +1,257 @@
+{
+  "schema_version": 2,
+  "n": 4,
+  "characters": [
+    {
+      "cell": "A1",
+      "name": "An",
+      "profession": "Thám tử"
+    },
+    {
+      "cell": "B1",
+      "name": "Bình",
+      "profession": "Bác sĩ"
+    },
+    {
+      "cell": "C1",
+      "name": "Châu",
+      "profession": "Đầu bếp"
+    },
+    {
+      "cell": "D1",
+      "name": "Dũng",
+      "profession": "Phi công"
+    },
+    {
+      "cell": "A2",
+      "name": "Giang",
+      "profession": "Kỹ sư"
+    },
+    {
+      "cell": "B2",
+      "name": "Hải",
+      "profession": "Nghệ sĩ"
+    },
+    {
+      "cell": "C2",
+      "name": "Khánh",
+      "profession": "Bảo vệ"
+    },
+    {
+      "cell": "D2",
+      "name": "Linh",
+      "profession": "Thẩm phán"
+    },
+    {
+      "cell": "A3",
+      "name": "Minh",
+      "profession": "Dược sĩ"
+    },
+    {
+      "cell": "B3",
+      "name": "Nam",
+      "profession": "Nhà báo"
+    },
+    {
+      "cell": "C3",
+      "name": "Oanh",
+      "profession": "Giáo sư"
+    },
+    {
+      "cell": "D3",
+      "name": "Phúc",
+      "profession": "Kiến trúc sư"
+    },
+    {
+      "cell": "A4",
+      "name": "Quân",
+      "profession": "Thuyền trưởng"
+    },
+    {
+      "cell": "B4",
+      "name": "Sơn",
+      "profession": "Nhạc sĩ"
+    },
+    {
+      "cell": "C4",
+      "name": "Thảo",
+      "profession": "Thư ký"
+    },
+    {
+      "cell": "D4",
+      "name": "Uyên",
+      "profession": "Pháp y"
+    }
+  ],
+  "initial_revealed": {
+    "A1": "INNOCENT",
+    "B1": "CRIMINAL"
+  },
+  "clues": {
+    "A1": {
+      "id": "c_A1",
+      "type": "FACT",
+      "cells": [
+        "A1"
+      ],
+      "status": "INNOCENT"
+    },
+    "B1": {
+      "id": "c_B1",
+      "type": "AT_MOST",
+      "region": {
+        "kind": "ROW",
+        "arg": 1
+      },
+      "k": 1
+    },
+    "C1": {
+      "id": "c_C1",
+      "type": "DIFFERENT",
+      "cells": [
+        "C1",
+        "A2"
+      ]
+    },
+    "D1": {
+      "id": "c_D1",
+      "type": "COMPARE",
+      "left": {
+        "kind": "COL",
+        "arg": "A"
+      },
+      "right": {
+        "kind": "ROW",
+        "arg": 1
+      },
+      "op": "EQ"
+    },
+    "A2": {
+      "id": "c_A2",
+      "type": "SAME",
+      "cells": [
+        "A2",
+        "B2"
+      ]
+    },
+    "B2": {
+      "id": "c_B2",
+      "type": "PARITY",
+      "region": {
+        "kind": "EXPLICIT",
+        "arg": [
+          "A2",
+          "B2",
+          "C2"
+        ]
+      },
+      "parity": "ODD"
+    },
+    "C2": {
+      "id": "c_C2",
+      "type": "EXACTLY",
+      "region": {
+        "kind": "ROW",
+        "arg": 2
+      },
+      "k": 3
+    },
+    "D2": {
+      "id": "c_D2",
+      "type": "SAME",
+      "cells": [
+        "D2",
+        "B3"
+      ]
+    },
+    "A3": {
+      "id": "c_A3",
+      "type": "EXACTLY",
+      "region": {
+        "kind": "COL",
+        "arg": "B"
+      },
+      "k": 2
+    },
+    "B3": {
+      "id": "c_B3",
+      "type": "AT_LEAST",
+      "region": {
+        "kind": "NEIGHBORS",
+        "arg": "D4"
+      },
+      "k": 2
+    },
+    "C3": {
+      "id": "c_C3",
+      "type": "EXACTLY",
+      "region": {
+        "kind": "COL",
+        "arg": "C"
+      },
+      "k": 2
+    },
+    "D3": {
+      "id": "c_D3",
+      "type": "EXACTLY",
+      "region": {
+        "kind": "ROW",
+        "arg": 3
+      },
+      "k": 1
+    },
+    "A4": {
+      "id": "c_A4",
+      "type": "EXACTLY",
+      "region": {
+        "kind": "COL",
+        "arg": "D"
+      },
+      "k": 2
+    },
+    "B4": {
+      "id": "c_B4",
+      "type": "DIFFERENT",
+      "cells": [
+        "B4",
+        "C4"
+      ]
+    },
+    "C4": {
+      "id": "c_C4",
+      "type": "EXACTLY",
+      "region": {
+        "kind": "ROW",
+        "arg": 4
+      },
+      "k": 2
+    },
+    "D4": {
+      "id": "c_D4",
+      "type": "FACT",
+      "cells": [
+        "B1"
+      ],
+      "status": "CRIMINAL"
+    }
+  },
+  "solution": {
+    "A1": "INNOCENT",
+    "B1": "CRIMINAL",
+    "C1": "INNOCENT",
+    "D1": "INNOCENT",
+    "A2": "CRIMINAL",
+    "B2": "CRIMINAL",
+    "C2": "CRIMINAL",
+    "D2": "INNOCENT",
+    "A3": "INNOCENT",
+    "B3": "INNOCENT",
+    "C3": "INNOCENT",
+    "D3": "CRIMINAL",
+    "A4": "INNOCENT",
+    "B4": "INNOCENT",
+    "C4": "CRIMINAL",
+    "D4": "CRIMINAL"
+  },
+  "id": "4x4_crossfire"
+}

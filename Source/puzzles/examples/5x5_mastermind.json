@@ -1,0 +1,375 @@
+{
+  "schema_version": 2,
+  "n": 5,
+  "characters": [
+    {
+      "cell": "A1",
+      "name": "An",
+      "profession": "Thám tử"
+    },
+    {
+      "cell": "B1",
+      "name": "Bình",
+      "profession": "Bác sĩ"
+    },
+    {
+      "cell": "C1",
+      "name": "Châu",
+      "profession": "Đầu bếp"
+    },
+    {
+      "cell": "D1",
+      "name": "Dũng",
+      "profession": "Phi công"
+    },
+    {
+      "cell": "E1",
+      "name": "Giang",
+      "profession": "Kỹ sư"
+    },
+    {
+      "cell": "A2",
+      "name": "Hiếu",
+      "profession": "Cảnh sát"
+    },
+    {
+      "cell": "B2",
+      "name": "Hải",
+      "profession": "Nghệ sĩ"
+    },
+    {
+      "cell": "C2",
+      "name": "Khánh",
+      "profession": "Bảo vệ"
+    },
+    {
+      "cell": "D2",
+      "name": "Kiên",
+      "profession": "Nhà băng"
+    },
+    {
+      "cell": "E2",
+      "name": "Linh",
+      "profession": "Thẩm phán"
+    },
+    {
+      "cell": "A3",
+      "name": "Long",
+      "profession": "Đạo diễn"
+    },
+    {
+      "cell": "B3",
+      "name": "Mai",
+      "profession": "Nhà khảo cổ"
+    },
+    {
+      "cell": "C3",
+      "name": "Minh",
+      "profession": "Dược sĩ"
+    },
+    {
+      "cell": "D3",
+      "name": "Nam",
+      "profession": "Nhà báo"
+    },
+    {
+      "cell": "E3",
+      "name": "Ngọc",
+      "profession": "Chuyên gia mật mã"
+    },
+    {
+      "cell": "A4",
+      "name": "Oanh",
+      "profession": "Giáo sư"
+    },
+    {
+      "cell": "B4",
+      "name": "Phúc",
+      "profession": "Kiến trúc sư"
+    },
+    {
+      "cell": "C4",
+      "name": "Quân",
+      "profession": "Thuyền trưởng"
+    },
+    {
+      "cell": "D4",
+      "name": "Sơn",
+      "profession": "Nhạc sĩ"
+    },
+    {
+      "cell": "E4",
+      "name": "Thảo",
+      "profession": "Thư ký"
+    },
+    {
+      "cell": "A5",
+      "name": "Tâm",
+      "profession": "Luật sư"
+    },
+    {
+      "cell": "B5",
+      "name": "Uyên",
+      "profession": "Pháp y"
+    },
+    {
+      "cell": "C5",
+      "name": "Vân",
+      "profession": "Nhà ngoại giao"
+    },
+    {
+      "cell": "D5",
+      "name": "Xuân",
+      "profession": "Thợ kim hoàn"
+    },
+    {
+      "cell": "E5",
+      "name": "Yến",
+      "profession": "Quản gia"
+    }
+  ],
+  "initial_revealed": {
+    "A1": "CRIMINAL",
+    "E5": "INNOCENT"
+  },
+  "clues": {
+    "A1": {
+      "id": "c_A1",
+      "type": "SAME",
+      "cells": [
+        "A1",
+        "B1"
+      ]
+    },
+    "B1": {
+      "id": "c_B1",
+      "type": "AT_MOST",
+      "region": {
+        "kind": "ROW",
+        "arg": 1
+      },
+      "k": 2
+    },
+    "C1": {
+      "id": "c_C1",
+      "type": "DIFFERENT",
+      "cells": [
+        "C1",
+        "A2"
+      ]
+    },
+    "D1": {
+      "id": "c_D1",
+      "type": "SAME",
+      "cells": [
+        "D1",
+        "B2"
+      ]
+    },
+    "E1": {
+      "id": "c_E1",
+      "type": "DIFFERENT",
+      "cells": [
+        "E1",
+        "C2"
+      ]
+    },
+    "A2": {
+      "id": "c_A2",
+      "type": "SAME",
+      "cells": [
+        "A2",
+        "D2"
+      ]
+    },
+    "B2": {
+      "id": "c_B2",
+      "type": "EXACTLY",
+      "region": {
+        "kind": "ROW",
+        "arg": 2
+      },
+      "k": 3
+    },
+    "C2": {
+      "id": "c_C2",
+      "type": "DIFFERENT",
+      "cells": [
+        "C2",
+        "A3"
+      ]
+    },
+    "D2": {
+      "id": "c_D2",
+      "type": "SAME",
+      "cells": [
+        "D2",
+        "B3"
+      ]
+    },
+    "E2": {
+      "id": "c_E2",
+      "type": "SAME",
+      "cells": [
+        "E2",
+        "C3"
+      ]
+    },
+    "A3": {
+      "id": "c_A3",
+      "type": "DIFFERENT",
+      "cells": [
+        "A3",
+        "D3"
+      ]
+    },
+    "B3": {
+      "id": "c_B3",
+      "type": "EXACTLY",
+      "region": {
+        "kind": "ROW",
+        "arg": 3
+      },
+      "k": 2
+    },
+    "C3": {
+      "id": "c_C3",
+      "type": "EXACTLY",
+      "region": {
+        "kind": "COL",
+        "arg": "A"
+      },
+      "k": 2
+    },
+    "D3": {
+      "id": "c_D3",
+      "type": "DIFFERENT",
+      "cells": [
+        "D3",
+        "B4"
+      ]
+    },
+    "E3": {
+      "id": "c_E3",
+      "type": "SAME",
+      "cells": [
+        "E3",
+        "C4"
+      ]
+    },
+    "A4": {
+      "id": "c_A4",
+      "type": "DIFFERENT",
+      "cells": [
+        "B4",
+        "D4"
+      ]
+    },
+    "B4": {
+      "id": "c_B4",
+      "type": "EXACTLY",
+      "region": {
+        "kind": "ROW",
+        "arg": 4
+      },
+      "k": 1
+    },
+    "C4": {
+      "id": "c_C4",
+      "type": "EXACTLY",
+      "region": {
+        "kind": "COL",
+        "arg": "B"
+      },
+      "k": 2
+    },
+    "D4": {
+      "id": "c_D4",
+      "type": "EXACTLY",
+      "region": {
+        "kind": "COL",
+        "arg": "C"
+      },
+      "k": 2
+    },
+    "E4": {
+      "id": "c_E4",
+      "type": "EXACTLY",
+      "region": {
+        "kind": "COL",
+        "arg": "D"
+      },
+      "k": 4
+    },
+    "A5": {
+      "id": "c_A5",
+      "type": "FACT",
+      "cells": [
+        "A1"
+      ],
+      "status": "CRIMINAL"
+    },
+    "B5": {
+      "id": "c_B5",
+      "type": "FACT",
+      "cells": [
+        "E5"
+      ],
+      "status": "INNOCENT"
+    },
+    "C5": {
+      "id": "c_C5",
+      "type": "EXACTLY",
+      "region": {
+        "kind": "ROW",
+        "arg": 5
+      },
+      "k": 2
+    },
+    "D5": {
+      "id": "c_D5",
+      "type": "EXACTLY",
+      "region": {
+        "kind": "COL",
+        "arg": "E"
+      },
+      "k": 0
+    },
+    "E5": {
+      "id": "c_E5",
+      "type": "FACT",
+      "cells": [
+        "E5"
+      ],
+      "status": "INNOCENT"
+    }
+  },
+  "solution": {
+    "A1": "CRIMINAL",
+    "B1": "CRIMINAL",
+    "C1": "INNOCENT",
+    "D1": "INNOCENT",
+    "E1": "INNOCENT",
+    "A2": "CRIMINAL",
+    "B2": "INNOCENT",
+    "C2": "CRIMINAL",
+    "D2": "CRIMINAL",
+    "E2": "INNOCENT",
+    "A3": "INNOCENT",
+    "B3": "CRIMINAL",
+    "C3": "INNOCENT",
+    "D3": "CRIMINAL",
+    "E3": "INNOCENT",
+    "A4": "INNOCENT",
+    "B4": "INNOCENT",
+    "C4": "INNOCENT",
+    "D4": "CRIMINAL",
+    "E4": "INNOCENT",
+    "A5": "INNOCENT",
+    "B5": "INNOCENT",
+    "C5": "CRIMINAL",
+    "D5": "CRIMINAL",
+    "E5": "INNOCENT"
+  },
+  "id": "5x5_mastermind"
+}

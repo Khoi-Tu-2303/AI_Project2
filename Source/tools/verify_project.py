@@ -57,7 +57,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Griductive Solver Verification Runner")
     parser.add_argument(
         "--scope",
-        choices=["a", "b", "c", "d", "e", "integration", "all"],
+        choices=["a", "b", "c", "d", "e", "p", "integration", "all"],
         default="a",
         help="Scope of verification to run (default: a)",
     )
@@ -97,6 +97,8 @@ def main() -> None:
     summary_path.write_text(summary_md, encoding="utf-8")
 
     # Print to console
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     print(summary_md)
     print(f"\n[INFO] Machine-readable report saved to: {results_path}")
     print(f"[INFO] Markdown summary saved to: {summary_path}")
@@ -106,4 +108,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
