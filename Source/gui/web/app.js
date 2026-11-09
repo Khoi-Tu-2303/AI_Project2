@@ -188,9 +188,49 @@ function showScreen(screenId) {
   document.querySelectorAll(".screen").forEach(el => el.classList.remove("active"));
   const target = document.getElementById(screenId);
   if (target) target.classList.add("active");
+  if (screenId === "screenStart") {
+    updateStartScreenStats();
+  }
   if (screenId === "screenCases" && currentState) {
     renderCaseSelection(currentState.puzzles || []);
   }
+}
+
+function updateStartScreenStats() {
+  const solved = getSolvedCases();
+  const officialSolved = solved.filter(id => isOfficialSix(id)).length;
+  const total = 6;
+  const pct = Math.min(100, Math.round((officialSolved / total) * 100));
+
+  const fillEl = document.getElementById("startProgressBarFill");
+  if (fillEl) fillEl.style.width = `${pct}%`;
+
+  const progLbl = document.getElementById("lblDetectiveProgress");
+  if (progLbl) progLbl.textContent = `Tiến độ: ${officialSolved}/${total} vụ án chuẩn`;
+
+  const rankLbl = document.getElementById("lblDetectiveRank");
+  if (rankLbl) {
+    let rankText = "CẤP BẬC: THÁM TỬ TẬP SỰ";
+    if (officialSolved >= 6) {
+      rankText = "CẤP BẬC: BẬC THẦY LOGIC MỆNH ĐỀ";
+    } else if (officialSolved >= 4) {
+      rankText = "CẤP BẬC: CHUYÊN GIA PHÁ ÁN";
+    } else if (officialSolved >= 2) {
+      rankText = "CẤP BẬC: TRINH SÁT HIỆN TRƯỜNG";
+    } else if (officialSolved >= 1) {
+      rankText = "CẤP BẬC: THÁM TỬ ĐIỀU TRA";
+    }
+    rankLbl.textContent = rankText;
+  }
+}
+
+async function launchSpotlightCase(caseId) {
+  stopAutoSolve();
+  selectedVisualStep = null;
+  playSfx("flip");
+  const data = await apiCall("/api/load", { case_id: caseId });
+  render(data);
+  showScreen("screenGame");
 }
 
 function openModal(id) {
@@ -818,6 +858,7 @@ function render(data) {
 
   if (data.is_complete) {
     markCaseSolved(data.puzzle_id);
+    updateStartScreenStats();
   }
 
   const qSel = document.getElementById("quickPuzzleSelect");
@@ -1201,6 +1242,10 @@ const uploadTopbar = document.getElementById("uploadJsonTopbar");
 if (uploadTopbar) {
   uploadTopbar.addEventListener("change", handleJsonFileUpload);
 }
+const uploadStart = document.getElementById("uploadJsonStart");
+if (uploadStart) {
+  uploadStart.addEventListener("change", handleJsonFileUpload);
+}
 
 // Lớp phủ Kéo Thả File JSON (Drag & Drop Dropzone Overlay)
 const dropOverlay = document.getElementById("dropzoneOverlay");
@@ -1252,6 +1297,7 @@ window.addEventListener("drop", async (e) => {
 
 // Khởi tạo icon âm thanh theo thiết lập
 updateSoundIcon();
+updateStartScreenStats();
 
 // Tải dữ liệu trạng thái khi mở trang
 apiCall("/api/state", {}).then(render);
