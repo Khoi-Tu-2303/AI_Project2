@@ -291,29 +291,28 @@ html, body {
 }
 
 /* =========================================================================
-   CỘT TRÁI: ĐẠI BẢN DOANH ĐIỀU TRA (COMMAND & BRIEFING DOSSIER BINDER)
+   CỘT TRÁI: ĐẠI BẢN DOANH ĐIỀU TRA (COMMAND & BRIEFING BORDERLESS FLOATING HUD)
    ========================================================================= */
 .bureau-command-panel {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   text-align: left;
-  gap: 16px;
-  background: linear-gradient(145deg, rgba(14, 18, 30, 0.74) 0%, rgba(8, 11, 18, 0.88) 100%);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(245, 158, 11, 0.24);
-  border-radius: 20px;
-  padding: 26px 28px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(254, 240, 138, 0.18);
+  gap: 18px;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 10px 0 !important;
+  box-shadow: none !important;
   position: relative;
-  overflow: hidden;
 }
 
 [data-theme="paper"] .bureau-command-panel {
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.92) 0%, rgba(244, 240, 230, 0.96) 100%);
-  border: 1.5px solid rgba(180, 83, 9, 0.35);
-  box-shadow: 0 14px 36px rgba(40, 25, 10, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 /* Con Dấu Nghiệp Vụ Tối Giản */
@@ -328,35 +327,39 @@ html, body {
 .secret-stamp-badge {
   display: inline-flex;
   align-items: center;
-  border: 2px dashed #dc2626;
-  color: #ef4444;
-  padding: 3px 9px;
-  border-radius: 3px;
+  border: 2px dashed #ef4444;
+  color: #f87171;
+  padding: 3px 10px;
+  border-radius: 4px;
   font-family: var(--font-mono);
   font-weight: 900;
-  font-size: 10.5px;
+  font-size: 11px;
   letter-spacing: 1.8px;
   text-transform: uppercase;
   transform: rotate(-2.5deg);
-  background: rgba(220, 38, 38, 0.08);
-  box-shadow: 0 0 12px rgba(220, 38, 38, 0.25);
+  background: rgba(220, 38, 38, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.65), 0 0 14px rgba(220, 38, 38, 0.35);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
 }
 
 .case-docket-badge {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 3px 9px;
+  padding: 3px 10px;
   border-radius: 4px;
-  background: rgba(245, 158, 11, 0.1);
-  border: 1px solid rgba(245, 158, 11, 0.32);
+  background: rgba(14, 18, 28, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(245, 158, 11, 0.4);
   font-family: var(--font-mono);
   font-size: 10.5px;
   color: var(--gold-bright);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
 }
 .docket-prefix {
   font-weight: 600;
-  color: var(--ink-secondary);
+  color: #CBD5E1;
   font-size: 9.5px;
 }
 .docket-id {
@@ -369,15 +372,18 @@ html, body {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  padding: 4px 11px;
+  padding: 4px 12px;
   border-radius: 999px;
-  background: var(--gold-soft);
-  border: 1px solid var(--border-strong);
+  background: rgba(14, 18, 28, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(245, 158, 11, 0.4);
   color: var(--gold-bright);
   font-family: var(--font-mono);
   font-size: 10.5px;
   font-weight: 700;
   letter-spacing: 0.05em;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
 }
 .badge-indicator {
   width: 6px;
@@ -387,24 +393,24 @@ html, body {
   box-shadow: 0 0 6px var(--gold-bright);
 }
 
-/* Tiêu Đề Hồ Sơ Trọng Án */
+/* Tiêu Đề Hồ Sơ Trọng Án Nổi Bật */
 .hero-title-block {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 6px;
 }
 
 .hero-title {
   font-family: var(--font-serif);
-  font-size: clamp(2.1rem, 3.4vw, 3rem);
+  font-size: clamp(2.3rem, 3.8vw, 3.4rem);
   font-weight: 700;
-  line-height: 1.15;
+  line-height: 1.12;
   letter-spacing: 0.015em;
   color: #FFFFFF;
   background: linear-gradient(135deg, #FFFFFF 0%, #FEE685 30%, #F59E0B 75%, #D97706 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 4px 18px rgba(245, 158, 11, 0.28));
+  filter: drop-shadow(0 4px 18px rgba(0, 0, 0, 0.95)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.9));
   margin: 0;
 }
 
@@ -418,47 +424,50 @@ html, body {
 .hero-subtitle {
   font-family: var(--font-serif);
   font-style: italic;
-  font-size: clamp(1rem, 1.35vw, 1.2rem);
+  font-size: clamp(1.05rem, 1.4vw, 1.25rem);
   font-weight: 500;
-  color: var(--gold-bright);
+  color: #FDE68A;
   margin: 0;
   letter-spacing: 0.02em;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95), 0 1px 3px rgba(0, 0, 0, 0.9);
 }
 
 [data-theme="paper"] .hero-subtitle {
   color: #B45309;
+  text-shadow: none;
 }
 
-/* Thẻ Ngành Thám Tử & Phù Hiệu Bằng Đồng Nhỏ Gọn (Detective ID Badge) */
+/* Thẻ Ngành Thám Tử & Phù Hiệu Dạng Dải Ngang Kim Loại (Không Khung Hộp) */
 .detective-profile-bar {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
   width: 100%;
   max-width: 520px;
-  padding: 11px 18px;
-  border-radius: 13px;
-  background: linear-gradient(135deg, rgba(22, 29, 44, 0.95), rgba(12, 16, 26, 0.95));
-  border: 1.5px solid rgba(245, 158, 11, 0.32);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(254, 240, 138, 0.2);
+  padding: 10px 0;
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid rgba(245, 158, 11, 0.28) !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
 }
 
 [data-theme="paper"] .detective-profile-bar {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(248, 245, 238, 0.98));
-  border-color: rgba(180, 83, 9, 0.35);
-  box-shadow: 0 4px 14px rgba(40, 25, 10, 0.08);
+  background: transparent !important;
+  border-color: rgba(180, 83, 9, 0.35) !important;
+  box-shadow: none !important;
 }
 
 .credential-shield-col {
   flex-shrink: 0;
 }
 .brass-police-shield {
-  width: 36px;
-  height: 40px;
+  width: 38px;
+  height: 42px;
   display: flex;
   align-items: center;
   justify-content: center;
-  filter: drop-shadow(0 2px 6px rgba(245, 158, 11, 0.4));
+  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.8)) drop-shadow(0 0 10px rgba(245, 158, 11, 0.5));
 }
 .shield-svg {
   width: 100%;
@@ -480,14 +489,16 @@ html, body {
 
 .rank-name-text {
   font-family: var(--font-sans);
-  font-size: 13px;
+  font-size: 13.5px;
   font-weight: 800;
   color: #FFFFFF;
   letter-spacing: 0.04em;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
 }
 
 [data-theme="paper"] .rank-name-text {
   color: #0F172A;
+  text-shadow: none;
 }
 
 .profile-progress-group {
@@ -505,17 +516,23 @@ html, body {
 .profile-progress-lbl {
   font-family: var(--font-mono);
   font-size: 11.5px;
-  color: var(--ink-secondary);
+  color: #E2E8F0;
   font-weight: 600;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+}
+
+[data-theme="paper"] .profile-progress-lbl {
+  color: #334155;
+  text-shadow: none;
 }
 
 .profile-progress-track {
   width: 100%;
-  height: 7px;
+  height: 6px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.16);
   overflow: hidden;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.8);
 }
 
 [data-theme="paper"] .profile-progress-track {
@@ -527,7 +544,7 @@ html, body {
   height: 100%;
   background: linear-gradient(90deg, #D97706, #F59E0B, #FDE68A);
   border-radius: 999px;
-  box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.7);
   transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -541,16 +558,16 @@ html, body {
   margin-top: 2px;
 }
 
-/* Nút Chính: Con Dấu Lệnh Khởi Tố Khẩn */
+/* Nút Chính: Con Dấu Lệnh Khởi Tố Khẩn (Thanh Lệnh Cơ Khí Nổi) */
 .btn-hero-launch {
   display: flex;
   align-items: center;
-  gap: 15px;
-  padding: 14px 20px;
+  gap: 16px;
+  padding: 14px 22px;
   border-radius: 14px;
   background: linear-gradient(180deg, #FCD34D 0%, #F59E0B 45%, #D97706 80%, #B45309 100%);
   border: 1.5px solid rgba(254, 240, 138, 0.85);
-  box-shadow: 0 10px 28px rgba(217, 119, 6, 0.45), 0 0 0 1px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 -2px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.75), 0 0 24px rgba(217, 119, 6, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 -2px 0 rgba(0, 0, 0, 0.2);
   color: #0B0E14;
   cursor: pointer;
   transition: transform 0.18s ease, box-shadow 0.18s ease;
@@ -571,7 +588,7 @@ html, body {
 
 .btn-hero-launch:hover {
   transform: translateY(-2px);
-  box-shadow: 0 14px 36px rgba(217, 119, 6, 0.65), 0 0 28px rgba(245, 158, 11, 0.5);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.85), 0 0 32px rgba(245, 158, 11, 0.65);
 }
 
 .btn-hero-launch:active {
@@ -633,7 +650,7 @@ html, body {
   transform: translateX(3px);
 }
 
-/* Cặp Nút Phụ Kẹp Hồ Sơ Gọn Gàng */
+/* Cặp Nút Phụ Kẹp Hồ Sơ Gọn Gàng (Floating Bar) */
 .hero-secondary-row {
   display: flex;
   flex-wrap: wrap;
@@ -648,13 +665,13 @@ html, body {
   gap: 9px;
   flex: 1;
   min-width: 190px;
-  padding: 12px 16px;
+  padding: 12px 18px;
   border-radius: 12px;
-  background: rgba(18, 25, 39, 0.85);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(245, 158, 11, 0.28);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  background: rgba(10, 14, 24, 0.68);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(245, 158, 11, 0.32);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.55);
   color: #F8FAFC;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -663,6 +680,7 @@ html, body {
   font-weight: 700;
   letter-spacing: 0.04em;
   text-decoration: none;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
 }
 
 [data-theme="paper"] .btn-start-action {
@@ -670,13 +688,14 @@ html, body {
   border-color: rgba(180, 83, 9, 0.3);
   box-shadow: 0 2px 10px rgba(40, 25, 10, 0.08);
   color: #0F172A;
+  text-shadow: none;
 }
 
 .btn-start-action:hover {
-  background: rgba(28, 38, 58, 0.95);
+  background: rgba(22, 30, 48, 0.88);
   border-color: var(--gold-bright);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 14px rgba(245, 158, 11, 0.25);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.75), 0 0 16px rgba(245, 158, 11, 0.35);
   color: #FFFFFF;
 }
 
@@ -693,13 +712,13 @@ html, body {
   flex-shrink: 0;
 }
 
-/* Dải Tem Kiểm Định Tối Giản */
+/* Dải Tem Kiểm Định Tối Giản Nổi Trực Tiếp */
 .bureau-specs-strip {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(245, 158, 11, 0.18);
+  gap: 14px;
+  padding-top: 6px;
+  border-top: none;
   width: 100%;
   max-width: 520px;
   margin-top: 2px;
@@ -709,27 +728,22 @@ html, body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(18, 25, 39, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 4px 10px;
-  border-radius: 6px;
-  transition: border-color 0.2s ease;
-}
-
-[data-theme="paper"] .spec-item {
-  background: rgba(255, 255, 255, 0.85);
-  border-color: rgba(15, 23, 42, 0.1);
-}
-
-.spec-item:hover {
-  border-color: rgba(245, 158, 11, 0.35);
+  background: transparent;
+  border: none;
+  padding: 0;
 }
 
 .spec-name {
   font-family: var(--font-mono);
-  font-size: 10.5px;
-  color: var(--ink-secondary);
+  font-size: 11px;
+  color: #CBD5E1;
   font-weight: 600;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95);
+}
+
+[data-theme="paper"] .spec-name {
+  color: #475569;
+  text-shadow: none;
 }
 
 .spec-dot {
