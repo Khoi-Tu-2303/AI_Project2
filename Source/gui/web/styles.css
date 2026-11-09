@@ -219,8 +219,123 @@ html, body {
 }
 
 /* =========================================================================
+   THANH ĐIỀU HƯỚNG TRÊN CÙNG (SINGLE-LINE LUXURY TOP NAVBAR)
+   1 dòng ngang duy nhất — Đầy đủ thương hiệu và các nút điều khiển
+   ========================================================================= */
+.start-navbar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1260px;
+  margin: 0 auto;
+  padding: 18px 24px 6px;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 10;
+}
+
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold-bright);
+  box-shadow: 0 0 10px var(--gold-bright), 0 0 4px #FDE68A;
+  animation: pulseDot 2.5s infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 0.7; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+.brand-code {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--ink-secondary);
+  text-transform: uppercase;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+}
+
+[data-theme="paper"] .brand-code {
+  color: #334155;
+  text-shadow: none;
+}
+
+.start-top-controls {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-top-nav-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(14, 20, 32, 0.68);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(245, 158, 11, 0.28);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  color: #CBD5E1;
+  font-family: var(--font-sans);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.btn-top-nav-pill:hover {
+  background: rgba(26, 36, 56, 0.88);
+  border-color: var(--gold-bright);
+  color: #FFFFFF;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.65), 0 0 12px rgba(245, 158, 11, 0.3);
+}
+
+[data-theme="paper"] .btn-top-nav-pill {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(180, 83, 9, 0.3);
+  box-shadow: 0 2px 8px rgba(40, 25, 10, 0.08);
+  color: #1E293B;
+}
+
+[data-theme="paper"] .btn-top-nav-pill:hover {
+  background: #FFFFFF;
+  border-color: #B45309;
+  color: #0F172A;
+}
+
+.btn-top-nav-pill .icon-svg {
+  width: 14px;
+  height: 14px;
+  color: var(--gold-bright);
+}
+
+.nav-btn-text {
+  font-family: var(--font-sans);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* =========================================================================
    MÀN HÌNH 1: KHỞI ĐỘNG ĐIỆN ẢNH (CINEMATIC NOIR BUREAU & EVIDENCE PINBOARD)
-   Bố cục 2 cánh cân xứng hoàn mỹ: Command Console Card + Bảng Ghim Manh Mối 3D
+   Cột Trái: Hiệu ứng bóng sương đêm lan tỏa tự nhiên — KHÔNG HỘP CHỮ NHẬT
+   Cột Phải: Bảng Ghim Manh Mối Hiện Trường 3D Chân Thực
    ========================================================================= */
 .start-container {
   flex: 1;
@@ -230,7 +345,7 @@ html, body {
   width: 100%;
   max-width: 1260px;
   margin: 0 auto;
-  padding: 20px 24px 32px;
+  padding: 16px 24px 32px;
   box-sizing: border-box;
   position: relative;
   z-index: 2;
@@ -239,8 +354,8 @@ html, body {
 .bureau-dual-layout {
   display: grid;
   grid-template-columns: minmax(480px, 1.15fr) minmax(460px, 1fr);
-  gap: 36px;
-  align-items: stretch;
+  gap: 40px;
+  align-items: center;
   width: 100%;
   animation: bureauEntrance 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -264,47 +379,32 @@ html, body {
 }
 
 /* =========================================================================
-   CÁNH TRÁI: BÀN CHỈ HUY THÁM TỬ (COMMAND CONSOLE FROSTED GLASS CARD)
+   CÁNH TRÁI: ĐẠI BẢN DOANH CHỈ HUY (HIỆU ỨNG ÁNH SÁNG NOIR - KHÔNG KHUNG HỘP)
    ========================================================================= */
 .bureau-command-wing {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  align-items: flex-start;
+  text-align: left;
+  gap: 16px;
   width: 100%;
+  padding: 20px 24px 20px 8px;
+  /* Hiệu ứng bóng đêm Noir lan tỏa tự nhiên — KHÔNG ĐƯỜNG VIỀN KHUNG HỘP */
+  background: radial-gradient(
+    ellipse 95% 85% at 20% 50%,
+    rgba(4, 6, 12, 0.72) 0%,
+    rgba(4, 6, 12, 0.38) 60%,
+    transparent 100%
+  ) !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
-.command-console-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-  min-height: 485px;
-  padding: 30px 32px;
-  border-radius: 20px;
-  background: rgba(8, 12, 20, 0.82);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(245, 158, 11, 0.32);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 0 20px rgba(245, 158, 11, 0.1);
-  position: relative;
-  overflow: hidden;
-  box-sizing: border-box;
-}
-
-.command-console-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 10%;
-  right: 10%;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.7), transparent);
-}
-
-[data-theme="paper"] .command-console-card {
-  background: rgba(255, 255, 255, 0.94);
-  border-color: rgba(180, 83, 9, 0.35);
-  box-shadow: 0 12px 35px rgba(40, 25, 10, 0.12);
+[data-theme="paper"] .bureau-command-wing {
+  background: transparent !important;
 }
 
 /* 1. Huy Hiệu Nghiệp Vụ Kim Loại Đồng Mờ */
@@ -313,7 +413,6 @@ html, body {
   align-items: center;
   gap: 12px;
   opacity: 0.95;
-  margin-bottom: 4px;
 }
 
 .crest-shield {
@@ -354,13 +453,13 @@ html, body {
   flex-direction: column;
   align-items: flex-start;
   text-align: left;
-  gap: 6px;
-  margin-bottom: 6px;
+  gap: 8px;
+  margin-bottom: 2px;
 }
 
 .cinematic-title {
   font-family: var(--font-serif);
-  font-size: clamp(2.1rem, 3.2vw, 2.9rem);
+  font-size: clamp(2.3rem, 3.8vw, 3.3rem);
   font-weight: 700;
   line-height: 1.15;
   letter-spacing: 0.02em;
@@ -368,7 +467,7 @@ html, body {
   background: linear-gradient(135deg, #FFFFFF 0%, #FEF08A 32%, #F59E0B 75%, #D97706 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 3px 12px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 20px rgba(245, 158, 11, 0.35));
+  filter: drop-shadow(0 4px 18px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 25px rgba(245, 158, 11, 0.4));
   margin: 0;
 }
 
@@ -382,19 +481,19 @@ html, body {
 .cinematic-tagline {
   font-family: var(--font-serif);
   font-style: italic;
-  font-size: clamp(0.95rem, 1.15vw, 1.05rem);
+  font-size: clamp(0.98rem, 1.25vw, 1.15rem);
   font-weight: 500;
   color: #FDE68A;
-  letter-spacing: 0.02em;
-  line-height: 1.4;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95);
+  letter-spacing: 0.025em;
+  line-height: 1.45;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95);
   margin: 0;
-  max-width: 500px;
+  max-width: 520px;
 }
 
 .tagline-dot {
   color: var(--gold-bright);
-  margin: 0 5px;
+  margin: 0 6px;
 }
 
 [data-theme="paper"] .cinematic-tagline {
@@ -406,28 +505,30 @@ html, body {
 .cinematic-capsule-badge {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 5px 16px;
+  gap: 12px;
+  padding: 6px 18px;
   border-radius: 999px;
-  background: rgba(14, 20, 32, 0.72);
-  border: 1px solid rgba(245, 158, 11, 0.32);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
-  margin-bottom: 8px;
+  background: rgba(12, 16, 26, 0.68);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.55), 0 0 16px rgba(245, 158, 11, 0.15);
+  margin-bottom: 4px;
 }
 
 [data-theme="paper"] .cinematic-capsule-badge {
   background: rgba(255, 255, 255, 0.94);
   border-color: rgba(180, 83, 9, 0.35);
-  box-shadow: 0 3px 10px rgba(40, 25, 10, 0.08);
+  box-shadow: 0 4px 14px rgba(40, 25, 10, 0.08);
 }
 
 .capsule-icon {
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .capsule-rank {
   font-family: var(--font-sans);
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.04em;
   color: #FFFFFF;
@@ -445,7 +546,7 @@ html, body {
 }
 
 .capsule-progress-track {
-  width: 65px;
+  width: 70px;
   height: 5px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.16);
@@ -460,13 +561,13 @@ html, body {
   height: 100%;
   background: linear-gradient(90deg, #D97706, #F59E0B, #FDE68A);
   border-radius: 999px;
-  box-shadow: 0 0 6px rgba(245, 158, 11, 0.6);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
   transition: width 0.35s ease;
 }
 
 .capsule-progress-text {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 10.5px;
   font-weight: 600;
   color: #E2E8F0;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
@@ -482,22 +583,22 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 12px;
+  gap: 14px;
   width: 100%;
-  margin-bottom: 6px;
+  max-width: 520px;
 }
 
 /* Nút Chính Lớn: BẮT ĐẦU ĐIỀU TRA NGAY */
 .btn-cinematic-launch {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
   width: 100%;
-  padding: 14px 22px;
-  border-radius: 14px;
+  padding: 15px 24px;
+  border-radius: 15px;
   background: linear-gradient(180deg, #FDE68A 0%, #F59E0B 40%, #D97706 80%, #B45309 100%);
   border: 1.5px solid rgba(254, 240, 138, 0.9);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.75), 0 0 24px rgba(245, 158, 11, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.65), inset 0 -2px 0 rgba(0, 0, 0, 0.25);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.8), 0 0 28px rgba(245, 158, 11, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.65), inset 0 -2px 0 rgba(0, 0, 0, 0.25);
   color: #0B0E14;
   cursor: pointer;
   position: relative;
@@ -508,12 +609,12 @@ html, body {
 
 .btn-cinematic-launch:hover {
   transform: translateY(-2px) scale(1.01);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.88), 0 0 32px rgba(245, 158, 11, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.9), 0 0 38px rgba(245, 158, 11, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
 .btn-cinematic-launch:active {
   transform: translateY(1px) scale(0.995);
-  box-shadow: 0 6px 14px rgba(217, 119, 6, 0.5);
+  box-shadow: 0 8px 18px rgba(217, 119, 6, 0.5);
 }
 
 .launch-shine {
@@ -526,9 +627,9 @@ html, body {
 }
 
 .launch-play-badge {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
+  width: 44px;
+  height: 44px;
+  border-radius: 11px;
   background: rgba(11, 14, 20, 0.16);
   border: 1.5px solid rgba(11, 14, 20, 0.25);
   display: flex;
@@ -539,8 +640,8 @@ html, body {
 }
 
 .launch-play-badge svg {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   margin-left: 2px;
 }
 
@@ -553,7 +654,7 @@ html, body {
 
 .launch-main-heading {
   font-family: var(--font-sans);
-  font-size: 15px;
+  font-size: 15.5px;
   font-weight: 800;
   letter-spacing: 0.05em;
   color: #0B0E14;
@@ -562,14 +663,14 @@ html, body {
 
 .launch-sub-heading {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 600;
   color: rgba(11, 14, 20, 0.85);
 }
 
 .launch-arrow-badge {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background: rgba(11, 14, 20, 0.14);
   border: 1px solid rgba(11, 14, 20, 0.2);
@@ -582,8 +683,8 @@ html, body {
 }
 
 .launch-arrow-badge svg {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
 }
 
 .btn-cinematic-launch:hover .launch-arrow-badge {
@@ -594,7 +695,7 @@ html, body {
 .cinematic-secondary-bar {
   display: flex;
   flex-wrap: wrap;
-  gap: 9px;
+  gap: 10px;
   width: 100%;
 }
 
@@ -602,20 +703,22 @@ html, body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
+  gap: 8px;
   flex: 1;
-  min-width: 135px;
-  padding: 10px 14px;
-  border-radius: 10px;
-  background: rgba(14, 20, 32, 0.75);
-  border: 1px solid rgba(245, 158, 11, 0.32);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+  min-width: 150px;
+  padding: 11px 16px;
+  border-radius: 11px;
+  background: rgba(12, 16, 26, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.55);
   color: #F8FAFC;
   cursor: pointer;
   font-family: var(--font-sans);
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.035em;
   transition: all 0.2s ease;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
   text-decoration: none;
@@ -624,28 +727,28 @@ html, body {
 [data-theme="paper"] .btn-cinematic-pill {
   background: rgba(255, 255, 255, 0.95);
   border-color: rgba(180, 83, 9, 0.35);
-  box-shadow: 0 2px 8px rgba(40, 25, 10, 0.08);
+  box-shadow: 0 2px 10px rgba(40, 25, 10, 0.08);
   color: #0F172A;
   text-shadow: none;
 }
 
 .btn-cinematic-pill:hover {
-  background: rgba(26, 36, 56, 0.9);
+  background: rgba(24, 32, 50, 0.88);
   border-color: var(--gold-bright);
   color: #FFFFFF;
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7), 0 0 14px rgba(245, 158, 11, 0.35);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.75), 0 0 16px rgba(245, 158, 11, 0.35);
 }
 
 [data-theme="paper"] .btn-cinematic-pill:hover {
   background: #FFFFFF;
   border-color: #B45309;
-  box-shadow: 0 4px 14px rgba(40, 25, 10, 0.12);
+  box-shadow: 0 6px 18px rgba(40, 25, 10, 0.12);
 }
 
 .btn-cinematic-pill .icon-svg {
-  width: 15px;
-  height: 15px;
+  width: 16px;
+  height: 16px;
   color: var(--gold-bright);
 }
 
@@ -654,17 +757,17 @@ html, body {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   opacity: 0.9;
-  padding-top: 2px;
+  padding-top: 4px;
 }
 
 .spec-tag {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   font-family: var(--font-mono);
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: 600;
   color: #CBD5E1;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95);
@@ -676,18 +779,18 @@ html, body {
 }
 
 .spec-glow-dot {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   flex-shrink: 0;
 }
-.spec-glow-dot.gold { background: #F59E0B; box-shadow: 0 0 6px #F59E0B; }
-.spec-glow-dot.emerald { background: #10B981; box-shadow: 0 0 6px #10B981; }
-.spec-glow-dot.ruby { background: #F43F5E; box-shadow: 0 0 6px #F43F5E; }
+.spec-glow-dot.gold { background: #F59E0B; box-shadow: 0 0 8px #F59E0B; }
+.spec-glow-dot.emerald { background: #10B981; box-shadow: 0 0 8px #10B981; }
+.spec-glow-dot.ruby { background: #F43F5E; box-shadow: 0 0 8px #F43F5E; }
 
 .spec-sep {
   color: rgba(245, 158, 11, 0.4);
-  font-size: 10px;
+  font-size: 11px;
 }
 
 /* =========================================================================
@@ -695,39 +798,35 @@ html, body {
    ========================================================================= */
 .bureau-pinboard-wing {
   width: 100%;
-  height: 100%;
   display: flex;
   justify-content: center;
-  align-items: stretch;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  transform: rotate(0.8deg);
+}
+
+.bureau-pinboard-wing:hover {
+  transform: translateY(-5px) rotate(0.2deg);
 }
 
 .pinboard-frame-noir {
   position: relative;
   width: 100%;
-  height: 100%;
-  min-height: 485px;
-  border: 7px solid #28170E;
-  border-radius: 20px;
+  max-width: 490px;
+  height: 410px;
+  border: 6px solid #2B1810;
+  border-radius: 16px;
   background:
-    radial-gradient(ellipse at 35% 25%, rgba(245, 158, 11, 0.2) 0%, transparent 65%),
-    radial-gradient(circle at 50% 50%, #1F150F 0%, #130C08 75%, #0A0604 100%);
+    radial-gradient(ellipse at 45% 35%, rgba(245, 158, 11, 0.16) 0%, transparent 70%),
+    radial-gradient(circle at 50% 50%, #221812 0%, #150E0A 75%, #0B0705 100%);
   box-shadow:
-    0 24px 60px rgba(0, 0, 0, 0.88),
-    inset 0 0 45px rgba(0, 0, 0, 0.85),
+    0 28px 70px rgba(0, 0, 0, 0.9),
+    0 0 25px rgba(0, 0, 0, 0.7),
+    inset 0 0 45px rgba(0, 0, 0, 0.8),
     inset 0 2px 4px rgba(245, 158, 11, 0.25);
   overflow: hidden;
   user-select: none;
-  cursor: pointer;
-  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease;
-  box-sizing: border-box;
-}
-
-.pinboard-frame-noir:hover {
-  transform: translateY(-4px) scale(1.008);
-  box-shadow:
-    0 30px 75px rgba(0, 0, 0, 0.95),
-    0 0 28px rgba(245, 158, 11, 0.28),
-    inset 0 0 45px rgba(0, 0, 0, 0.85);
 }
 
 [data-theme="paper"] .pinboard-frame-noir {
@@ -736,33 +835,33 @@ html, body {
   box-shadow: 0 16px 40px rgba(40, 25, 10, 0.25);
 }
 
-/* 4 Đinh Tán Đồng Nhỏ Gọn Tinh Tế (Subtle 11px Brass Studs) */
+/* 4 Nẹp Đồng Vát Góc Cổ Điển */
 .pinboard-bracket {
   position: absolute;
-  width: 11px;
-  height: 11px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   background: radial-gradient(circle at 35% 35%, #FFFBEB 0%, #F59E0B 45%, #92400E 80%, #451A03 100%);
   border: 0.8px solid rgba(254, 240, 138, 0.8);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.85);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
   z-index: 10;
 }
-.pinboard-bracket.top-left { top: 8px; left: 8px; }
-.pinboard-bracket.top-right { top: 8px; right: 8px; }
-.pinboard-bracket.bottom-left { bottom: 8px; left: 8px; }
-.pinboard-bracket.bottom-right { bottom: 8px; right: 8px; }
+.pinboard-bracket.top-left { top: 9px; left: 9px; }
+.pinboard-bracket.top-right { top: 9px; right: 9px; }
+.pinboard-bracket.bottom-left { bottom: 9px; left: 9px; }
+.pinboard-bracket.bottom-right { bottom: 9px; right: 9px; }
 
 /* Băng Rôn Tiêu Đề Bảng Điều Tra Nổi Mạ Đồng */
 .pinboard-noir-header {
   position: absolute;
-  top: 14px;
+  top: 13px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(12, 17, 28, 0.94);
-  border: 1px solid rgba(245, 158, 11, 0.55);
+  background: rgba(15, 23, 42, 0.94);
+  border: 1.5px solid rgba(245, 158, 11, 0.6);
   padding: 5px 18px;
-  border-radius: 6px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.7);
+  border-radius: 5px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.75), 0 0 12px rgba(245, 158, 11, 0.2);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -772,15 +871,15 @@ html, body {
 
 .noir-header-star {
   color: var(--gold-bright);
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .noir-header-text {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 10.5px;
   font-weight: 800;
   color: var(--gold-bright);
-  letter-spacing: 1.5px;
+  letter-spacing: 1.6px;
   text-transform: uppercase;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
 }
@@ -829,24 +928,24 @@ html, body {
 /* Đinh Ghim Đầu Tròn Mạ Đồng Đỏ 3D (Pushpin) */
 .pushpin-brass-red {
   position: absolute;
-  top: -8px;
+  top: -9px;
   left: 50%;
   transform: translateX(-50%);
-  width: 14px;
-  height: 14px;
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
   background: radial-gradient(circle at 35% 35%, #FCA5A5 0%, #EF4444 50%, #7F1D1D 100%);
   border: 1px solid rgba(254, 240, 138, 0.7);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.85), 0 0 6px rgba(239, 68, 68, 0.55);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.85), 0 0 8px rgba(239, 68, 68, 0.55);
   z-index: 8;
 }
 
 /* Băng Dính Vàng Cũ Dán Góc */
 .tape-strip-yellow {
   position: absolute;
-  top: -6px;
+  top: -7px;
   right: 12px;
-  width: 30px;
+  width: 32px;
   height: 11px;
   background: rgba(254, 240, 138, 0.42);
   transform: rotate(18deg);
@@ -863,14 +962,14 @@ html, body {
   z-index: 3;
 }
 
-.pinboard-frame-noir:hover .pinboard-item {
-  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.75);
+.bureau-pinboard-wing:hover .pinboard-item {
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.75);
 }
 
 /* 1. Ảnh Polaroid Nghi Phạm A1 */
 .polaroid-card.p-suspect {
-  top: 65px;
-  left: 22px;
+  top: 58px;
+  left: 20px;
   width: 140px;
   background: #FBF8F2;
   padding: 8px 8px 12px;
@@ -879,14 +978,14 @@ html, body {
   transform: rotate(-4.5deg);
 }
 
-.pinboard-frame-noir:hover .polaroid-card.p-suspect {
+.bureau-pinboard-wing:hover .polaroid-card.p-suspect {
   transform: rotate(-2.5deg) scale(1.03);
 }
 
 .polaroid-photo {
   position: relative;
   width: 100%;
-  height: 115px;
+  height: 112px;
   background: #0F172A;
   border-radius: 2px;
   display: flex;
@@ -932,8 +1031,8 @@ html, body {
 
 /* 2. Mẩu Báo Cáo Hiện Trường Xé Mép */
 .evidence-clipping {
-  top: 60px;
-  right: 20px;
+  top: 50px;
+  right: 18px;
   width: 185px;
   background: #FEF9C3;
   padding: 11px 13px;
@@ -943,7 +1042,7 @@ html, body {
   border-left: 3.5px solid #EAB308;
 }
 
-.pinboard-frame-noir:hover .evidence-clipping {
+.bureau-pinboard-wing:hover .evidence-clipping {
   transform: rotate(1.2deg) scale(1.02);
 }
 
@@ -998,7 +1097,7 @@ html, body {
 /* 3. Sa Bàn Mini Polaroid 3×3 */
 .polaroid-card.p-matrix {
   bottom: 24px;
-  right: 28px;
+  right: 32px;
   width: 135px;
   background: #FBF8F2;
   padding: 8px 8px 10px;
@@ -1007,7 +1106,7 @@ html, body {
   transform: rotate(-2.5deg);
 }
 
-.pinboard-frame-noir:hover .polaroid-card.p-matrix {
+.bureau-pinboard-wing:hover .polaroid-card.p-matrix {
   transform: rotate(0deg) scale(1.03);
 }
 
@@ -1050,33 +1149,33 @@ html, body {
 /* 4. Huy Hiệu Niêm Phong Mạ Vàng Bấm Phá Án */
 .pinboard-seal-badge {
   position: absolute;
-  bottom: 22px;
+  bottom: 20px;
   left: 20px;
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(12, 17, 28, 0.94);
+  background: rgba(15, 23, 42, 0.94);
   border: 1.5px solid var(--gold-bright);
   padding: 7px 16px;
   border-radius: 22px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.75), 0 0 14px rgba(245, 158, 11, 0.35);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.75), 0 0 16px rgba(245, 158, 11, 0.35);
   z-index: 6;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
-.pinboard-frame-noir:hover .pinboard-seal-badge {
-  transform: scale(1.04);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85), 0 0 20px rgba(245, 158, 11, 0.55);
+.bureau-pinboard-wing:hover .pinboard-seal-badge {
+  transform: scale(1.05);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.85), 0 0 24px rgba(245, 158, 11, 0.6);
   border-color: #FEF08A;
 }
 
 .seal-icon {
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .seal-text {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 10.5px;
   font-weight: 800;
   color: var(--gold-bright);
   letter-spacing: 0.9px;

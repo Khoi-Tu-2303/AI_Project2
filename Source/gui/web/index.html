@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=JetBrains+Mono:wght@500;600;700&family=Lora:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/styles.css?v=20261109_16" />
+  <link rel="stylesheet" href="/styles.css?v=20261109_17" />
 </head>
 <body>
   <!-- Ảnh Nền Phòng Thám Tử Cổ Điển Ban Đêm (Cinematic Noir Detective Background) -->
@@ -35,143 +35,138 @@
        MÀN HÌNH 1: MÀN HÌNH BẮT ĐẦU (TRẠM CHỈ HUY TRINH THÁM - CINEMATIC LAUNCHPAD)
        =================================================================== -->
   <section id="screenStart" class="screen active">
-    <!-- Dải Băng Rôn Cảnh Sát Hiện Trường (Crime Scene Tape) -->
-    <div class="crime-scene-tape" aria-hidden="true">
-      <div class="tape-strip">★ HIỆN TRƯỜNG ĐIỀU TRA ★ DO NOT CROSS ★ TÀI LIỆU TUYỆT MẬT ★ DPLL SAT SOLVER ★ HIỆN TRƯỜNG ĐIỀU TRA ★ DO NOT CROSS ★ BẰNG CHỨNG MỆNH ĐỀ ★</div>
-    </div>
-
+    <!-- Thanh Điều Hướng Cao Cấp Dạng Ngang Duy Nhất (Single-Line Luxury Navbar) -->
     <nav class="start-navbar">
       <div class="brand-mark">
         <span class="brand-dot"></span>
-        <span class="brand-code">CSC14003 · PROJECT 02 · GRIDUCTIVE SOLVER</span>
+        <span class="brand-code">CSC14003 · GRIDUCTIVE SOLVER</span>
       </div>
       <div class="start-top-controls">
-        <button type="button" class="btn btn-icon-only" id="btnSoundStart" onclick="toggleSound()" title="Bật/Tắt âm thanh">
+        <button type="button" class="btn-top-nav-pill" id="btnSoundStart" onclick="toggleSound()" title="Bật/Tắt âm thanh">
           <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
             <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
           </svg>
+          <span class="nav-btn-text">Âm thanh</span>
         </button>
-        <button type="button" class="btn" onclick="toggleTheme()">
+        <button type="button" class="btn-top-nav-pill" onclick="toggleTheme()">
           <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
           </svg>
-          <span id="lblThemeStart">Đổi giao diện</span>
+          <span id="lblThemeStart" class="nav-btn-text">Đổi giao diện</span>
         </button>
-        <button type="button" class="btn" onclick="openModal('modalRules')">
+        <button type="button" class="btn-top-nav-pill" onclick="openModal('modalRules')">
           <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
           </svg>
-          <span>Luật chơi &amp; SAT</span>
+          <span class="nav-btn-text">Luật chơi &amp; SAT</span>
         </button>
       </div>
     </nav>
 
     <div class="start-container">
       <div class="bureau-dual-layout">
-        <!-- CÁNH TRÁI: ĐẠI BẢN DOANH CHỈ HUY (COMMAND DOSSIER HUB) -->
+        <!-- CÁNH TRÁI: ĐẠI BẢN DOANH CHỈ HUY (HIỆU ỨNG ÁNH SÁNG & SƯƠNG KHÓI NOIR - HOÀN TOÀN KHÔNG KHUNG HỘP) -->
         <div class="bureau-command-wing">
-          <div class="command-console-card">
-            <!-- Huy Hiệu Nghiệp Vụ Kim Loại Đồng Mờ (Brass Crest) -->
-            <div class="cinematic-crest">
-              <div class="crest-shield">
-                <svg viewBox="0 0 24 28" class="crest-svg" aria-hidden="true">
-                  <path d="M12 1L2 5V12C2 18.5 6.3 24.5 12 27C17.7 24.5 22 18.5 22 12V5L12 1Z" fill="url(#crestGrad)" stroke="#FDE68A" stroke-width="1.2"/>
-                  <polygon points="12 6.5 13.8 10.5 18 11 14.8 14 15.7 18.2 12 16 8.3 18.2 9.2 14 6 11 10.2 10.5" fill="#FEF08A"/>
-                  <defs>
-                    <linearGradient id="crestGrad" x1="2" y1="1" x2="22" y2="27" gradientUnits="userSpaceOnUse">
-                      <stop stop-color="#D97706"/>
-                      <stop offset="0.5" stop-color="#92400E"/>
-                      <stop offset="1" stop-color="#451A03"/>
-                    </linearGradient>
-                  </defs>
+          <!-- Huy Hiệu Nghiệp Vụ Kim Loại Đồng Mờ (Brass Crest) -->
+          <div class="cinematic-crest">
+            <div class="crest-shield">
+              <svg viewBox="0 0 24 28" class="crest-svg" aria-hidden="true">
+                <path d="M12 1L2 5V12C2 18.5 6.3 24.5 12 27C17.7 24.5 22 18.5 22 12V5L12 1Z" fill="url(#crestGrad)" stroke="#FDE68A" stroke-width="1.2"/>
+                <polygon points="12 6.5 13.8 10.5 18 11 14.8 14 15.7 18.2 12 16 8.3 18.2 9.2 14 6 11 10.2 10.5" fill="#FEF08A"/>
+                <defs>
+                  <linearGradient id="crestGrad" x1="2" y1="1" x2="22" y2="27" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#D97706"/>
+                    <stop offset="0.5" stop-color="#92400E"/>
+                    <stop offset="1" stop-color="#451A03"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+            <span class="crest-text">DPLL PROPOSITIONAL LOGIC · ÁN LỆ #2026</span>
+          </div>
+
+          <!-- Đại Tựa Đề Hồ Sơ Trọng Án (Grand Cinematic Title) -->
+          <div class="cinematic-title-group">
+            <h1 class="cinematic-title">Hồ Sơ Logic: Griductive</h1>
+            <p class="cinematic-tagline">
+              Phá án bằng suy luận mệnh đề thuần túy <span class="tagline-dot">•</span> Tuyệt đối không đoán mò
+            </p>
+          </div>
+
+          <!-- Thẻ Cấp Bậc Thám Tử Dạng Capsule Nổi Trực Tiếp (Rank Capsule) -->
+          <div class="cinematic-capsule-badge" id="startDetectiveBar">
+            <span class="capsule-icon">🎖️</span>
+            <span class="capsule-rank" id="lblDetectiveRank">CẤP BẬC: THÁM TỬ TẬP SỰ</span>
+            <span class="capsule-divider">|</span>
+            <div class="capsule-progress-track">
+              <div class="capsule-progress-fill" id="startProgressBarFill" style="width: 0%;"></div>
+            </div>
+            <span class="capsule-progress-text" id="lblDetectiveProgress">0/6 vụ án chuẩn</span>
+          </div>
+
+          <!-- Trung Tâm Điều Khiển Tác Vụ Điện Ảnh (Action Hub) -->
+          <div class="cinematic-actions-cluster">
+            <!-- Nút Lớn: BẮT ĐẦU ĐIỀU TRA NGAY (Pulsing Gold Launch Command) -->
+            <button type="button" class="btn-cinematic-launch" onclick="launchSpotlightCase('3x3_classic')">
+              <div class="launch-shine"></div>
+              <div class="launch-play-badge">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="7 4 19 12 7 20 7 4"/>
                 </svg>
               </div>
-              <span class="crest-text">DPLL PROPOSITIONAL LOGIC · ÁN LỆ #2026</span>
-            </div>
-
-            <!-- Đại Tựa Đề Hồ Sơ Trọng Án (Grand Cinematic Title) -->
-            <div class="cinematic-title-group">
-              <h1 class="cinematic-title">Hồ Sơ Logic: Griductive</h1>
-              <p class="cinematic-tagline">
-                Phá án bằng suy luận mệnh đề thuần túy <span class="tagline-dot">•</span> Tuyệt đối không đoán mò
-              </p>
-            </div>
-
-            <!-- Thẻ Cấp Bậc Thám Tử Dạng Capsule Nổi Trực Tiếp (Rank Capsule) -->
-            <div class="cinematic-capsule-badge" id="startDetectiveBar">
-              <span class="capsule-icon">🎖️</span>
-              <span class="capsule-rank" id="lblDetectiveRank">CẤP BẬC: THÁM TỬ TẬP SỰ</span>
-              <span class="capsule-divider">|</span>
-              <div class="capsule-progress-track">
-                <div class="capsule-progress-fill" id="startProgressBarFill" style="width: 0%;"></div>
+              <div class="launch-title-col">
+                <span class="launch-main-heading">BẮT ĐẦU ĐIỀU TRA NGAY</span>
+                <span class="launch-sub-heading">Khởi động Án Lệ #01: Đêm Gala Thượng Lưu (3×3)</span>
               </div>
-              <span class="capsule-progress-text" id="lblDetectiveProgress">0/6 vụ án chuẩn</span>
-            </div>
+              <div class="launch-arrow-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </div>
+            </button>
 
-            <!-- Trung Tâm Điều Khiển Tác Vụ Điện Ảnh (Action Hub) -->
-            <div class="cinematic-actions-cluster">
-              <!-- Nút Lớn: BẮT ĐẦU ĐIỀU TRA NGAY (Pulsing Gold Launch Command) -->
-              <button type="button" class="btn-cinematic-launch" onclick="launchSpotlightCase('3x3_classic')">
-                <div class="launch-shine"></div>
-                <div class="launch-play-badge">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <polygon points="7 4 19 12 7 20 7 4"/>
-                  </svg>
-                </div>
-                <div class="launch-title-col">
-                  <span class="launch-main-heading">BẮT ĐẦU ĐIỀU TRA NGAY</span>
-                  <span class="launch-sub-heading">Khởi động Án Lệ #01: Đêm Gala Thượng Lưu (3×3)</span>
-                </div>
-                <div class="launch-arrow-badge">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                  </svg>
-                </div>
+            <!-- Hàng Nút Phụ Kính Mờ Tinh Gọn -->
+            <div class="cinematic-secondary-bar">
+              <button type="button" class="btn-cinematic-pill" onclick="showScreen('screenCases')">
+                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                </svg>
+                <span>KHO LƯU TRỮ HỒ SƠ VỤ ÁN</span>
               </button>
 
-              <!-- Hàng Nút Phụ Kính Mờ Tinh Gọn -->
-              <div class="cinematic-secondary-bar">
-                <button type="button" class="btn-cinematic-pill" onclick="showScreen('screenCases')">
-                  <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
-                  </svg>
-                  <span>KHO LƯU TRỮ HỒ SƠ VỤ ÁN</span>
-                </button>
+              <button type="button" class="btn-cinematic-pill" onclick="openModal('modalRules')">
+                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
+                </svg>
+                <span>LUẬT CHƠI &amp; SAT</span>
+              </button>
 
-                <button type="button" class="btn-cinematic-pill" onclick="openModal('modalRules')">
-                  <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
-                  </svg>
-                  <span>LUẬT CHƠI &amp; SAT</span>
-                </button>
-
-                <label class="btn-cinematic-pill" for="uploadJsonStart" style="cursor:pointer;">
-                  <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
-                  </svg>
-                  <span>TẢI TẬP TIN JSON</span>
-                </label>
-                <input id="uploadJsonStart" type="file" accept=".json" style="display:none" />
-              </div>
+              <label class="btn-cinematic-pill" for="uploadJsonStart" style="cursor:pointer;">
+                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                <span>TẢI TẬP TIN JSON</span>
+              </label>
+              <input id="uploadJsonStart" type="file" accept=".json" style="display:none" />
             </div>
+          </div>
 
-            <!-- Dải Tem Nghiệm Chứng Kỹ Thuật Tối Giản -->
-            <div class="cinematic-specs-row">
-              <div class="spec-tag">
-                <span class="spec-glow-dot gold"></span>
-                <span>DPLL Pure Python</span>
-              </div>
-              <span class="spec-sep">•</span>
-              <div class="spec-tag">
-                <span class="spec-glow-dot emerald"></span>
-                <span>8 Dạng Lời Khai CNF</span>
-              </div>
-              <span class="spec-sep">•</span>
-              <div class="spec-tag">
-                <span class="spec-glow-dot ruby"></span>
-                <span>Minh Bạch 4 Tầng</span>
-              </div>
+          <!-- Dải Tem Nghiệm Chứng Kỹ Thuật Tối Giản -->
+          <div class="cinematic-specs-row">
+            <div class="spec-tag">
+              <span class="spec-glow-dot gold"></span>
+              <span>DPLL Pure Python</span>
+            </div>
+            <span class="spec-sep">•</span>
+            <div class="spec-tag">
+              <span class="spec-glow-dot emerald"></span>
+              <span>8 Dạng Lời Khai CNF</span>
+            </div>
+            <span class="spec-sep">•</span>
+            <div class="spec-tag">
+              <span class="spec-glow-dot ruby"></span>
+              <span>Minh Bạch 4 Tầng</span>
             </div>
           </div>
         </div>
@@ -599,6 +594,6 @@
     </div>
   </div>
 
-  <script src="/app.js?v=20261109_16"></script>
+  <script src="/app.js?v=20261109_17"></script>
 </body>
 </html>
