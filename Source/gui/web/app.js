@@ -592,25 +592,46 @@ function renderCaseSelection(puzzles) {
   filtered.forEach(p => {
     const isSolved = solved.includes(p.case_id);
     const diffLevel = p.difficulty || 1;
+    const diffStars = "★".repeat(diffLevel) + "☆".repeat(Math.max(0, 3 - diffLevel));
     const diffLabel = `CẤP ĐỘ ${diffLevel}/3`;
     const card = document.createElement("div");
-    card.className = "dossier-card";
+    card.className = "dossier-card" + (isSolved ? " is-solved" : "");
     card.innerHTML = `
-      <div>
+      <div class="dossier-folder-tab">
+        <span class="dossier-code">${p.code || "HỒ SƠ"} · ${p.n}×${p.n}</span>
+        <span class="dossier-tab-security">MẬT</span>
+      </div>
+      <div class="dossier-paperclip" title="Kẹp hồ sơ kim loại hiện trường">
+        <svg width="22" height="38" viewBox="0 0 24 44" fill="none" stroke="#D4AF37" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M7 14v18a5 5 0 0 0 10 0V9a3 3 0 0 0-6 0v21a1 1 0 0 0 2 0V14" />
+        </svg>
+      </div>
+      <div class="dossier-stamp-classified ${isSolved ? 'dossier-stamp-solved' : ''}">
+        ${isSolved ? 'ĐÃ PHÁ ÁN' : 'TỐI MẬT'}
+      </div>
+      <div class="dossier-body">
         <div class="dossier-top">
-          <span class="dossier-code">${p.code || "HỒ SƠ"} · ${p.n}×${p.n}</span>
-          <div class="dossier-badges">
-            ${isSolved ? '<span class="solved-pill">ĐÃ PHÁ ÁN</span>' : ''}
-            <span class="stars" title="Độ khó">${diffLabel}</span>
+          <div class="dossier-stars-rating" title="Độ khó: ${diffLabel}">
+            <span class="stars-gold">${diffStars}</span>
+            <span class="diff-text">${diffLabel}</span>
           </div>
+          ${isSolved ? '<span class="solved-pill">✓ ĐÃ PHÁ ÁN</span>' : '<span class="unsolved-pill">ĐANG ĐIỀU TRA</span>'}
         </div>
         <div class="dossier-title">${p.title || p.case_id}</div>
         <div class="dossier-sub">${p.subtitle || ""}</div>
-        <div class="dossier-story">${p.story || ""}</div>
+        <div class="dossier-story-box">
+          <p class="dossier-story">${p.story || ""}</p>
+        </div>
       </div>
       <div class="dossier-footer">
         <span class="dossier-tag">${p.badge || (p.n + "×" + p.n)}</span>
-        <span class="dossier-cta">Mở Hồ Sơ Điều Tra →</span>
+        <button type="button" class="btn-dossier-open dossier-cta">
+          <span>Mở Hồ Sơ Điều Tra</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
       </div>
     `;
     card.addEventListener("click", async () => {
