@@ -64,8 +64,8 @@ function toggleTheme() {
   const lbl = document.getElementById("lblThemeStart");
   if (lbl) {
     lbl.textContent = next === "noir"
-      ? "🌗 Giao diện: Đêm Trinh Thám"
-      : "🌕 Giao diện: Hồ Sơ Cổ Điển";
+      ? "Giao diện: Đêm Trinh Thám"
+      : "Giao diện: Hồ Sơ Cổ Điển";
   }
 }
 
@@ -88,6 +88,7 @@ function setCaseFilter(f) {
 
 function renderCaseSelection(puzzles) {
   const grid = document.getElementById("casesGrid");
+  if (!grid) return;
   grid.innerHTML = "";
   const solved = getSolvedCases();
 
@@ -99,7 +100,8 @@ function renderCaseSelection(puzzles) {
 
   filtered.forEach(p => {
     const isSolved = solved.includes(p.case_id);
-    const stars = "★".repeat(p.difficulty || 1) + "☆".repeat(Math.max(0, 3 - (p.difficulty || 1)));
+    const diffLevel = p.difficulty || 1;
+    const diffLabel = `CẤP ĐỘ ${diffLevel}/3`;
     const card = document.createElement("div");
     card.className = "dossier-card";
     card.innerHTML = `
@@ -107,8 +109,8 @@ function renderCaseSelection(puzzles) {
         <div class="dossier-top">
           <span class="dossier-code">${p.code || "HỒ SƠ"} · ${p.n}×${p.n}</span>
           <div class="dossier-badges">
-            ${isSolved ? '<span class="solved-pill">✓ ĐÃ PHÁ ÁN</span>' : ''}
-            <span class="stars" title="Độ khó">${stars}</span>
+            ${isSolved ? '<span class="solved-pill">ĐÃ PHÁ ÁN</span>' : ''}
+            <span class="stars" title="Độ khó">${diffLabel}</span>
           </div>
         </div>
         <div class="dossier-title">${p.title || p.case_id}</div>
@@ -116,7 +118,7 @@ function renderCaseSelection(puzzles) {
         <div class="dossier-story">${p.story || ""}</div>
       </div>
       <div class="dossier-footer">
-        <span class="dossier-tag">📌 ${p.badge || (p.n + "×" + p.n)}</span>
+        <span class="dossier-tag">${p.badge || (p.n + "×" + p.n)}</span>
         <span class="dossier-cta">Mở Hồ Sơ Điều Tra →</span>
       </div>
     `;
@@ -129,7 +131,7 @@ function renderCaseSelection(puzzles) {
   });
 }
 
-/* Minh họa SVG nhân vật đa sắc diện theo nghề nghiệp */
+/* Minh họa SVG nhân vật theo nghề nghiệp */
 function suspectPortraitSvg(profession, isRevealed, status) {
   const p = (profession || "").toLowerCase();
   let accent = "#F59E0B";
@@ -165,7 +167,7 @@ function suspectPortraitSvg(profession, isRevealed, status) {
     coat = status === "INNOCENT" ? "#059669" : "#E11D48";
   }
 
-  return `<svg width="34" height="34" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+  return `<svg width="32" height="32" viewBox="0 0 36 36" fill="none" aria-hidden="true">
     <path d="M7 33 C7 24.5, 29 24.5, 29 33" fill="${coat}"/>
     <circle cx="18" cy="15.5" r="6" fill="#FDE68A" stroke="${accent}" stroke-width="1.4"/>
     <circle cx="16" cy="15" r="0.9" fill="#1E293B"/>
@@ -177,10 +179,10 @@ function suspectPortraitSvg(profession, isRevealed, status) {
 
 function regionOverlayHtml(role) {
   let col = "var(--hl-ref)";
-  let label = "📍 VÙNG LỜI KHAI";
-  if (role === "LEFT") { col = "var(--hl-ref)"; label = "◀ VẾ TRÁI"; }
-  if (role === "RIGHT") { col = "var(--hl-right)"; label = "▶ VẾ PHẢI"; }
-  if (role === "L∩R") { col = "var(--hl-overlap)"; label = "✦ GIAO NHAU"; }
+  let label = "VÙNG LỜI KHAI";
+  if (role === "LEFT") { col = "var(--hl-ref)"; label = "VẾ TRÁI"; }
+  if (role === "RIGHT") { col = "var(--hl-right)"; label = "VẾ PHẢI"; }
+  if (role === "L∩R") { col = "var(--hl-overlap)"; label = "GIAO NHAU"; }
   return `
     <div class="region-role-pill" data-role="${role}">${label}</div>
     <svg class="region-overlay-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -219,7 +221,7 @@ function render(data) {
   }
 
   const qSel = document.getElementById("quickPuzzleSelect");
-  if (data.puzzles) {
+  if (data.puzzles && qSel) {
     qSel.innerHTML = "";
     data.puzzles.forEach(p => {
       const opt = document.createElement("option");
@@ -233,146 +235,162 @@ function render(data) {
     renderCaseSelection(data.puzzles);
   }
 
-  document.getElementById("hdrCaseCode").textContent = data.case_code || "HỒ SƠ";
-  document.getElementById("hdrCaseTitle").textContent = data.case_title || data.puzzle_id;
-  document.getElementById("progressLabel").textContent = `Đã xác minh: ${data.revealed_count}/${data.total_cells}`;
+  const hdrCode = document.getElementById("hdrCaseCode");
+  if (hdrCode) hdrCode.textContent = data.case_code || "HỒ SƠ";
+  const hdrTitle = document.getElementById("hdrCaseTitle");
+  if (hdrTitle) hdrTitle.textContent = data.case_title || data.puzzle_id;
+
+  const progLbl = document.getElementById("progressLabel");
+  if (progLbl) progLbl.textContent = `${data.revealed_count}/${data.total_cells} ô`;
   const pct = data.total_cells > 0 ? Math.round((data.revealed_count / data.total_cells) * 100) : 0;
-  document.getElementById("progressBarFill").style.width = `${pct}%`;
-  document.getElementById("badgeClauseCount").textContent = `${data.telemetry.num_clauses} CNF`;
+  const progFill = document.getElementById("progressBarFill");
+  if (progFill) progFill.style.width = `${pct}%`;
+
+  const badgeClause = document.getElementById("badgeClauseCount");
+  if (badgeClause) badgeClause.textContent = `${data.telemetry.num_clauses} CNF`;
 
   const kind = data.banner_kind || "READY";
   const spInner = document.getElementById("spotlightInner");
   const stBadge = document.getElementById("statusBadge");
-  spInner.dataset.kind = kind;
-  stBadge.dataset.kind = kind;
-  stBadge.textContent = BANNER_LABEL_VN[kind] || kind;
-  document.getElementById("statusText").textContent = data.banner_message || "";
+  if (spInner) spInner.dataset.kind = kind;
+  if (stBadge) {
+    stBadge.dataset.kind = kind;
+    stBadge.textContent = BANNER_LABEL_VN[kind] || kind;
+  }
+  const stText = document.getElementById("statusText");
+  if (stText) stText.textContent = data.banner_message || "";
 
   const insp = data.selected_inspector;
   const cluePill = document.getElementById("activeCluePill");
-  if (insp) {
-    cluePill.style.display = "flex";
-    document.getElementById("activeClueOwner").textContent = `Lời khai ${insp.owner} (${insp.cell}):`;
-    if ((insp.left && insp.left.length) || (insp.right && insp.right.length)) {
-      const parts = [];
-      if (insp.left.length) parts.push(`Vế trái: ${insp.left.join(", ")}`);
-      if (insp.right.length) parts.push(`Vế phải: ${insp.right.join(", ")}`);
-      if (insp.overlap.length) parts.push(`Giao nhau: ${insp.overlap.join(", ")}`);
-      document.getElementById("activeClueRefs").textContent = parts.join(" | ");
+  if (cluePill) {
+    if (insp) {
+      cluePill.style.display = "flex";
+      document.getElementById("activeClueOwner").textContent = `Lời khai ${insp.owner} (${insp.cell}):`;
+      if ((insp.left && insp.left.length) || (insp.right && insp.right.length)) {
+        const parts = [];
+        if (insp.left.length) parts.push(`Vế trái: ${insp.left.join(", ")}`);
+        if (insp.right.length) parts.push(`Vế phải: ${insp.right.join(", ")}`);
+        if (insp.overlap.length) parts.push(`Giao nhau: ${insp.overlap.join(", ")}`);
+        document.getElementById("activeClueRefs").textContent = parts.join(" | ");
+      } else {
+        document.getElementById("activeClueRefs").textContent = `Khoanh vùng (${insp.referenced.length} ô): ${insp.referenced.join(", ")}`;
+      }
     } else {
-      document.getElementById("activeClueRefs").textContent = `Khoanh vùng (${insp.referenced.length} ô): ${insp.referenced.join(", ")}`;
+      cluePill.style.display = "none";
     }
-  } else {
-    cluePill.style.display = "none";
   }
 
   const n = data.n;
   const shell = document.getElementById("boardShell");
-  shell.dataset.n = String(n);
+  if (shell) shell.dataset.n = String(n);
 
   const colHeaders = document.getElementById("colHeaders");
-  colHeaders.innerHTML = "";
-  colHeaders.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
-  for (let c = 0; c < n; c++) {
-    const ch = document.createElement("div");
-    ch.className = "col-hdr";
-    ch.textContent = `CỘT ${String.fromCharCode(65 + c)}`;
-    colHeaders.appendChild(ch);
+  if (colHeaders) {
+    colHeaders.innerHTML = "";
+    colHeaders.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
+    for (let c = 0; c < n; c++) {
+      const ch = document.createElement("div");
+      ch.className = "col-hdr";
+      ch.textContent = `CỘT ${String.fromCharCode(65 + c)}`;
+      colHeaders.appendChild(ch);
+    }
   }
 
   const rowsWrap = document.getElementById("boardRowsWrap");
-  rowsWrap.innerHTML = "";
-  for (let r = 0; r < n; r++) {
-    const rowEl = document.createElement("div");
-    rowEl.className = "board-row";
+  if (rowsWrap) {
+    rowsWrap.innerHTML = "";
+    for (let r = 0; r < n; r++) {
+      const rowEl = document.createElement("div");
+      rowEl.className = "board-row";
 
-    const rHdr = document.createElement("div");
-    rHdr.className = "row-hdr";
-    rHdr.textContent = `${r + 1}`;
-    rowEl.appendChild(rHdr);
+      const rHdr = document.createElement("div");
+      rHdr.className = "row-hdr";
+      rHdr.textContent = `${r + 1}`;
+      rowEl.appendChild(rHdr);
 
-    const cardsGrid = document.createElement("div");
-    cardsGrid.className = "row-cards";
-    cardsGrid.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
+      const cardsGrid = document.createElement("div");
+      cardsGrid.className = "row-cards";
+      cardsGrid.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
 
-    for (let c = 0; c < n; c++) {
-      const item = data.cells[r * n + c];
-      const scene = document.createElement("div");
-      scene.className = "suspect-scene";
+      for (let c = 0; c < n; c++) {
+        const item = data.cells[r * n + c];
+        const scene = document.createElement("div");
+        scene.className = "suspect-scene";
 
-      const card = document.createElement("div");
-      const classes = ["suspect-card"];
-      if (item.revealed) {
-        classes.push(item.status === "INNOCENT" ? "revealed-innocent" : "revealed-criminal");
-      } else {
-        classes.push("unsolved");
-      }
-      if (item.is_selected_clue) classes.push("selected-clue");
-      if (item.is_hinted) classes.push("hinted");
-      if (lastAnimatedCell === item.cell && lastAnimationKind) {
-        classes.push(lastAnimationKind);
-      }
-      card.className = classes.join(" ");
+        const card = document.createElement("div");
+        const classes = ["suspect-card"];
+        if (item.revealed) {
+          classes.push(item.status === "INNOCENT" ? "revealed-innocent" : "revealed-criminal");
+        } else {
+          classes.push("unsolved");
+        }
+        if (item.is_selected_clue) classes.push("selected-clue");
+        if (item.is_hinted) classes.push("hinted");
+        if (lastAnimatedCell === item.cell && lastAnimationKind) {
+          classes.push(lastAnimationKind);
+        }
+        card.className = classes.join(" ");
 
-      const overlay = item.highlight_role ? regionOverlayHtml(item.highlight_role) : "";
+        const overlay = item.highlight_role ? regionOverlayHtml(item.highlight_role) : "";
 
-      if (item.revealed) {
-        const isInn = item.status === "INNOCENT";
-        const badgeClass = isInn ? "innocent" : "criminal";
-        const badgeText = isInn ? "✓ VÔ TỘI" : "✕ THỦ PHẠM";
-        const clueText = n === 5 ? item.clue.short_text : item.clue.text;
+        if (item.revealed) {
+          const isInn = item.status === "INNOCENT";
+          const badgeClass = isInn ? "innocent" : "criminal";
+          const badgeText = isInn ? "VÔ TỘI" : "THỦ PHẠM";
+          const clueText = n === 5 ? item.clue.short_text : item.clue.text;
 
-        card.innerHTML = `
-          ${overlay}
-          <div class="card-top">
-            <span class="coord-pill">${item.cell}</span>
-            <span class="stamp-badge ${badgeClass}">${badgeText}</span>
-          </div>
-          <div class="identity-revealed">
-            <div class="avatar-wrap">${suspectPortraitSvg(item.profession, true, item.status)}</div>
-            <div>
+          card.innerHTML = `
+            ${overlay}
+            <div class="card-top">
+              <span class="coord-pill">${item.cell}</span>
+              <span class="stamp-badge ${badgeClass}">${badgeText}</span>
+            </div>
+            <div class="identity-revealed">
+              <div class="avatar-wrap">${suspectPortraitSvg(item.profession, true, item.status)}</div>
+              <div>
+                <div class="char-name">${item.name}</div>
+                <div class="char-prof">${item.profession}</div>
+              </div>
+            </div>
+            <div class="clue-bubble" title="Bấm vào thẻ để khoanh vùng các ô liên quan">
+              “${clueText}”
+            </div>
+          `;
+          card.addEventListener("click", () => selectClue(item.is_selected_clue ? null : item.cell));
+        } else {
+          const topRight = item.is_hinted
+            ? `<span class="stamp-badge hint-pill">AI GỢI Ý</span>`
+            : `<span class="stamp-badge unsolved-pill">CHƯA MỞ</span>`;
+          card.innerHTML = `
+            ${overlay}
+            <div class="card-top">
+              <span class="coord-pill">${item.cell}</span>
+              ${topRight}
+            </div>
+            <div class="identity-unsolved">
+              <div class="avatar-wrap">${suspectPortraitSvg(item.profession, false, null)}</div>
               <div class="char-name">${item.name}</div>
               <div class="char-prof">${item.profession}</div>
             </div>
-          </div>
-          <div class="clue-bubble" title="Bấm vào thẻ để khoanh vùng các ô liên quan">
-            “${clueText}”
-          </div>
-        `;
-        card.addEventListener("click", () => selectClue(item.is_selected_clue ? null : item.cell));
-      } else {
-        const topRight = item.is_hinted
-          ? `<span class="stamp-badge hint-pill">💡 AI GỢI Ý</span>`
-          : `<span class="stamp-badge unsolved-pill">ĐANG THẨM VẤN</span>`;
-        card.innerHTML = `
-          ${overlay}
-          <div class="card-top">
-            <span class="coord-pill">${item.cell}</span>
-            ${topRight}
-          </div>
-          <div class="identity-unsolved">
-            <div class="avatar-wrap">${suspectPortraitSvg(item.profession, false, null)}</div>
-            <div class="char-name">${item.name}</div>
-            <div class="char-prof">${item.profession}</div>
-          </div>
-          <div class="verdict-row">
-            <button type="button" class="btn-verdict innocent" data-cell="${item.cell}" data-v="INNOCENT">✓ Vô tội</button>
-            <button type="button" class="btn-verdict criminal" data-cell="${item.cell}" data-v="CRIMINAL">✕ Thủ phạm</button>
-          </div>
-        `;
-        card.querySelectorAll(".btn-verdict").forEach(btn => {
-          btn.addEventListener("click", (ev) => {
-            ev.stopPropagation();
-            submitVerdict(btn.dataset.cell, btn.dataset.v);
+            <div class="verdict-row">
+              <button type="button" class="btn-verdict innocent" data-cell="${item.cell}" data-v="INNOCENT">Vô tội</button>
+              <button type="button" class="btn-verdict criminal" data-cell="${item.cell}" data-v="CRIMINAL">Thủ phạm</button>
+            </div>
+          `;
+          card.querySelectorAll(".btn-verdict").forEach(btn => {
+            btn.addEventListener("click", (ev) => {
+              ev.stopPropagation();
+              submitVerdict(btn.dataset.cell, btn.dataset.v);
+            });
           });
-        });
-      }
+        }
 
-      scene.appendChild(card);
-      cardsGrid.appendChild(scene);
+        scene.appendChild(card);
+        cardsGrid.appendChild(scene);
+      }
+      rowEl.appendChild(cardsGrid);
+      rowsWrap.appendChild(rowEl);
     }
-    rowEl.appendChild(cardsGrid);
-    rowsWrap.appendChild(rowEl);
   }
 
   lastAnimatedCell = null;
@@ -389,24 +407,28 @@ function render(data) {
   document.getElementById("mRuntime").textContent = `${t.runtime_ms.toFixed(1)}ms`;
 
   const cList = document.getElementById("clueDrawerList");
-  cList.innerHTML = "";
-  data.revealed_clues.forEach(rc => {
-    const item = document.createElement("div");
-    item.className = "clue-drawer-item" + (rc.selected ? " active" : "");
-    item.innerHTML = `<span class="clue-drawer-tag">[${rc.cell} · ${rc.owner}]</span>${rc.text}`;
-    item.addEventListener("click", () => selectClue(rc.cell));
-    cList.appendChild(item);
-  });
+  if (cList) {
+    cList.innerHTML = "";
+    data.revealed_clues.forEach(rc => {
+      const item = document.createElement("div");
+      item.className = "clue-drawer-item" + (rc.selected ? " active" : "");
+      item.innerHTML = `<span class="clue-drawer-tag">[${rc.cell} · ${rc.owner}]</span>${rc.text}`;
+      item.addEventListener("click", () => selectClue(rc.cell));
+      cList.appendChild(item);
+    });
+  }
 
   const traceBox = document.getElementById("traceBox");
-  traceBox.innerHTML = "";
-  data.trace.forEach(tr => {
-    const row = document.createElement("div");
-    row.className = "trace-entry";
-    row.innerHTML = `<span class="trace-tag ${tr.outcome}">#${String(tr.step_no).padStart(2, '0')} [${tr.outcome}]</span> ${tr.detail}`;
-    traceBox.appendChild(row);
-  });
-  traceBox.scrollTop = traceBox.scrollHeight;
+  if (traceBox) {
+    traceBox.innerHTML = "";
+    data.trace.forEach(tr => {
+      const row = document.createElement("div");
+      row.className = "trace-entry";
+      row.innerHTML = `<span class="trace-tag ${tr.outcome}">#${String(tr.step_no).padStart(2, '0')} [${tr.outcome}]</span> ${tr.detail}`;
+      traceBox.appendChild(row);
+    });
+    traceBox.scrollTop = traceBox.scrollHeight;
+  }
 
   if (data.is_complete && victoryShownForSession !== data.session_id) {
     victoryShownForSession = data.session_id;
@@ -453,7 +475,8 @@ function stopAutoSolve() {
     clearTimeout(autoTimer);
     autoTimer = null;
   }
-  document.getElementById("lblAuto").textContent = "⚡ Tự động phá án";
+  const lblAuto = document.getElementById("lblAuto");
+  if (lblAuto) lblAuto.textContent = "Tự động phá án";
 }
 
 async function loopAutoSolve() {
@@ -482,7 +505,7 @@ document.getElementById("btnAuto").addEventListener("click", () => {
     stopAutoSolve();
     return;
   }
-  document.getElementById("lblAuto").textContent = "⏸ Tạm dừng";
+  document.getElementById("lblAuto").textContent = "Tạm dừng";
   autoTimer = setTimeout(loopAutoSolve, 60);
 });
 
