@@ -1,7 +1,7 @@
-# Griductive Solver — Báo cáo nghiệm thu (P)
+# Griductive Solver — Báo cáo nghiệm thu (E)
 
-- **Thời gian thực hiện**: `2026-11-09T08:59:47.330944+00:00`
-- **Phạm vi kiểm tra (Scope)**: `p`
+- **Thời gian thực hiện**: `2026-11-09T09:14:13.365449+00:00`
+- **Phạm vi kiểm tra (Scope)**: `e`
 - **Yêu cầu mã thật (require_real)**: `True`
 - **Kết quả tổng thể**: **PASS** (Exit code: `0`)
 
@@ -9,27 +9,23 @@
 
 | Cổng (Gate) | Phụ trách | Trạng thái | Passed | Failed | Blocked | Tổng số |
 |---|---|---|---:|---:|---:|---:|
-| `G-P` | C/E (Puzzle Suite) | **PASS** | 9 | 0 | 0 | 9 |
+| `G-E` | E (GUI & Main) | **PASS** | 7 | 0 | 0 | 7 |
 
 ## Chi tiết các bước kiểm tra (Subchecks)
 
-### Cổng `G-P`: C/E (Puzzle Suite) — [PASS]
+### Cổng `G-E`: E (GUI & Main) — [PASS]
 
-- **[PASS] P-chain_demo**: Verify puzzle case 'chain_demo' (examples/3x3_chain.json) (26.71 ms)
-  - *Bằng chứng / Ghi chú*: Case 'chain_demo' (3x3, normal) verified: uniqueness=UNIQUE, run=SOLVED
-- **[PASS] P-3x3_classic**: Verify puzzle case '3x3_classic' (examples/3x3_classic.json) (42.4 ms)
-  - *Bằng chứng / Ghi chú*: Case '3x3_classic' (3x3, normal) verified: uniqueness=UNIQUE, run=SOLVED
-- **[PASS] P-3x3_extensions**: Verify puzzle case '3x3_extensions' (examples/3x3_extensions.json) (59.2 ms)
-  - *Bằng chứng / Ghi chú*: Case '3x3_extensions' (3x3, normal) verified: uniqueness=UNIQUE, run=SOLVED
-- **[PASS] P-4x4_detective**: Verify puzzle case '4x4_detective' (examples/4x4_detective.json) (201.29 ms)
-  - *Bằng chứng / Ghi chú*: Case '4x4_detective' (4x4, normal) verified: uniqueness=UNIQUE, run=SOLVED
-- **[PASS] P-4x4_crossfire**: Verify puzzle case '4x4_crossfire' (examples/4x4_crossfire.json) (273.38 ms)
-  - *Bằng chứng / Ghi chú*: Case '4x4_crossfire' (4x4, normal) verified: uniqueness=UNIQUE, run=SOLVED
-- **[PASS] P-5x5_mastermind**: Verify puzzle case '5x5_mastermind' (examples/5x5_mastermind.json) (642.52 ms)
-  - *Bằng chứng / Ghi chú*: Case '5x5_mastermind' (5x5, stress) verified: uniqueness=UNIQUE, run=SOLVED
-- **[PASS] P-3x3_stuck**: Verify puzzle case '3x3_stuck' (examples/3x3_stuck.json) (12.63 ms)
-  - *Bằng chứng / Ghi chú*: Case '3x3_stuck' (3x3, stuck) verified: uniqueness=UNIQUE, run=STUCK
-- **[PASS] P-3x3_multi**: Verify puzzle case '3x3_multi' (examples/3x3_multi.json) (30.2 ms)
-  - *Bằng chứng / Ghi chú*: Case '3x3_multi' (3x3, multi_solution) verified: uniqueness=MULTIPLE, run=STUCK
-- **[PASS] P-3x3_inconsistent**: Verify puzzle case '3x3_inconsistent' (examples/3x3_inconsistent.json) (7.62 ms)
-  - *Bằng chứng / Ghi chú*: Case '3x3_inconsistent' (3x3, inconsistent) verified: uniqueness=UNSAT, run=INCONSISTENT
+- **[PASS] test_e01_controller_load_restart**: E-01: GUIController tải và làm mới màn chơi qua PublicState mà không làm lộ solution. (5.04 ms)
+  - *Bằng chứng / Ghi chú*: Real Module E implementation verified
+- **[PASS] test_e02_clue_highlighting_and_overlap**: E-02: Chọn lời khai trả về đúng vùng ô tham chiếu và phân tách Trái/Phải/Giao nhau của COMPARE. (6.71 ms)
+  - *Bằng chứng / Ghi chú*: Real Module E implementation verified
+- **[PASS] test_e03_manual_verdict_outcomes**: E-03: Phân biệt rõ NOT_PROVABLE, CONTRADICTED và ACCEPTED mà không đổi trạng thái khi bị từ chối. (5.95 ms)
+  - *Bằng chứng / Ghi chú*: Real Module E implementation verified
+- **[PASS] test_e04_hint_and_autosolve_isolation**: E-04: Gợi ý tìm đúng ô bị ép buộc mà không tự lật thẻ; Tự động phá án giải trọn vẹn. (21.59 ms)
+  - *Bằng chứng / Ghi chú*: Real Module E implementation verified
+- **[PASS] test_e05_clue_formatter_and_layout_metrics**: E-05: Trình dịch lời khai Tiếng Việt hỗ trợ đủ 8 mẫu ClueType và bố cục bàn cờ cân đối. (2.31 ms)
+  - *Bằng chứng / Ghi chú*: Real Module E implementation verified
+- **[PASS] test_e06_puzzle_suite_and_manifest_verification**: E-06: Toàn bộ 9 màn chơi trong puzzles/index.json khớp tính duy nhất nghiệm và thứ tự suy diễn. (673.22 ms)
+  - *Bằng chứng / Ghi chú*: Real Module E implementation verified
+- **[PASS] test_e07_web_gui_vietnamese_screens_and_api**: E-07: Giao diện Web Tiếng Việt có đủ 3 màn hình (Bắt đầu, Kho Hồ Sơ, Bàn cờ 3D) và các endpoint API. (48.05 ms)
+  - *Bằng chứng / Ghi chú*: Real Module E implementation verified

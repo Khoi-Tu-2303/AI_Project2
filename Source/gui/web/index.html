@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="noir" data-motion="on">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hồ Sơ Logic: Griductive — Phá Án Không Đoán Mò</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@500;600;700&family=Playfair+Display:ital,wght@0,700;0,800;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="ambient-bg"></div>
+  <div class="ambient-grid"></div>
+
+  <!-- ===================================================================
+       MÀN HÌNH 1: MÀN HÌNH BẮT ĐẦU (START SCREEN)
+       =================================================================== -->
+  <section id="screenStart" class="screen active">
+    <div class="start-top-controls">
+      <button type="button" class="btn" onclick="toggleTheme()">
+        <span id="lblThemeStart">🌗 Giao diện: Đêm Trinh Thám</span>
+      </button>
+      <button type="button" class="btn" onclick="openModal('modalRules')">
+        📖 Luật chơi &amp; AI
+      </button>
+    </div>
+
+    <div class="start-container">
+      <div class="agency-badge">
+        <span>✦ CỤC ĐIỀU TRA LOGIC MỆNH ĐỀ · DPLL SAT SOLVER ✦</span>
+      </div>
+
+      <svg class="hero-crest" viewBox="0 0 96 96" fill="none">
+        <polygon points="48,6 86,24 76,72 48,90 20,72 10,24" fill="rgba(245,158,11,0.12)" stroke="#F59E0B" stroke-width="2.5"/>
+        <circle cx="48" cy="46" r="22" fill="rgba(16,185,129,0.12)" stroke="#FBBF24" stroke-width="2"/>
+        <path d="M38 46 L45 53 L59 39" stroke="#10B981" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+
+      <h1 class="hero-title">HỒ SƠ LOGIC: GRIDUCTIVE</h1>
+      <div class="hero-subtitle">Phá Án Bằng Suy Luận Thuần Túy — Tuyệt Đối Không Đoán Mò</div>
+      <p class="hero-desc">
+        Chào mừng Thám tử đến với bàn cờ thẩm vấn nghi phạm. Mỗi nghi phạm đã lộ diện sẽ cung cấp một lời khai
+        được mã hóa thành <strong>mệnh đề logic dạng chuẩn hội (CNF)</strong>. Nhiệm vụ của bạn là chỉ ra ai
+        <strong>Vô tội</strong>, ai là <strong>Thủ phạm</strong> khi và chỉ khi phán quyết đó được chứng minh tất yếu!
+      </p>
+
+      <div class="hero-actions">
+        <button type="button" class="btn-hero-primary" onclick="startImmediateInvestigation()">
+          <span>▶ BẮT ĐẦU ĐIỀU TRA NGAY</span>
+        </button>
+        <button type="button" class="btn-hero-secondary" onclick="showScreen('screenCases')">
+          <span>📂 KHO HỒ SƠ VỤ ÁN (9 MÀN)</span>
+        </button>
+        <button type="button" class="btn-hero-secondary" onclick="openModal('modalRules')">
+          <span>📖 HƯỚNG DẪN &amp; CƠ CHẾ SAT</span>
+        </button>
+      </div>
+
+      <div class="hero-features">
+        <div class="feature-card">
+          <div class="feature-icon">🔍</div>
+          <div class="feature-title">Suy Diễn Logic Không Đoán Mò</div>
+          <div class="feature-text">
+            Hệ thống kiểm tra suy diễn bằng chứng minh phản chứng <code>KB ∧ ¬L = UNSAT</code>. Mọi phán quyết vội vàng đều bị cảnh báo ngay lập tức.
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🧩</div>
+          <div class="feature-title">8 Mẫu Lời Khai &amp; Khoanh Vùng Trực Quan</div>
+          <div class="feature-text">
+            Bấm vào bất kỳ hồ sơ đã mở nào để chiếu sáng Hàng, Cột, Láng giềng xung quanh hoặc vùng đối chiếu Chẵn/Lẻ (PARITY, COMPARE).
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🧠</div>
+          <div class="feature-title">Trợ Lý AI &amp; Phân Tích DPLL Trực Tiếp</div>
+          <div class="feature-text">
+            Tích hợp Gợi ý nước đi, Giải từng bước, Tự động phá án và Ngăn kéo theo dõi thông số Unit Propagation thời gian thực.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================
+       MÀN HÌNH 2: KHO HỒ SƠ VỤ ÁN / CHỌN MÀN CHƠI (CASE SELECTION)
+       =================================================================== -->
+  <section id="screenCases" class="screen">
+    <div class="cases-wrapper">
+      <div class="cases-header">
+        <div class="cases-title-block">
+          <h1>📂 KHO LƯU TRỮ HỒ SƠ VỤ ÁN</h1>
+          <p>Chọn một hồ sơ vụ án dưới đây để bắt đầu thẩm vấn hoặc tải lên file JSON tùy chỉnh</p>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <label class="btn" for="uploadJsonCases" style="cursor:pointer;">
+            📤 Tải File JSON Từ Máy
+          </label>
+          <input id="uploadJsonCases" type="file" accept=".json" style="display:none" />
+          <button type="button" class="btn" onclick="toggleTheme()">🌗 Đổi giao diện</button>
+          <button type="button" class="btn btn-gold" onclick="showScreen('screenStart')">← Màn hình chính</button>
+        </div>
+      </div>
+
+      <div class="filter-bar">
+        <div class="filter-tabs" id="caseFilterTabs">
+          <button type="button" class="filter-tab active" data-filter="all" onclick="setCaseFilter('all')">Tất cả hồ sơ (9)</button>
+          <button type="button" class="filter-tab" data-filter="3" onclick="setCaseFilter('3')">Cấp độ 3×3</button>
+          <button type="button" class="filter-tab" data-filter="4" onclick="setCaseFilter('4')">Cấp độ 4×4</button>
+          <button type="button" class="filter-tab" data-filter="5" onclick="setCaseFilter('5')">Siêu cấp 5×5</button>
+          <button type="button" class="filter-tab" data-filter="edge" onclick="setCaseFilter('edge')">Kiểm thử biên AI</button>
+        </div>
+      </div>
+
+      <div class="cases-grid" id="casesGrid"></div>
+    </div>
+  </section>
+
+  <!-- ===================================================================
+       MÀN HÌNH 3: MÀN HÌNH ĐIỀU TRA BÀN CỜ 3D (GAMEPLAY SCREEN)
+       =================================================================== -->
+  <section id="screenGame" class="screen">
+    <!-- Thanh công cụ phía trên -->
+    <header class="game-topbar">
+      <div class="topbar-left">
+        <button type="button" class="btn" onclick="showScreen('screenCases')" title="Quay về Kho Hồ Sơ Vụ Án">
+          ← Kho Hồ Sơ
+        </button>
+        <div class="case-header-pill">
+          <span class="case-header-code" id="hdrCaseCode">HỒ SƠ #02</span>
+          <span class="case-header-title" id="hdrCaseTitle">Đêm Gala Thượng Lưu</span>
+        </div>
+        <select id="quickPuzzleSelect" class="ctrl-select" aria-label="Đổi nhanh vụ án"></select>
+        <div class="progress-widget">
+          <span id="progressLabel">Đã xác minh: 2/9</span>
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill" id="progressBarFill" style="width: 22%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="topbar-center">
+        <button type="button" class="btn" id="btnHint" title="AI tìm 1 ô đã đủ chứng cứ suy diễn (không tự lật thẻ)">
+          💡 Gợi ý
+        </button>
+        <button type="button" class="btn" id="btnStep" title="AI tự động lật 1 ô chắc chắn đúng">
+          ⏭ Giải 1 bước
+        </button>
+        <button type="button" class="btn btn-gold" id="btnAuto" title="AI tự động phá án tuần tự">
+          <span id="lblAuto">⚡ Tự động phá án</span>
+        </button>
+        <select id="speedSelect" class="ctrl-select" aria-label="Tốc độ giải tự động">
+          <option value="220">Tốc độ: Nhanh</option>
+          <option value="480" selected>Tốc độ: Vừa</option>
+          <option value="850">Tốc độ: Chậm</option>
+        </select>
+        <button type="button" class="btn" id="btnRestart" title="Làm mới lại màn chơi này">
+          ↺ Chơi lại
+        </button>
+      </div>
+
+      <div class="topbar-right">
+        <button type="button" class="btn btn-ai-drawer" onclick="toggleDrawer(true)">
+          🧠 Phân tích AI <span class="badge-count" id="badgeClauseCount">0 CNF</span>
+        </button>
+        <button type="button" class="btn" onclick="openModal('modalRules')" title="Xem luật chơi">
+          📖 Luật
+        </button>
+        <button type="button" class="btn" onclick="toggleTheme()" title="Đổi chế độ Sáng / Tối">
+          🌗
+        </button>
+      </div>
+    </header>
+
+    <!-- Thanh Tiêu Điểm Lời Khai & Phản Hồi -->
+    <div class="spotlight-bar">
+      <div class="spotlight-inner" id="spotlightInner" data-kind="READY">
+        <div class="status-msg-group">
+          <span class="status-badge" id="statusBadge" data-kind="READY">ĐANG ĐIỀU TRA</span>
+          <span class="status-text" id="statusText">Bấm vào thẻ đã mở để khoanh vùng lời khai, hoặc chọn Vô tội / Thủ phạm cho nghi phạm.</span>
+        </div>
+        <div class="active-clue-pill" id="activeCluePill" style="display:none;">
+          <span class="active-clue-owner" id="activeClueOwner">An (A1):</span>
+          <span class="active-clue-refs" id="activeClueRefs">Ô liên quan: A1, B1</span>
+          <button type="button" class="btn-clear-hl" onclick="selectClue(null)">✕ Bỏ chọn</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bàn Cờ Nghi Phạm 3D -->
+    <main class="board-stage">
+      <div class="board-shell" id="boardShell" data-n="3">
+        <div class="col-headers" id="colHeaders"></div>
+        <div class="board-rows-wrap" id="boardRowsWrap"></div>
+      </div>
+    </main>
+  </section>
+
+  <!-- ===================================================================
+       NGĂN KÉO TRƯỢT PHÂN TÍCH AI (CNF & DPLL TELEMETRY DRAWER)
+       =================================================================== -->
+  <div class="drawer-backdrop" id="drawerBackdrop" onclick="toggleDrawer(false)"></div>
+  <aside class="ai-drawer" id="aiDrawer">
+    <div class="drawer-header">
+      <div class="drawer-title">🧠 Bảng Phân Tích Logic CNF &amp; DPLL SAT</div>
+      <button type="button" class="btn" onclick="toggleDrawer(false)">✕ Đóng</button>
+    </div>
+    <div class="drawer-body">
+      <div>
+        <div class="drawer-section-title">Thông số Cơ sở Tri thức CNF &amp; Bộ giải DPLL</div>
+        <div class="telemetry-grid">
+          <div class="metric-box"><span class="metric-lbl">Biến chính (N²)</span><span class="metric-val" id="mPrimary">0</span></div>
+          <div class="metric-box"><span class="metric-lbl">Biến phụ trợ</span><span class="metric-val" id="mAux">0</span></div>
+          <div class="metric-box"><span class="metric-lbl">Mệnh đề CNF</span><span class="metric-val" id="mClauses">0</span></div>
+          <div class="metric-box"><span class="metric-lbl">Truy vấn SAT</span><span class="metric-val" id="mQueries">0</span></div>
+          <div class="metric-box"><span class="metric-lbl">Phân nhánh</span><span class="metric-val" id="mDecisions">0</span></div>
+          <div class="metric-box"><span class="metric-lbl">Lan truyền đơn vị</span><span class="metric-val" id="mProps">0</span></div>
+          <div class="metric-box"><span class="metric-lbl">Quay lui (Backtrack)</span><span class="metric-val" id="mBacktracks">0</span></div>
+          <div class="metric-box"><span class="metric-lbl">Thời gian giải</span><span class="metric-val" id="mRuntime">0.0ms</span></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="drawer-section-title">Danh sách Lời khai Đã mở (Bấm để khoanh vùng)</div>
+        <div class="clue-drawer-list" id="clueDrawerList"></div>
+      </div>
+
+      <div style="flex:1; display:flex; flex-direction:column;">
+        <div class="drawer-section-title">Nhật ký Suy diễn AI (Deduction Trace)</div>
+        <div class="trace-box" id="traceBox"></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===================================================================
+       MODAL 1: LUẬT CHƠI & CƠ CHẾ AI
+       =================================================================== -->
+  <div class="modal-overlay" id="modalRules" onclick="if(event.target===this) closeModal('modalRules')">
+    <div class="modal-card">
+      <h2>📖 Luật Chơi &amp; Cơ Chế Suy Diễn SAT</h2>
+      <p>
+        <strong>Hồ Sơ Logic: Griductive</strong> là trò chơi trinh thám dựa trên <strong>Logic Mệnh Đề (Propositional Logic)</strong>
+        và bộ giải <strong>DPLL SAT Solver</strong>, lấy cảm hứng từ <em>Clues by Sam</em>.
+      </p>
+      <ul class="rule-list">
+        <li>
+          <strong>1. Hai thân phận duy nhất:</strong> Mỗi nghi phạm trên bàn cờ <code>N×N</code> chỉ có thể là
+          <strong style="color:var(--innocent)">✓ VÔ TỘI (INNOCENT)</strong> hoặc
+          <strong style="color:var(--criminal)">✕ THỦ PHẠM (CRIMINAL)</strong>.
+        </li>
+        <li>
+          <strong>2. Mọi lời khai đều là sự thật:</strong> Ngay cả Thủ phạm hay người Vô tội, một khi hồ sơ đã được lật mở,
+          nội dung lời khai trên thẻ của họ luôn luôn đúng 100%.
+        </li>
+        <li>
+          <strong>3. Nguyên tắc vàng — Cấm đoán mò:</strong> Bạn chỉ được phép kết luận một nghi phạm khi trạng thái của họ
+          <strong>bắt buộc phải đúng trong mọi nghiệm hợp lệ</strong> của các lời khai hiện có:
+          <br/>• Phán quyết đúng tất yếu → <strong>CHẤP NHẬN</strong> &amp; lật thẻ mở lời khai mới.
+          <br/>• Phán quyết khi chưa đủ chứng cứ → Cảnh báo <strong>CHƯA ĐỦ BẰNG CHỨNG</strong>.
+          <br/>• Phán quyết trái ngược lời khai → Cảnh báo <strong>MÂU THUẪN LOGIC</strong>.
+        </li>
+        <li>
+          <strong>4. Khoanh vùng trực quan:</strong> Bấm vào bất kỳ thẻ sáng màu nào đã mở để chiếu sáng các ô mà lời khai đó đang nhắc tới trên bàn cờ.
+        </li>
+      </ul>
+      <div style="display:flex; justify-content:flex-end;">
+        <button type="button" class="btn btn-gold" onclick="closeModal('modalRules')">Đã hiểu, bắt đầu phá án!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       MODAL 2: PHÁ ÁN THÀNH CÔNG (VICTORY MODAL)
+       =================================================================== -->
+  <div class="modal-overlay" id="modalVictory" onclick="if(event.target===this) closeModal('modalVictory')">
+    <div class="modal-card" style="text-align:center;">
+      <div style="font-size:46px; margin-bottom:6px;">🏆</div>
+      <h2>VỤ ÁN ĐÃ KHÉP LẠI!</h2>
+      <p id="victoryDesc">Chúc mừng Thám tử! Bạn đã xác minh chính xác toàn bộ nghi phạm bằng suy luận logic thuần túy.</p>
+      <div class="victory-stats">
+        <div class="victory-stat-tile">
+          <div class="victory-stat-val" id="vStatCells">9/9</div>
+          <div class="victory-stat-lbl">Nghi phạm đã mở</div>
+        </div>
+        <div class="victory-stat-tile">
+          <div class="victory-stat-val" id="vStatClauses">0</div>
+          <div class="victory-stat-lbl">Mệnh đề CNF</div>
+        </div>
+        <div class="victory-stat-tile">
+          <div class="victory-stat-val" id="vStatProps">0</div>
+          <div class="victory-stat-lbl">Lan truyền đơn vị</div>
+        </div>
+      </div>
+      <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
+        <button type="button" class="btn" onclick="closeModal('modalVictory')">Xem lại bàn cờ</button>
+        <button type="button" class="btn" onclick="closeModal('modalVictory'); showScreen('screenCases')">Về Kho Hồ Sơ</button>
+        <button type="button" class="btn btn-gold" onclick="playNextCase()">Hồ Sơ Tiếp Theo →</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
