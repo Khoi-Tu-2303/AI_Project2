@@ -4,17 +4,19 @@
    ========================================================================= */
 
 :root, [data-theme="noir"] {
-  --font-display: 'Plus Jakarta Sans', 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Cinzel', Georgia, 'Times New Roman', serif;
+  --font-typewriter: 'Special Elite', 'Courier Prime', 'JetBrains Mono', monospace;
+  --font-display: 'Cinzel', 'Plus Jakarta Sans', system-ui, sans-serif;
   --font-sans: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  --bg-deep: #090B10;
-  --bg-canvas: #0D1017;
-  --bg-surface: rgba(18, 22, 32, 0.94);
-  --bg-elevated: #161B26;
-  --bg-glass: rgba(19, 24, 34, 0.88);
+  --bg-deep: #07090E;
+  --bg-canvas: #0A0D14;
+  --bg-surface: rgba(14, 18, 27, 0.95);
+  --bg-elevated: #141924;
+  --bg-glass: rgba(16, 21, 32, 0.90);
   --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(217, 119, 6, 0.38);
+  --border-strong: rgba(217, 119, 6, 0.42);
 
   --ink-primary: #F8FAFC;
   --ink-secondary: #CBD5E1;
@@ -22,17 +24,17 @@
 
   --gold: #D97706;
   --gold-bright: #F59E0B;
-  --gold-soft: rgba(245, 158, 11, 0.13);
+  --gold-soft: rgba(245, 158, 11, 0.14);
 
   --innocent: #10B981;
   --innocent-dark: #047857;
-  --innocent-soft: rgba(16, 185, 129, 0.15);
+  --innocent-soft: rgba(16, 185, 129, 0.16);
   --paper-innocent: #F8FAF7;
   --paper-innocent-border: #10B981;
 
   --criminal: #F43F5E;
   --criminal-dark: #BE123C;
-  --criminal-soft: rgba(244, 63, 94, 0.15);
+  --criminal-soft: rgba(244, 63, 94, 0.16);
   --paper-criminal: #FFF7F8;
   --paper-criminal-border: #F43F5E;
 
@@ -45,16 +47,22 @@
   --hl-right: #38BDF8;
   --hl-overlap: #A855F7;
 
-  --shadow-card: 0 10px 24px -6px rgba(0, 0, 0, 0.5), 0 2px 6px -1px rgba(0, 0, 0, 0.32);
-  --shadow-subtle: 0 4px 14px rgba(0, 0, 0, 0.28);
+  --shadow-card: 0 10px 24px -6px rgba(0, 0, 0, 0.55), 0 2px 6px -1px rgba(0, 0, 0, 0.35);
+  --shadow-subtle: 0 4px 14px rgba(0, 0, 0, 0.32);
 }
 
 [data-theme="paper"] {
-  --bg-deep: #E6DFD3;
-  --bg-canvas: #F2ECE1;
-  --bg-surface: rgba(255, 252, 246, 0.95);
-  --bg-elevated: #E8E0D2;
-  --bg-glass: rgba(255, 251, 245, 0.92);
+  --font-serif: 'Cinzel', Georgia, 'Times New Roman', serif;
+  --font-typewriter: 'Special Elite', 'Courier Prime', 'JetBrains Mono', monospace;
+  --font-display: 'Cinzel', 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-sans: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --bg-deep: #E4DDD1;
+  --bg-canvas: #EDE5D8;
+  --bg-surface: rgba(252, 248, 240, 0.96);
+  --bg-elevated: #E5DCCE;
+  --bg-glass: rgba(252, 247, 239, 0.94);
   --border-subtle: rgba(15, 23, 42, 0.11);
   --border-strong: rgba(180, 83, 9, 0.36);
 
@@ -106,6 +114,68 @@ html, body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+/* Nền Động Khí Quyển Điện Ảnh & Lớp Phủ Hạt Phim Cổ Điển */
+.noir-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: -3;
+}
+
+.vintage-vignette {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at 50% 40%, transparent 35%, rgba(6, 8, 12, 0.62) 75%, rgba(2, 3, 5, 0.95) 100%);
+  pointer-events: none;
+  z-index: -2;
+}
+
+[data-theme="paper"] .vintage-vignette {
+  background: radial-gradient(circle at 50% 40%, transparent 40%, rgba(90, 75, 55, 0.25) 80%, rgba(55, 45, 30, 0.55) 100%);
+}
+
+.film-grain-overlay {
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.038'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: -1;
+  mix-blend-mode: overlay;
+}
+
+/* Dải Băng Rôn Cảnh Sát Hiện Trường (Crime Scene Tape) */
+.crime-scene-tape {
+  width: 100%;
+  overflow: hidden;
+  background: repeating-linear-gradient(
+    -45deg,
+    #facc15 0px,
+    #facc15 22px,
+    #0f172a 22px,
+    #0f172a 44px
+  );
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.7);
+  position: relative;
+  z-index: 10;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.85);
+}
+
+.tape-strip {
+  background: rgba(15, 23, 42, 0.92);
+  color: #facc15;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 2.2px;
+  padding: 6px 0;
+  text-align: center;
+  white-space: nowrap;
+  text-transform: uppercase;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.85);
 }
 
 /* Nền kiến trúc tinh tế */
@@ -230,6 +300,32 @@ html, body {
   margin: 0 auto;
 }
 
+.hero-stamps-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.secret-stamp-badge {
+  display: inline-flex;
+  align-items: center;
+  border: 2.5px solid #dc2626;
+  color: #ef4444;
+  padding: 3px 12px;
+  border-radius: 4px;
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 11.5px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transform: rotate(-3deg);
+  background: rgba(220, 38, 38, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(220, 38, 38, 0.25), 0 3px 8px rgba(220, 38, 38, 0.25);
+}
+
 .agency-badge {
   display: inline-flex;
   align-items: center;
@@ -243,7 +339,6 @@ html, body {
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.06em;
-  margin-bottom: 12px;
 }
 .badge-indicator {
   width: 6px;
@@ -253,21 +348,24 @@ html, body {
 }
 
 .hero-title {
-  font-family: var(--font-display);
-  font-size: clamp(2.2rem, 4.2vw, 3.2rem);
+  font-family: var(--font-serif);
+  font-size: clamp(2.3rem, 4.5vw, 3.4rem);
   font-weight: 900;
   line-height: 1.12;
-  letter-spacing: -0.025em;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
   color: var(--ink-primary);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.85);
 }
 
 .hero-subtitle {
-  font-family: var(--font-display);
-  font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+  font-family: var(--font-typewriter);
+  font-size: clamp(1rem, 1.6vw, 1.25rem);
   font-weight: 600;
   color: var(--gold-bright);
-  margin-bottom: 14px;
+  margin-bottom: 16px;
+  letter-spacing: 0.04em;
 }
 
 /* Bảng Tiến Độ & Cấp Bậc Thám Tử */
@@ -277,21 +375,26 @@ html, body {
   align-items: center;
   justify-content: center;
   gap: 16px;
-  padding: 8px 18px;
+  padding: 8px 20px;
   border-radius: 999px;
   background: var(--bg-surface);
   border: 1px solid var(--border-strong);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
 }
 .profile-rank-badge {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   font-family: var(--font-mono);
   font-size: 11.5px;
   font-weight: 800;
   color: var(--gold-bright);
   letter-spacing: 0.04em;
+}
+.brass-star-icon {
+  font-size: 16px;
+  color: var(--gold-bright);
+  text-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
 }
 .profile-progress-group {
   display: inline-flex;
@@ -320,26 +423,26 @@ html, body {
   transition: width 0.3s ease;
 }
 
-/* Lưới 3 Thẻ Tiêu Điểm Vụ Án (Spotlight Cards) */
+/* Lưới 3 Thẻ Tiêu Điểm Vụ Án (Spotlight Cards - Manila Dossier Folders) */
 .spotlight-section {
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
 }
 .section-title-tag {
   font-family: var(--font-mono);
   font-size: 10.5px;
   font-weight: 800;
-  color: var(--ink-muted);
-  letter-spacing: 0.12em;
+  color: var(--gold-bright);
+  letter-spacing: 0.15em;
   text-transform: uppercase;
 }
 .spotlight-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
+  gap: 22px;
   width: 100%;
 }
 @media (max-width: 860px) {
@@ -352,27 +455,84 @@ html, body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 20px 20px 18px;
+  padding: 22px 20px 18px;
   border-radius: 14px;
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   box-shadow: var(--shadow-card);
-  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
   cursor: pointer;
   text-align: left;
   gap: 12px;
 }
+
+/* Hồ sơ bìa Manila cổ điển (Dossier Folder Aesthetic) */
+.spotlight-card.dossier-folder {
+  position: relative;
+  background: linear-gradient(170deg, #181e2b 0%, #10141f 100%);
+  border: 1.5px solid rgba(217, 119, 6, 0.32);
+  border-top: 3px solid var(--gold-bright);
+  padding-top: 26px;
+}
+[data-theme="paper"] .spotlight-card.dossier-folder {
+  background: linear-gradient(170deg, #f5ecd8 0%, #ebe0c8 100%);
+  border: 1.5px solid rgba(180, 83, 9, 0.35);
+  border-top: 3px solid var(--gold);
+}
+.spotlight-card.dossier-folder::before {
+  content: "";
+  position: absolute;
+  top: -12px;
+  left: 20px;
+  width: 95px;
+  height: 12px;
+  background: #1f2738;
+  border: 1.5px solid rgba(217, 119, 6, 0.32);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+}
+[data-theme="paper"] .spotlight-card.dossier-folder::before {
+  background: #ebdcc2;
+  border-color: rgba(180, 83, 9, 0.35);
+}
+.dossier-tab {
+  position: absolute;
+  top: -11px;
+  left: 26px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 800;
+  color: var(--gold-bright);
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+.paperclip-graphic {
+  position: absolute;
+  top: -9px;
+  right: 20px;
+  width: 14px;
+  height: 30px;
+  border: 2.2px solid #94a3b8;
+  border-radius: 7px;
+  box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+[data-theme="paper"] .paperclip-graphic {
+  border-color: #64748b;
+}
+
 .spotlight-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-5px);
   border-color: var(--gold-bright);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
 }
 .spotlight-card.featured {
   border-color: var(--border-strong);
-  background: linear-gradient(165deg, rgba(217, 119, 6, 0.08) 0%, rgba(18, 22, 32, 0.95) 100%);
+  background: linear-gradient(165deg, rgba(217, 119, 6, 0.12) 0%, rgba(18, 22, 32, 0.98) 100%);
 }
 [data-theme="paper"] .spotlight-card.featured {
-  background: linear-gradient(165deg, rgba(245, 158, 11, 0.12) 0%, rgba(255, 252, 246, 0.95) 100%);
+  background: linear-gradient(165deg, rgba(245, 158, 11, 0.15) 0%, rgba(255, 252, 246, 0.98) 100%);
 }
 
 .spotlight-top {
@@ -1802,34 +1962,50 @@ html, body {
   color: #FFFFFF;
 }
 
+.card-paperclip {
+  position: absolute;
+  top: -8px;
+  left: 16px;
+  width: 13px;
+  height: 28px;
+  border: 2.2px solid #94a3b8;
+  border-radius: 6px;
+  background: transparent;
+  z-index: 6;
+  box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.65);
+  pointer-events: none;
+}
+[data-theme="paper"] .card-paperclip {
+  border-color: #64748b;
+}
+
 .stamp-badge {
-  font-family: var(--font-sans);
+  font-family: var(--font-serif);
   font-size: 10px;
-  font-weight: 800;
-  padding: 2.5px 7px;
-  border-radius: 5px;
-  letter-spacing: 0.06em;
+  font-weight: 900;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
   transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .stamp-badge.innocent {
-  background: #D1FAE5;
-  color: #065F46;
-  border: 1.5px solid #10B981;
-  box-shadow: inset 0 0 0 1px #10B981, 0 2px 8px rgba(16, 185, 129, 0.28);
-  transform: rotate(-3deg);
+  background: rgba(16, 185, 129, 0.16);
+  color: #10b981;
+  border: 2px solid #10b981;
+  box-shadow: inset 0 0 0 1px rgba(16, 185, 129, 0.3), 0 3px 10px rgba(16, 185, 129, 0.3);
+  transform: rotate(-6deg);
 }
 .stamp-badge.criminal {
-  background: #FFE4E6;
-  color: #9F1239;
-  border: 1.5px solid #F43F5E;
-  box-shadow: inset 0 0 0 1px #F43F5E, 0 2px 8px rgba(244, 63, 94, 0.28);
-  transform: rotate(3deg);
-}
+  background: rgba(225, 29, 72, 0.18);
+  color: #f43f5e;
+  border: 2px solid #e11d48;
+  box-shadow: inset 0 0 0 1px rgba(225, 29, 72, 0.35), 0 3px 12px rgba(244, 63, 94, 0.38);
+  transform: rotate(5deg);
 }
 .stamp-badge.hint-pill {
   background: #FEF3C7;
@@ -1903,16 +2079,17 @@ html, body {
 .board-shell[data-n="5"] .char-name { font-size: 11.5px; }
 .board-shell[data-n="5"] .char-prof { font-size: 9.8px; }
 
-/* Khung lời khai trên thẻ đã mở */
+/* Khung lời khai trên thẻ đã mở (Vintage Typewriter Note) */
 .clue-bubble {
   position: relative;
   background: rgba(15, 23, 42, 0.055);
   border-left: 3px solid var(--gold);
   border-radius: 6px;
   padding: 6px 8px;
+  font-family: var(--font-typewriter);
   font-size: 11.8px;
-  font-weight: 600;
-  line-height: 1.38;
+  font-weight: 500;
+  line-height: 1.42;
   color: #0F172A;
   z-index: 2;
   margin-top: auto;
@@ -1922,12 +2099,12 @@ html, body {
 .board-shell[data-n="4"] .clue-bubble {
   font-size: 11px;
   padding: 5px 7px;
-  line-height: 1.32;
+  line-height: 1.34;
 }
 .board-shell[data-n="5"] .clue-bubble {
   font-size: 10px;
   padding: 4px 6px;
-  line-height: 1.26;
+  line-height: 1.28;
 }
 
 /* Nút phán quyết trên thẻ chưa mở */
@@ -2311,31 +2488,23 @@ html, body {
   fill: none;
   stroke-linecap: round;
   stroke-linejoin: round;
-  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.45));
+  filter: drop-shadow(0 3px 7px rgba(0, 0, 0, 0.75));
 }
 .crime-string-path.ref-line {
-  stroke: var(--hl-ref);
-  stroke-width: 2.2;
-  stroke-dasharray: 6 3;
-  animation: dashPulse 18s linear infinite;
+  stroke: #e11d48;
+  stroke-width: 2.8;
 }
 .crime-string-path.left-line {
-  stroke: var(--hl-right);
-  stroke-width: 2;
-  stroke-dasharray: 5 3;
-  animation: dashPulse 20s linear infinite;
+  stroke: #38bdf8;
+  stroke-width: 2.4;
 }
 .crime-string-path.right-line {
-  stroke: #38BDF8;
-  stroke-width: 2;
-  stroke-dasharray: 5 3;
-  animation: dashPulse 20s linear infinite;
+  stroke: #f59e0b;
+  stroke-width: 2.4;
 }
 .crime-string-path.overlap-line {
-  stroke: var(--hl-overlap);
-  stroke-width: 2.6;
-  stroke-dasharray: 4 3;
-  animation: dashPulse 12s linear infinite;
+  stroke: #a855f7;
+  stroke-width: 3.2;
 }
 @keyframes dashPulse {
   to { stroke-dashoffset: -200; }

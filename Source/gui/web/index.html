@@ -6,12 +6,14 @@
   <title>Hồ Sơ Logic: Griductive — Phá Án Không Đoán Mò</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Cinzel:wght@600;700;800;900&family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&family=Special+Elite&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
-  <div class="ambient-bg"></div>
-  <div class="ambient-grid"></div>
+  <!-- Nền Động Khí Quyển Điện Ảnh (Cinematic Ambient Spotlight & Particles Canvas) -->
+  <canvas id="noirAtmosphereCanvas" class="noir-canvas" aria-hidden="true"></canvas>
+  <div class="vintage-vignette" aria-hidden="true"></div>
+  <div class="film-grain-overlay" aria-hidden="true"></div>
 
   <!-- Lớp phủ Kéo Thả File JSON (Drag & Drop Dropzone Overlay) -->
   <div class="dropzone-overlay" id="dropzoneOverlay">
@@ -30,6 +32,11 @@
        MÀN HÌNH 1: MÀN HÌNH BẮT ĐẦU (TRẠM CHỈ HUY TRINH THÁM - CINEMATIC LAUNCHPAD)
        =================================================================== -->
   <section id="screenStart" class="screen active">
+    <!-- Dải Băng Rôn Cảnh Sát Hiện Trường (Crime Scene Tape) -->
+    <div class="crime-scene-tape" aria-hidden="true">
+      <div class="tape-strip">★ HIỆN TRƯỜNG ĐIỀU TRA ★ DO NOT CROSS ★ TÀI LIỆU TUYỆT MẬT ★ DPLL SAT SOLVER ★ HIỆN TRƯỜNG ĐIỀU TRA ★ DO NOT CROSS ★ BẰNG CHỨNG MỆNH ĐỀ ★</div>
+    </div>
+
     <nav class="start-navbar">
       <div class="brand-mark">
         <span class="brand-dot"></span>
@@ -61,9 +68,14 @@
       <div class="start-hub-layout">
         <!-- Cụm Tiêu Đề Trung Tâm -->
         <header class="start-hero-header">
-          <div class="agency-badge">
-            <span class="badge-indicator"></span>
-            <span>HỘI ĐỒNG ĐIỀU TRA LOGIC MỆNH ĐỀ · DPLL SAT SOLVER</span>
+          <div class="hero-stamps-row">
+            <div class="secret-stamp-badge">
+              <span>TUYỆT MẬT · CLASSIFIED</span>
+            </div>
+            <div class="agency-badge">
+              <span class="badge-indicator"></span>
+              <span>HỘI ĐỒNG ĐIỀU TRA LOGIC MỆNH ĐỀ · DPLL SAT SOLVER</span>
+            </div>
           </div>
           <h1 class="hero-title">Hồ Sơ Logic: Griductive</h1>
           <p class="hero-subtitle">Phá án bằng suy luận mệnh đề — Tuyệt đối không đoán mò</p>
@@ -71,9 +83,7 @@
           <!-- Bảng Xếp Hạng & Tiến Độ Thám Tử -->
           <div class="detective-profile-bar" id="startDetectiveBar">
             <div class="profile-rank-badge">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="var(--gold-bright)" stroke="var(--gold-bright)"/>
-              </svg>
+              <div class="brass-star-icon">★</div>
               <span id="lblDetectiveRank">CẤP BẬC: THÁM TỬ TẬP SỰ</span>
             </div>
             <div class="profile-progress-group">
@@ -85,12 +95,14 @@
           </div>
         </header>
 
-        <!-- Lưới 3 Thẻ Tiêu Điểm Vụ Án Chơi Ngay (Spotlight Cases Grid) -->
+        <!-- Lưới 3 Thẻ Tiêu Điểm Vụ Án Chơi Ngay (Spotlight Cases Grid - Manila Dossier Folders) -->
         <section class="spotlight-section">
-          <div class="section-title-tag">CHỌN NHANH CẤP ĐỘ ĐIỀU TRA</div>
+          <div class="section-title-tag">CHỌN NHANH HỒ SƠ PHÁ ÁN (MANILA DOSSIERS)</div>
           <div class="spotlight-grid">
             <!-- Thẻ 1: 3x3 Căn Bản -->
-            <div class="spotlight-card" onclick="launchSpotlightCase('3x3_classic')">
+            <div class="spotlight-card dossier-folder" onclick="launchSpotlightCase('3x3_classic')">
+              <div class="dossier-tab">TẬP ÁN #01</div>
+              <div class="paperclip-graphic" aria-hidden="true"></div>
               <div class="spotlight-top">
                 <span class="spotlight-badge tier-3">CĂN BẢN · 3×3</span>
                 <span class="spotlight-diff">⭐☆☆</span>
@@ -110,7 +122,9 @@
             </div>
 
             <!-- Thẻ 2: 4x4 Nâng Cao -->
-            <div class="spotlight-card featured" onclick="launchSpotlightCase('4x4_detective')">
+            <div class="spotlight-card dossier-folder featured" onclick="launchSpotlightCase('4x4_detective')">
+              <div class="dossier-tab">TẬP ÁN #03</div>
+              <div class="paperclip-graphic" aria-hidden="true"></div>
               <div class="spotlight-top">
                 <span class="spotlight-badge tier-4">NÂNG CAO · 4×4</span>
                 <span class="spotlight-diff">⭐⭐☆</span>
@@ -124,13 +138,15 @@
                 <span>Ràng buộc vùng</span>
               </div>
               <button type="button" class="btn-spotlight-play gold">
-                <span>Phá Án Ngay (Khuyên dùng)</span>
+                <span>BẮT ĐẦU ĐIỀU TRA NGAY</span>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
               </button>
             </div>
 
             <!-- Thẻ 3: 5x5 Thử Thách -->
-            <div class="spotlight-card" onclick="launchSpotlightCase('5x5_mastermind')">
+            <div class="spotlight-card dossier-folder" onclick="launchSpotlightCase('5x5_mastermind')">
+              <div class="dossier-tab">TẬP ÁN #05</div>
+              <div class="paperclip-graphic" aria-hidden="true"></div>
               <div class="spotlight-top">
                 <span class="spotlight-badge tier-5">THỬ THÁCH · 5×5</span>
                 <span class="spotlight-diff">⭐⭐⭐</span>

@@ -2,6 +2,134 @@
    HỒ SƠ LOGIC: GRIDUCTIVE — LOGIC TƯƠNG TÁC & TRỰC QUAN HÓA LUỒNG DPLL (APP.JS)
    ========================================================================= */
 
+/* =========================================================================
+   ĐỘNG CƠ KHÍ QUYỂN ĐIỆN ẢNH (CINEMATIC ATMOSPHERE CANVAS ENGINE)
+   Ánh sáng đèn bàn rọi (Spotlight) lướt êm ái & Hạt bụi hổ phách / Khói lơ lửng
+   ========================================================================= */
+class AtmosphereEngine {
+  constructor(canvasId) {
+    this.canvas = document.getElementById(canvasId);
+    if (!this.canvas) return;
+    this.ctx = this.canvas.getContext("2d");
+    this.particles = [];
+    this.numParticles = 48;
+    this.width = window.innerWidth;
+    this.height = window.innerHeight;
+    this.mouseX = this.width * 0.5;
+    this.mouseY = this.height * 0.35;
+    this.spotX = this.mouseX;
+    this.spotY = this.mouseY;
+    this.lastMouseMove = Date.now();
+    this.animId = null;
+    this.init();
+  }
+
+  init() {
+    this.resize();
+    window.addEventListener("resize", () => this.resize(), { passive: true });
+    window.addEventListener("mousemove", (e) => {
+      this.mouseX = e.clientX;
+      this.mouseY = e.clientY;
+      this.lastMouseMove = Date.now();
+    }, { passive: true });
+
+    // Khởi tạo các hạt bụi hổ phách và tàn khói
+    for (let i = 0; i < this.numParticles; i++) {
+      this.particles.push({
+        x: Math.random() * this.width,
+        y: Math.random() * this.height,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: -0.15 - Math.random() * 0.35,
+        size: 0.9 + Math.random() * 2.2,
+        baseAlpha: 0.12 + Math.random() * 0.45,
+        pulseOffset: Math.random() * Math.PI * 2,
+        isSmoke: Math.random() < 0.22,
+      });
+    }
+
+    this.start();
+  }
+
+  resize() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    this.width = window.innerWidth;
+    this.height = window.innerHeight;
+    this.canvas.width = Math.floor(this.width * dpr);
+    this.canvas.height = Math.floor(this.height * dpr);
+    this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+    this.ctx.scale(dpr, dpr);
+  }
+
+  start() {
+    const loop = (t) => {
+      this.draw(t);
+      this.animId = requestAnimationFrame(loop);
+    };
+    this.animId = requestAnimationFrame(loop);
+  }
+
+  draw(t) {
+    const ctx = this.ctx;
+    ctx.clearRect(0, 0, this.width, this.height);
+
+    // 1. Quán tính vị trí đèn rọi bàn (Lerp hoặc tự đung đưa khi chuột đứng yên)
+    const idleTime = Date.now() - this.lastMouseMove;
+    if (idleTime > 1600) {
+      const angle = (t * 0.00035);
+      const wanderX = this.width * 0.5 + Math.cos(angle) * (this.width * 0.24);
+      const wanderY = this.height * 0.38 + Math.sin(angle * 1.4) * (this.height * 0.16);
+      this.spotX += (wanderX - this.spotX) * 0.025;
+      this.spotY += (wanderY - this.spotY) * 0.025;
+    } else {
+      this.spotX += (this.mouseX - this.spotX) * 0.065;
+      this.spotY += (this.mouseY - this.spotY) * 0.065;
+    }
+
+    // 2. Vẽ quầng sáng đèn bàn thám tử (Desk Lamp Spotlight)
+    const spotRadius = Math.max(380, Math.min(this.width, this.height) * 0.65);
+    const spotGrad = ctx.createRadialGradient(
+      this.spotX, this.spotY, 30,
+      this.spotX, this.spotY, spotRadius
+    );
+    spotGrad.addColorStop(0, "rgba(230, 160, 50, 0.12)");
+    spotGrad.addColorStop(0.35, "rgba(210, 140, 40, 0.05)");
+    spotGrad.addColorStop(0.72, "rgba(16, 20, 30, 0.45)");
+    spotGrad.addColorStop(1, "rgba(7, 9, 14, 0.90)");
+
+    ctx.fillStyle = spotGrad;
+    ctx.fillRect(0, 0, this.width, this.height);
+
+    // 3. Chuyển động hạt bụi vàng và khói thuốc lơ lửng
+    const timeSec = t * 0.001;
+    for (let i = 0; i < this.particles.length; i++) {
+      const p = this.particles[i];
+      p.x += p.vx + Math.sin(timeSec + p.pulseOffset) * 0.18;
+      p.y += p.vy;
+
+      if (p.y < -15) {
+        p.y = this.height + 10;
+        p.x = Math.random() * this.width;
+      }
+      if (p.x < -15) p.x = this.width + 10;
+      if (p.x > this.width + 15) p.x = -10;
+
+      const dist = Math.hypot(p.x - this.spotX, p.y - this.spotY);
+      const spotFactor = Math.max(0.35, 1.35 - dist / spotRadius);
+      const alpha = p.baseAlpha * (0.7 + 0.3 * Math.sin(timeSec * 2.2 + p.pulseOffset)) * spotFactor;
+
+      ctx.beginPath();
+      if (p.isSmoke) {
+        ctx.arc(p.x, p.y, p.size * 2.6, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(215, 195, 165, ${alpha * 0.28})`;
+      } else {
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(245, 185, 75, ${alpha})`;
+      }
+      ctx.fill();
+    }
+  }
+}
+
 let currentState = null;
 let autoTimer = null;
 let lastAnimatedCell = null;
@@ -36,50 +164,88 @@ function playSfx(type) {
     initAudio();
     if (!audioCtx) return;
     const now = audioCtx.currentTime;
-    if (type === "click") {
+    if (type === "click" || type === "flip") {
+      // Tiếng gõ phím máy chữ cơ học (Vintage Typewriter Key Click)
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.type = "triangle";
-      osc.frequency.setValueAtTime(800, now);
-      osc.frequency.exponentialRampToValueAtTime(300, now + 0.04);
-      gain.gain.setValueAtTime(0.12, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+      osc.frequency.setValueAtTime(1200, now);
+      osc.frequency.exponentialRampToValueAtTime(150, now + 0.038);
+      gain.gain.setValueAtTime(0.18, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.038);
       osc.connect(gain);
       gain.connect(audioCtx.destination);
       osc.start(now);
-      osc.stop(now + 0.04);
+      osc.stop(now + 0.038);
     } else if (type === "stamp_innocent") {
-      [523.25, 659.25].forEach((freq, i) => {
+      // Con dấu Vô Tội mộc cao su (Emerald Stamp Thud)
+      [240, 480].forEach((freq, i) => {
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(freq, now + i * 0.04);
-        gain.gain.setValueAtTime(0.15, now + i * 0.04);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.04 + 0.18);
+        osc.type = i === 0 ? "triangle" : "sine";
+        osc.frequency.setValueAtTime(freq, now + i * 0.025);
+        osc.frequency.exponentialRampToValueAtTime(75, now + i * 0.025 + 0.16);
+        gain.gain.setValueAtTime(0.24, now + i * 0.025);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.025 + 0.17);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
-        osc.start(now + i * 0.04);
-        osc.stop(now + i * 0.04 + 0.18);
+        osc.start(now + i * 0.025);
+        osc.stop(now + i * 0.025 + 0.17);
       });
     } else if (type === "stamp_criminal") {
+      // Con dấu Thủ Phạm đập đanh thép (Crimson Stamp Heavy Thud)
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.type = "sawtooth";
-      osc.frequency.setValueAtTime(220, now);
-      osc.frequency.exponentialRampToValueAtTime(90, now + 0.15);
-      gain.gain.setValueAtTime(0.22, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+      osc.frequency.setValueAtTime(160, now);
+      osc.frequency.exponentialRampToValueAtTime(45, now + 0.22);
+      gain.gain.setValueAtTime(0.32, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
       osc.connect(gain);
       gain.connect(audioCtx.destination);
       osc.start(now);
-      osc.stop(now + 0.16);
+      osc.stop(now + 0.22);
+    } else if (type === "paper") {
+      // Tiếng lật xào xạc của hồ sơ tài liệu
+      const bufferSize = Math.floor(audioCtx.sampleRate * 0.08);
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.35));
+      }
+      const noise = audioCtx.createBufferSource();
+      noise.buffer = buffer;
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = "bandpass";
+      filter.frequency.value = 1800;
+      filter.Q.value = 1.4;
+      const gain = audioCtx.createGain();
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+      noise.connect(filter);
+      filter.connect(gain);
+      gain.connect(audioCtx.destination);
+      noise.start(now);
+    } else if (type === "twang") {
+      // Tiếng gảy dây chỉ đỏ liên kết (Red Yarn String Twang)
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(340, now);
+      osc.frequency.exponentialRampToValueAtTime(110, now + 0.14);
+      gain.gain.setValueAtTime(0.16, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.14);
     } else if (type === "not_provable") {
-      [350, 260].forEach((freq, i) => {
+      [360, 240].forEach((freq, i) => {
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = "square";
         osc.frequency.setValueAtTime(freq, now + i * 0.08);
-        gain.gain.setValueAtTime(0.08, now + i * 0.08);
+        gain.gain.setValueAtTime(0.09, now + i * 0.08);
         gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.12);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
@@ -185,6 +351,7 @@ function markCaseSolved(puzzleId) {
 
 function showScreen(screenId) {
   stopAutoSolve();
+  playSfx("paper");
   document.querySelectorAll(".screen").forEach(el => el.classList.remove("active"));
   const target = document.getElementById(screenId);
   if (target) target.classList.add("active");
@@ -980,6 +1147,7 @@ function render(data) {
           : `<span class="step-order-badge step-deduced">BƯỚC #${rStep}</span>`;
 
         card.innerHTML = `
+          <div class="card-paperclip" aria-hidden="true"></div>
           <div class="card-top">
             <div class="card-top-left">
               <span class="coord-pill">${item.cell}</span>
@@ -1023,6 +1191,7 @@ function render(data) {
           : '';
 
         card.innerHTML = `
+          <div class="card-paperclip" aria-hidden="true"></div>
           <div class="card-top">
             <div class="card-top-left">
               <span class="coord-pill">${item.cell}</span>
@@ -1119,6 +1288,7 @@ function render(data) {
 }
 
 async function selectClue(cell) {
+  if (cell) playSfx("twang");
   const data = await apiCall("/api/select_clue", { cell });
   render(data);
 }
@@ -1298,6 +1468,12 @@ window.addEventListener("drop", async (e) => {
 // Khởi tạo icon âm thanh theo thiết lập
 updateSoundIcon();
 updateStartScreenStats();
+
+// Khởi tạo nền động khí quyển điện ảnh (Cinematic Atmosphere Canvas)
+let atmosphere = null;
+if (document.getElementById("noirAtmosphereCanvas")) {
+  atmosphere = new AtmosphereEngine("noirAtmosphereCanvas");
+}
 
 // Tải dữ liệu trạng thái khi mở trang
 apiCall("/api/state", {}).then(render);
