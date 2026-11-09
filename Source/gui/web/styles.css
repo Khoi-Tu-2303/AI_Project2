@@ -252,15 +252,16 @@ html, body {
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 1260px;
+  max-width: 1240px;
   margin: 0 auto;
-  padding: 32px 24px 48px;
+  padding: 18px 24px 28px;
+  box-sizing: border-box;
 }
 
 .bureau-layout {
   display: grid;
-  grid-template-columns: 1.12fr 0.98fr;
-  gap: 40px;
+  grid-template-columns: 1.15fr 0.95fr;
+  gap: 28px;
   align-items: center;
   width: 100%;
 }
@@ -268,7 +269,7 @@ html, body {
 @media (max-width: 980px) {
   .bureau-layout {
     grid-template-columns: 1fr;
-    gap: 32px;
+    gap: 24px;
   }
 }
 
@@ -278,35 +279,73 @@ html, body {
   flex-direction: column;
   align-items: flex-start;
   text-align: left;
-  gap: 16px;
+  gap: 12px;
 }
 
 .hero-stamps-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   margin-bottom: 2px;
+}
+
+.secret-stamp-badge {
+  display: inline-flex;
+  align-items: center;
+  border: 2px dashed #dc2626;
+  color: #ef4444;
+  padding: 2.5px 10px;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-weight: 900;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transform: rotate(-3deg);
+  background: rgba(220, 38, 38, 0.08);
+  box-shadow: 0 0 12px rgba(220, 38, 38, 0.25);
+}
+
+.agency-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 11px;
+  border-radius: 999px;
+  background: var(--gold-soft);
+  border: 1px solid var(--border-strong);
+  color: var(--gold-bright);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+.badge-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold-bright);
 }
 
 .hero-title {
   font-family: var(--font-serif);
-  font-size: clamp(2.2rem, 3.8vw, 3.4rem);
+  font-size: clamp(2rem, 3.2vw, 2.9rem);
   font-weight: 700;
-  line-height: 1.18;
+  line-height: 1.15;
   letter-spacing: 0.015em;
   color: #FFFFFF;
   background: linear-gradient(135deg, #FFFFFF 0%, #FEE685 30%, #F59E0B 75%, #D97706 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 4px 20px rgba(245, 158, 11, 0.28));
+  filter: drop-shadow(0 4px 18px rgba(245, 158, 11, 0.28));
   margin: 0;
 }
 
 .hero-subtitle {
   font-family: var(--font-serif);
   font-style: italic;
-  font-size: clamp(1.05rem, 1.4vw, 1.25rem);
+  font-size: clamp(0.95rem, 1.3vw, 1.15rem);
   font-weight: 500;
   color: var(--gold-bright);
   margin: 0;
@@ -315,11 +354,11 @@ html, body {
 
 .hero-brief {
   font-family: var(--font-sans);
-  font-size: 13.5px;
-  line-height: 1.65;
+  font-size: 13px;
+  line-height: 1.55;
   color: var(--ink-secondary);
-  max-width: 580px;
-  margin: 4px 0 6px;
+  max-width: 560px;
+  margin: 2px 0 4px;
 }
 .hero-brief strong {
   color: #F8FAFC;
@@ -330,53 +369,109 @@ html, body {
   display: inline-flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 14px;
-  padding: 8px 18px;
+  gap: 12px;
+  padding: 6px 16px;
   border-radius: 999px;
   background: rgba(18, 24, 38, 0.85);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid var(--border-strong);
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+}
+.profile-rank-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--gold-bright);
+  letter-spacing: 0.04em;
+}
+.brass-star-icon {
+  font-size: 15px;
+  color: var(--gold-bright);
+  text-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
+}
+.profile-progress-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.profile-progress-lbl {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--ink-secondary);
+}
+.profile-progress-track {
+  width: 58px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+[data-theme="paper"] .profile-progress-track {
+  background: rgba(15, 23, 42, 0.12);
+}
+.profile-progress-fill {
+  height: 100%;
+  background: var(--gold-bright);
+  border-radius: 999px;
+  transition: width 0.3s ease;
 }
 
 /* Cụm Nút Hành Động Trọng Tâm */
 .hero-primary-actions {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
   width: 100%;
-  max-width: 540px;
-  margin-top: 6px;
+  max-width: 520px;
+  margin-top: 4px;
 }
 
 .btn-hero-launch {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 16px 22px;
-  border-radius: 13px;
-  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
-  border: 1.5px solid rgba(254, 240, 138, 0.5);
-  box-shadow: 0 10px 28px rgba(217, 119, 6, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  gap: 15px;
+  padding: 13px 20px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 50%, #B45309 100%);
+  border: 1.5px solid rgba(254, 240, 138, 0.6);
+  box-shadow: 0 8px 24px rgba(217, 119, 6, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.35);
   color: #0B0E14;
   cursor: pointer;
   transition: transform 0.18s ease, box-shadow 0.18s ease;
   width: 100%;
   text-align: left;
+  position: relative;
+  overflow: hidden;
 }
+.btn-hero-launch::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent);
+  transform: translateX(-100%);
+  animation: goldSheen 4.5s ease infinite;
+}
+@keyframes goldSheen {
+  0%, 70% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
 .btn-hero-launch:hover {
   transform: translateY(-2px);
-  box-shadow: 0 14px 36px rgba(217, 119, 6, 0.5), 0 0 24px rgba(245, 158, 11, 0.45);
+  box-shadow: 0 12px 32px rgba(217, 119, 6, 0.55), 0 0 24px rgba(245, 158, 11, 0.45);
 }
 .launch-icon-circle {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
-  background: rgba(11, 14, 20, 0.15);
+  width: 40px;
+  height: 40px;
+  border-radius: 9px;
+  background: rgba(11, 14, 20, 0.18);
   border: 1px solid rgba(11, 14, 20, 0.25);
   color: #0B0E14;
   flex-shrink: 0;
@@ -384,18 +479,18 @@ html, body {
 .launch-text-group {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 .launch-main-lbl {
   font-family: var(--font-sans);
-  font-size: 15px;
+  font-size: 14.5px;
   font-weight: 800;
   letter-spacing: 0.05em;
   color: #0B0E14;
 }
 .launch-sub-lbl {
   font-family: var(--font-mono);
-  font-size: 11.5px;
+  font-size: 11px;
   color: rgba(11, 14, 20, 0.78);
   font-weight: 600;
 }
@@ -410,49 +505,49 @@ html, body {
 .bureau-specs-strip {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 14px;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 10.5px;
   color: var(--ink-secondary);
-  padding-top: 10px;
+  padding-top: 8px;
   border-top: 1px solid var(--border-subtle);
   width: 100%;
-  max-width: 540px;
+  max-width: 520px;
 }
 .spec-item {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
 }
 .spec-dot {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
 }
 .spec-dot.gold { background: #F59E0B; box-shadow: 0 0 8px #F59E0B; }
 .spec-dot.emerald { background: #10B981; box-shadow: 0 0 8px #10B981; }
 .spec-dot.ruby { background: #F43F5E; box-shadow: 0 0 8px #F43F5E; }
 
-/* Cột Phải: Bàn Hồ Sơ Manila Đang Mở */
+/* Cột Phải: Bàn Hồ Sơ Manila Đang Mở (Real Kraft Paper & Cutout Tab) */
 .bureau-dossier-panel {
   width: 100%;
 }
 
 .dossier-desk-frame {
   position: relative;
-  background: linear-gradient(168deg, rgba(22, 28, 44, 0.92) 0%, rgba(13, 17, 28, 0.98) 100%);
+  background: linear-gradient(168deg, #241C15 0%, #1A130E 50%, #120D09 100%);
   border: 1.5px solid rgba(217, 119, 6, 0.45);
-  border-top: 3px solid var(--gold-bright);
-  border-radius: 16px;
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.65), 0 0 32px rgba(245, 158, 11, 0.12);
+  border-top: 4px solid var(--gold-bright);
+  border-radius: 4px 18px 18px 18px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 230, 160, 0.15);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  padding: 24px 26px 22px;
+  padding: 16px 20px 14px;
 }
 [data-theme="paper"] .dossier-desk-frame {
-  background: linear-gradient(168deg, rgba(250, 244, 232, 0.94) 0%, rgba(240, 230, 212, 0.98) 100%);
+  background: linear-gradient(168deg, #FBF6EB 0%, #F3EBD8 60%, #E9DFC8 100%);
   border: 1.5px solid rgba(180, 83, 9, 0.4);
-  border-top: 3px solid var(--gold);
+  border-top: 4px solid var(--gold);
 }
 
 .desk-header {
@@ -460,17 +555,17 @@ html, body {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding-bottom: 16px;
+  gap: 10px;
+  padding-bottom: 12px;
   border-bottom: 1px dashed rgba(245, 158, 11, 0.28);
-  margin-bottom: 18px;
+  margin-bottom: 12px;
 }
 .desk-header-title {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 800;
   color: var(--gold-bright);
   letter-spacing: 0.1em;
@@ -478,27 +573,27 @@ html, body {
 
 .dossier-tab-pills {
   display: inline-flex;
-  gap: 6px;
-  background: rgba(11, 14, 22, 0.55);
+  gap: 5px;
+  background: rgba(11, 14, 22, 0.6);
   padding: 3px;
   border-radius: 8px;
   border: 1px solid var(--border-subtle);
 }
 .dossier-pill-btn {
-  padding: 5px 12px;
+  padding: 4px 11px;
   border-radius: 6px;
   border: none;
   background: transparent;
   color: var(--ink-secondary);
   font-family: var(--font-sans);
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 .dossier-pill-btn:hover {
   color: var(--ink-primary);
-  background: rgba(245, 158, 11, 0.12);
+  background: rgba(245, 158, 11, 0.14);
 }
 .dossier-pill-btn.active {
   background: var(--gold-bright);
@@ -508,7 +603,7 @@ html, body {
 .active-dossier-card {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 11px;
 }
 
 .dossier-top-meta {
@@ -521,22 +616,23 @@ html, body {
 .dossier-stamp-seal {
   display: inline-flex;
   align-items: center;
-  border: 2px solid #dc2626;
-  color: #ef4444;
+  border: 2px dashed #DC2626;
+  color: #EF4444;
   padding: 2px 10px;
-  border-radius: 4px;
-  font-family: var(--font-serif);
+  border-radius: 3px;
+  font-family: var(--font-mono);
   font-weight: 900;
-  font-size: 11px;
-  letter-spacing: 1.5px;
+  font-size: 10.5px;
+  letter-spacing: 1.8px;
   text-transform: uppercase;
-  transform: rotate(-2deg);
+  transform: rotate(-3deg);
   background: rgba(220, 38, 38, 0.08);
+  box-shadow: 0 0 12px rgba(220, 38, 38, 0.2);
 }
 
 .dossier-difficulty-badge {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 10.5px;
   color: var(--gold-bright);
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -544,7 +640,7 @@ html, body {
 
 .dossier-case-title {
   font-family: var(--font-serif);
-  font-size: 1.45rem;
+  font-size: 1.35rem;
   font-weight: 700;
   line-height: 1.25;
   color: #FFFFFF;
@@ -557,15 +653,15 @@ html, body {
 .dossier-meta-specs {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 7px;
 }
 .spec-chip {
-  padding: 4px 10px;
-  border-radius: 6px;
+  padding: 3px 9px;
+  border-radius: 5px;
   background: rgba(245, 158, 11, 0.09);
   border: 1px solid rgba(245, 158, 11, 0.28);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 10.5px;
   color: var(--ink-secondary);
 }
 .spec-chip strong {
@@ -574,20 +670,20 @@ html, body {
 
 .dossier-clue-preview {
   position: relative;
-  background: rgba(11, 14, 22, 0.6);
+  background: rgba(10, 14, 22, 0.65);
   border-left: 3px solid var(--gold-bright);
-  padding: 12px 16px 12px 34px;
-  border-radius: 0 8px 8px 0;
+  padding: 9px 14px 9px 30px;
+  border-radius: 0 7px 7px 0;
 }
 [data-theme="paper"] .dossier-clue-preview {
   background: rgba(242, 232, 214, 0.7);
 }
 .preview-quote-icon {
   position: absolute;
-  left: 10px;
-  top: 6px;
+  left: 9px;
+  top: 4px;
   font-family: var(--font-serif);
-  font-size: 26px;
+  font-size: 22px;
   color: var(--gold-bright);
   opacity: 0.55;
   line-height: 1;
@@ -595,41 +691,44 @@ html, body {
 .preview-quote-text {
   font-family: var(--font-serif);
   font-style: italic;
-  font-size: 13px;
-  line-height: 1.55;
+  font-size: 12.5px;
+  line-height: 1.5;
   color: var(--ink-secondary);
   margin: 0;
 }
 
-/* Sa Bàn Mini Trực Quan */
+/* Sa Bàn Mini Trực Quan Kiểu Ảnh Chứng Cứ Polaroid */
 .mini-grid-wrapper {
   display: flex;
   justify-content: center;
-  padding: 12px 0 6px;
+  padding: 4px 0;
 }
 .mini-grid-container {
   display: grid;
   gap: 5px;
-  width: 140px;
-  height: 140px;
-  padding: 8px;
-  background: rgba(11, 14, 22, 0.7);
-  border-radius: 8px;
-  border: 1px solid rgba(245, 158, 11, 0.25);
+  width: 118px;
+  height: 118px;
+  padding: 7px;
+  background: #0E121B;
+  border-radius: 6px;
+  border: 1.5px solid rgba(217, 119, 6, 0.35);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
 }
 .mini-cell {
-  background: rgba(30, 41, 59, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
+  background: #192233;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
   transition: all 0.2s ease;
 }
 .mini-cell.revealed {
-  background: rgba(16, 185, 129, 0.4);
-  border-color: #10B981;
+  background: #059669;
+  border-color: #34D399;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.45);
 }
 .mini-cell.target {
-  background: rgba(244, 63, 94, 0.35);
-  border-color: #F43F5E;
+  background: #E11D48;
+  border-color: #FB7185;
+  box-shadow: 0 0 10px rgba(225, 29, 72, 0.55);
 }
 
 .dossier-actions-footer {
@@ -637,20 +736,38 @@ html, body {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding-top: 14px;
+  gap: 10px;
+  padding-top: 10px;
   border-top: 1px solid var(--border-subtle);
+}
+.btn-spotlight-play.gold {
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  border: 1px solid rgba(254, 240, 138, 0.5);
+  color: #0B0E14;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 10px 16px;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(217, 119, 6, 0.35);
+  transition: all 0.16s ease;
+  position: relative;
+  overflow: hidden;
+}
+.btn-spotlight-play.gold:hover {
+  background: #FBBF24;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(217, 119, 6, 0.5), 0 0 18px rgba(245, 158, 11, 0.4);
 }
 .btn-view-all {
   background: transparent;
   border: none;
   color: var(--gold-bright);
   font-family: var(--font-sans);
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 700;
   cursor: pointer;
-  padding: 6px 10px;
-  border-radius: 6px;
+  padding: 5px 8px;
+  border-radius: 5px;
   transition: background 0.15s ease;
 }
 .btn-view-all:hover {
@@ -1509,6 +1626,14 @@ html, body {
   height: auto;
   max-height: none;
   margin: 0 auto;
+  background: linear-gradient(168deg, rgba(20, 26, 38, 0.94) 0%, rgba(12, 16, 24, 0.98) 100%);
+  border: 1.5px solid rgba(217, 119, 6, 0.38);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 20px 52px rgba(0, 0, 0, 0.72), inset 0 0 40px rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  position: relative;
 }
 .board-shell[data-n="3"] { max-width: 780px; }
 .board-shell[data-n="4"] { max-width: 900px; }
@@ -1538,14 +1663,17 @@ html, body {
   min-width: 380px;
   max-width: 100%;
   border-radius: 14px;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-strong);
-  box-shadow: var(--shadow-card);
+  background: linear-gradient(168deg, rgba(20, 26, 38, 0.94) 0%, rgba(13, 17, 26, 0.98) 100%);
+  border: 1.5px solid rgba(217, 119, 6, 0.4);
+  border-top: 3px solid var(--gold-bright);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.65), 0 0 24px rgba(245, 158, 11, 0.1);
   display: flex;
   flex-direction: column;
   overflow: hidden;
   flex-shrink: 0;
   transition: all 0.22s ease;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 .live-visualizer.hidden {
   display: none;
@@ -2105,70 +2233,74 @@ html, body {
   position: relative;
   width: 100%;
   height: 100%;
-  min-height: 162px;
+  min-height: 168px;
   border-radius: 12px;
-  padding: 11px 13px;
+  padding: 12px 14px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 7px;
-  box-shadow: var(--shadow-card);
-  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  gap: 8px;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.35);
+  transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.18s ease, border-color 0.18s ease;
   overflow: hidden;
   user-select: none;
 }
 .board-shell[data-n="4"] .suspect-card {
-  min-height: 148px;
-  padding: 10px 11px;
+  min-height: 152px;
+  padding: 10px 12px;
 }
 .board-shell[data-n="5"] .suspect-card {
-  min-height: 132px;
-  padding: 8px 9px;
+  min-height: 136px;
+  padding: 8px 10px;
   border-radius: 10px;
   gap: 5px;
 }
 
 .suspect-card.unsolved {
-  background: var(--card-front-bg);
-  border: 1.5px solid var(--card-front-border);
+  background: linear-gradient(168deg, #1C2333 0%, #121824 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
   color: var(--ink-primary);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.55);
 }
 .suspect-card.unsolved:hover {
-  transform: translateY(-2px);
-  border-color: rgba(245, 158, 11, 0.48);
+  transform: translateY(-3px) scale(1.01);
+  border-color: rgba(245, 158, 11, 0.6);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.65), 0 0 20px rgba(245, 158, 11, 0.22);
 }
 
 .suspect-card.revealed-innocent {
-  background: var(--paper-innocent);
-  border: 2px solid var(--paper-innocent-border);
-  color: var(--card-back-ink);
+  background: linear-gradient(168deg, #FFFFFF 0%, #F4FBF7 100%);
+  border: 2px solid #059669;
+  color: #0F172A;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35), 0 0 18px rgba(16, 185, 129, 0.25);
 }
 .suspect-card.revealed-criminal {
-  background: var(--paper-criminal);
-  border: 2px solid var(--paper-criminal-border);
-  color: var(--card-back-ink);
+  background: linear-gradient(168deg, #FFFFFF 0%, #FFF4F6 100%);
+  border: 2px solid #E11D48;
+  color: #0F172A;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35), 0 0 22px rgba(225, 29, 72, 0.35);
 }
 
 .suspect-card.selected-clue {
-  box-shadow: 0 0 0 3px var(--gold-bright), var(--shadow-card);
+  box-shadow: 0 0 0 3px var(--gold-bright), 0 12px 32px rgba(245, 158, 11, 0.35);
 }
 .suspect-card.hinted {
   border-color: var(--gold-bright) !important;
-  box-shadow: 0 0 0 2.5px var(--gold-bright), var(--shadow-card);
+  box-shadow: 0 0 0 2.5px var(--gold-bright), 0 0 20px rgba(245, 158, 11, 0.3);
 }
 
 /* Hiệu ứng khi bật nút hỗ trợ Soi vùng lời khai (không đè lên nút bấm) */
 .suspect-card.hl-card-ref {
   border-color: var(--hl-ref) !important;
-  box-shadow: 0 0 0 2.5px var(--hl-ref), var(--shadow-card);
+  box-shadow: 0 0 0 2.5px var(--hl-ref), 0 0 16px rgba(245, 158, 11, 0.3);
 }
 .suspect-card.hl-card-right {
   border-color: var(--hl-right) !important;
-  box-shadow: 0 0 0 2.5px var(--hl-right), var(--shadow-card);
+  box-shadow: 0 0 0 2.5px var(--hl-right), 0 0 16px rgba(56, 189, 248, 0.3);
 }
 .suspect-card.hl-card-overlap {
   border-color: var(--hl-overlap) !important;
-  box-shadow: 0 0 0 2.5px var(--hl-overlap), var(--shadow-card);
+  box-shadow: 0 0 0 2.5px var(--hl-overlap), 0 0 16px rgba(168, 85, 247, 0.35);
 }
 
 [data-motion="on"] .anim-flip {
@@ -2259,11 +2391,22 @@ html, body {
   border-color: #64748b;
 }
 
+@keyframes stampSlamInnocent {
+  0% { opacity: 0; transform: scale(2.2) rotate(-18deg); filter: blur(3px); }
+  65% { opacity: 0.95; transform: scale(0.92) rotate(4deg); filter: none; }
+  100% { opacity: 1; transform: scale(1) rotate(-6deg); }
+}
+@keyframes stampSlamCriminal {
+  0% { opacity: 0; transform: scale(2.4) rotate(22deg); filter: blur(4px); }
+  65% { opacity: 0.95; transform: scale(0.9) rotate(-3deg); filter: none; }
+  100% { opacity: 1; transform: scale(1) rotate(5deg); }
+}
+
 .stamp-badge {
   font-family: var(--font-serif);
-  font-size: 10px;
+  font-size: 10.5px;
   font-weight: 900;
-  padding: 3px 8px;
+  padding: 3px 9px;
   border-radius: 4px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -2275,17 +2418,19 @@ html, body {
 }
 .stamp-badge.innocent {
   background: rgba(16, 185, 129, 0.16);
-  color: #10b981;
-  border: 2px solid #10b981;
-  box-shadow: inset 0 0 0 1px rgba(16, 185, 129, 0.3), 0 3px 10px rgba(16, 185, 129, 0.3);
+  color: #047857;
+  border: 2px solid #059669;
+  box-shadow: inset 0 0 0 1px rgba(16, 185, 129, 0.35), 0 3px 12px rgba(16, 185, 129, 0.35);
   transform: rotate(-6deg);
+  animation: stampSlamInnocent 0.38s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .stamp-badge.criminal {
   background: rgba(225, 29, 72, 0.18);
-  color: #f43f5e;
-  border: 2px solid #e11d48;
-  box-shadow: inset 0 0 0 1px rgba(225, 29, 72, 0.35), 0 3px 12px rgba(244, 63, 94, 0.38);
+  color: #BE123C;
+  border: 2px dashed #E11D48;
+  box-shadow: inset 0 0 0 1px rgba(225, 29, 72, 0.45), 0 4px 16px rgba(244, 63, 94, 0.45);
   transform: rotate(5deg);
+  animation: stampSlamCriminal 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .stamp-badge.hint-pill {
   background: #FEF3C7;
@@ -2362,14 +2507,15 @@ html, body {
 /* Khung lời khai trên thẻ đã mở (Vintage Typewriter Note) */
 .clue-bubble {
   position: relative;
-  background: rgba(15, 23, 42, 0.055);
-  border-left: 3px solid var(--gold);
+  background: rgba(15, 23, 42, 0.05);
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  border-left: 3.5px solid var(--gold);
   border-radius: 6px;
-  padding: 6px 8px;
+  padding: 7px 9px;
   font-family: var(--font-typewriter);
-  font-size: 11.8px;
+  font-size: 12px;
   font-weight: 500;
-  line-height: 1.42;
+  line-height: 1.45;
   color: #0F172A;
   z-index: 2;
   margin-top: auto;
@@ -2397,13 +2543,13 @@ html, body {
   flex-shrink: 0;
 }
 .btn-verdict {
-  padding: 6px 4px;
+  padding: 7px 5px;
   border-radius: 7px;
   font-family: var(--font-sans);
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.14s ease;
+  transition: all 0.16s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2417,25 +2563,30 @@ html, body {
 }
 .btn-verdict.innocent {
   background: rgba(16, 185, 129, 0.14);
-  border: 1px solid rgba(16, 185, 129, 0.45);
+  border: 1.5px solid rgba(16, 185, 129, 0.45);
   color: #34D399;
 }
 [data-theme="paper"] .btn-verdict.innocent { color: #047857; }
 .btn-verdict.innocent:hover {
-  background: #10B981;
-  border-color: #10B981;
+  background: #059669;
+  border-color: #059669;
   color: #FFFFFF;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
 }
+
 .btn-verdict.criminal {
   background: rgba(244, 63, 94, 0.14);
-  border: 1px solid rgba(244, 63, 94, 0.45);
+  border: 1.5px solid rgba(244, 63, 94, 0.45);
   color: #FB7185;
 }
 [data-theme="paper"] .btn-verdict.criminal { color: #BE123C; }
 .btn-verdict.criminal:hover {
-  background: #F43F5E;
-  border-color: #F43F5E;
+  background: #E11D48;
+  border-color: #E11D48;
   color: #FFFFFF;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(244, 63, 94, 0.4);
 }
 
 /* Nút hỗ trợ riêng "Soi vùng lời khai" trên thẻ đã mở */
