@@ -85,14 +85,34 @@ class AtmosphereEngine {
       this.spotY += (this.mouseY - this.spotY) * 0.07;
     }
 
-    // 2. Nền bóng đêm ấm áp của phòng điều tra
-    ctx.fillStyle = "#090C14";
+    // 2. Nền bàn thám tử phong cách Noir cổ điển (Rich Vintage Film Noir Atmosphere)
+    const baseGrad = ctx.createLinearGradient(0, 0, 0, this.height);
+    baseGrad.addColorStop(0, "#080B12");
+    baseGrad.addColorStop(0.5, "#0E1422");
+    baseGrad.addColorStop(1, "#0A0D16");
+    ctx.fillStyle = baseGrad;
     ctx.fillRect(0, 0, this.width, this.height);
 
-    // 3. Lưới sa bàn mờ nhẹ trên mặt bàn thám tử
-    ctx.strokeStyle = "rgba(245, 175, 65, 0.035)";
+    // 3. Vệt sáng rèm cửa sổ chớp đặc trưng phim noir (Venetian Blinds Effect)
+    ctx.save();
+    ctx.rotate(-0.22);
+    const blindStep = 64;
+    const blindWidth = 28;
+    for (let bx = -this.height * 1.5; bx < this.width + this.height * 1.5; bx += blindStep) {
+      const bAlpha = 0.065 + 0.035 * Math.sin(t * 0.0008 + bx * 0.03);
+      const bGrad = ctx.createLinearGradient(bx, 0, bx + blindWidth, 0);
+      bGrad.addColorStop(0, "rgba(255, 205, 120, 0)");
+      bGrad.addColorStop(0.5, `rgba(255, 205, 120, ${bAlpha})`);
+      bGrad.addColorStop(1, "rgba(255, 205, 120, 0)");
+      ctx.fillStyle = bGrad;
+      ctx.fillRect(bx, -this.height * 2, blindWidth, this.height * 4);
+    }
+    ctx.restore();
+
+    // 4. Lưới tọa độ bàn sa bàn thám tử mờ nhẹ
+    ctx.strokeStyle = "rgba(245, 185, 80, 0.055)";
     ctx.lineWidth = 1;
-    const step = 48;
+    const step = 56;
     for (let x = 0; x < this.width; x += step) {
       ctx.beginPath();
       ctx.moveTo(x, 0);
@@ -106,51 +126,54 @@ class AtmosphereEngine {
       ctx.stroke();
     }
 
-    // 4. Vẽ quầng sáng đèn bàn thám tử rọi sáng (Desk Lamp Spotlight)
-    const spotRadius = Math.max(460, Math.min(this.width, this.height) * 0.72);
+    // 5. Quầng sáng ấm áp của đèn chụp bàn thám tử (Desk Lamp Spotlight)
+    const spotRadius = Math.max(560, Math.min(this.width, this.height) * 0.85);
     const spotGrad = ctx.createRadialGradient(
-      this.spotX, this.spotY, 20,
+      this.spotX, this.spotY, 15,
       this.spotX, this.spotY, spotRadius
     );
-    spotGrad.addColorStop(0, "rgba(255, 185, 65, 0.24)");
-    spotGrad.addColorStop(0.28, "rgba(230, 150, 45, 0.12)");
-    spotGrad.addColorStop(0.65, "rgba(160, 95, 25, 0.04)");
+    spotGrad.addColorStop(0, "rgba(255, 195, 90, 0.45)");
+    spotGrad.addColorStop(0.2, "rgba(240, 160, 55, 0.26)");
+    spotGrad.addColorStop(0.5, "rgba(180, 100, 30, 0.11)");
+    spotGrad.addColorStop(0.8, "rgba(120, 60, 15, 0.035)");
     spotGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
 
     ctx.fillStyle = spotGrad;
     ctx.fillRect(0, 0, this.width, this.height);
 
-    // 5. Chuyển động hạt bụi vàng và khói thuốc lơ lửng
+    // 6. Hạt bụi vàng lơ lửng bắt sáng trong chùm đèn & làn khói mảnh
     const timeSec = t * 0.001;
     for (let i = 0; i < this.particles.length; i++) {
       const p = this.particles[i];
-      p.x += p.vx + Math.sin(timeSec + p.pulseOffset) * 0.22;
+      p.x += p.vx + Math.sin(timeSec + p.pulseOffset) * 0.3;
       p.y += p.vy;
 
-      if (p.y < -15) {
-        p.y = this.height + 10;
+      if (p.y < -20) {
+        p.y = this.height + 15;
         p.x = Math.random() * this.width;
       }
-      if (p.x < -15) p.x = this.width + 10;
-      if (p.x > this.width + 15) p.x = -10;
+      if (p.x < -20) p.x = this.width + 15;
+      if (p.x > this.width + 20) p.x = -15;
 
       const dist = Math.hypot(p.x - this.spotX, p.y - this.spotY);
-      const spotFactor = Math.max(0.45, 1.6 - dist / spotRadius);
-      const alpha = p.baseAlpha * (0.65 + 0.35 * Math.sin(timeSec * 2.4 + p.pulseOffset)) * spotFactor;
+      const inLight = Math.max(0.35, 1.0 - dist / spotRadius);
+      const pulse = 0.7 + 0.3 * Math.sin(timeSec * 2.2 + p.pulseOffset);
+      const alpha = p.baseAlpha * inLight * pulse;
 
+      ctx.save();
       ctx.beginPath();
       if (p.isSmoke) {
-        ctx.arc(p.x, p.y, p.size * 3.2, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(220, 195, 160, ${alpha * 0.35})`;
+        ctx.arc(p.x, p.y, p.size * 3.8, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(225, 205, 175, ${alpha * 0.35})`;
+        ctx.fill();
       } else {
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 195, 75, ${alpha * 1.2})`;
+        ctx.arc(p.x, p.y, p.size * 1.6, 0, Math.PI * 2);
+        ctx.shadowColor = "rgba(255, 215, 95, 0.85)";
+        ctx.shadowBlur = p.size * 3.5;
+        ctx.fillStyle = `rgba(255, 220, 115, ${Math.min(1, alpha * 1.6)})`;
+        ctx.fill();
       }
-      ctx.fill();
-    }
-        ctx.fillStyle = `rgba(245, 185, 75, ${alpha})`;
-      }
-      ctx.fill();
+      ctx.restore();
     }
   }
 }
