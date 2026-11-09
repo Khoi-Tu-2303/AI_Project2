@@ -329,20 +329,19 @@
       <div class="spotlight-inner" id="spotlightInner" data-kind="READY">
         <div class="status-msg-group">
           <span class="status-badge" id="statusBadge" data-kind="READY">ĐANG ĐIỀU TRA</span>
-          <span class="status-text" id="statusText">Bấm vào thẻ đã mở để khoanh vùng lời khai, hoặc chọn Vô tội / Thủ phạm cho nghi phạm.</span>
+          <span class="status-text" id="statusText">Đọc lời khai trên các thẻ sáng màu để suy luận, hoặc bấm nút "Soi vùng lời khai" để xem các ô liên quan.</span>
         </div>
         <div class="active-clue-pill" id="activeCluePill" style="display:none;">
           <span class="active-clue-owner" id="activeClueOwner">An (A1):</span>
           <span class="active-clue-refs" id="activeClueRefs">Ô liên quan: A1, B1</span>
-          <button type="button" class="btn-clear-hl" onclick="selectClue(null)">Bỏ chọn</button>
+          <button type="button" class="btn-clear-hl" onclick="selectClue(null)">Tắt soi vùng</button>
         </div>
       </div>
     </div>
 
-    <!-- Bàn Cờ Nghi Phạm (Co giãn tự nhiên khi Zoom In / Zoom Out) -->
+    <!-- Bàn Cờ Nghi Phạm Lưới N×N Thuần Túy -->
     <main class="board-stage">
       <div class="board-shell" id="boardShell" data-n="3">
-        <div class="col-headers" id="colHeaders"></div>
         <div class="board-rows-wrap" id="boardRowsWrap"></div>
       </div>
     </main>

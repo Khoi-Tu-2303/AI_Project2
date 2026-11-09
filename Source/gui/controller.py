@@ -288,11 +288,6 @@ class GUIController:
         self._active_hint = None
         self._trace.clear()
 
-        for c in state.known_statuses:
-            if c in state.revealed_clues:
-                self._selected_clue_cell = c
-                break
-
         self._refresh_kb_telemetry(state)
         self._append_trace(
             action="LOAD",
@@ -313,10 +308,6 @@ class GUIController:
         self._selected_clue_cell = None
         self._active_hint = None
         self._trace.clear()
-        for c in state.known_statuses:
-            if c in state.revealed_clues:
-                self._selected_clue_cell = c
-                break
         self._refresh_kb_telemetry(state)
         self._append_trace(
             action="RESTART",
@@ -396,7 +387,6 @@ class GUIController:
         verdict_vn = "VÔ TỘI" if verdict is Status.INNOCENT else "THỦ PHẠM"
 
         if outcome.result is VerdictResult.ACCEPTED:
-            self._selected_clue_cell = cell
             if self._active_hint is not None and self._active_hint.cell == cell:
                 self._active_hint = None
             clue_id = outcome.new_clue.id if outcome.new_clue is not None else None

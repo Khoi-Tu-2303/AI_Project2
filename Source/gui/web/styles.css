@@ -629,9 +629,9 @@ html, body {
 }
 
 .game-topbar {
-  min-height: 56px;
+  min-height: 52px;
   height: auto;
-  padding: 8px 20px;
+  padding: 6px 16px;
   background: var(--bg-surface);
   backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--border-subtle);
@@ -639,7 +639,7 @@ html, body {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 10px 14px;
+  gap: 8px 10px;
   flex-shrink: 0;
   position: sticky;
   top: 0;
@@ -650,29 +650,29 @@ html, body {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .puzzle-select {
-  min-width: 210px;
-  max-width: 310px;
+  min-width: 175px;
+  max-width: 250px;
   text-overflow: ellipsis;
 }
 
 .progress-widget {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 10px;
+  gap: 7px;
+  padding: 5px 9px;
   border-radius: 8px;
   background: var(--bg-elevated);
   border: 1px solid var(--border-subtle);
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 600;
 }
 .progress-bar-track {
-  width: 60px;
+  width: 48px;
   height: 6px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.1);
@@ -693,9 +693,9 @@ html, body {
   display: inline-flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
-  padding: 4px;
-  border-radius: 10px;
+  gap: 5px;
+  padding: 3px;
+  border-radius: 9px;
   background: var(--bg-deep);
   border: 1px solid var(--border-subtle);
 }
@@ -706,13 +706,13 @@ html, body {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 7px 12px;
+  padding: 6px 10px;
   border-radius: 8px;
   border: 1px solid var(--border-subtle);
   background: var(--bg-elevated);
   color: var(--ink-primary);
   font-family: var(--font-sans);
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: border-color 0.14s ease, background-color 0.14s ease;
@@ -722,7 +722,7 @@ html, body {
   border-color: var(--gold-bright);
 }
 .dock-btn {
-  padding: 6px 11px;
+  padding: 5px 10px;
   border-radius: 7px;
 }
 .btn-gold {
@@ -887,22 +887,19 @@ html, body {
 }
 
 /* =========================================================================
-   SÂN KHẤU BÀN CỜ & LƯỚI THẺ NGHI PHẠM (CHỐNG VỠ LAYOUT KHI ZOOM 50%-200%)
+   SÂN KHẤU BÀN CỜ & LƯỚI THẺ NGHI PHẠM N×N THUẦN TÚY
    ========================================================================= */
 .board-stage {
   flex: 1;
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: 12px 24px 36px;
+  padding: 10px 24px 32px;
   width: 100%;
   overflow: visible;
 }
 
 .board-shell {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
   width: 100%;
   height: auto;
   max-height: none;
@@ -912,67 +909,14 @@ html, body {
 .board-shell[data-n="4"] { max-width: 980px; }
 .board-shell[data-n="5"] { max-width: 1140px; }
 
-.col-headers {
-  display: grid;
-  padding-left: 38px;
-  gap: 12px;
-  min-height: 26px;
-  flex-shrink: 0;
-}
-.col-hdr {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  color: var(--gold-bright);
-  background: var(--gold-soft);
-  border-radius: 6px;
-  border: 1px solid var(--border-subtle);
-  padding: 3px 0;
-}
-
 .board-rows-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  width: 100%;
-}
-.board-shell[data-n="4"] .board-rows-wrap,
-.board-shell[data-n="4"] .col-headers { gap: 10px; }
-.board-shell[data-n="5"] .board-rows-wrap,
-.board-shell[data-n="5"] .col-headers { gap: 8px; }
-
-.board-row {
-  display: flex;
-  align-items: stretch;
-  gap: 10px;
-  width: 100%;
-}
-.row-hdr {
-  width: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--gold-bright);
-  background: var(--gold-soft);
-  border-radius: 6px;
-  border: 1px solid var(--border-subtle);
-  flex-shrink: 0;
-}
-.row-cards {
-  flex: 1;
   display: grid;
-  gap: 12px;
+  gap: 14px;
+  width: 100%;
   align-items: stretch;
 }
-.board-shell[data-n="4"] .row-cards { gap: 10px; }
-.board-shell[data-n="5"] .row-cards { gap: 8px; }
+.board-shell[data-n="4"] .board-rows-wrap { gap: 11px; }
+.board-shell[data-n="5"] .board-rows-wrap { gap: 8px; }
 
 /* =========================================================================
    THẺ NGHI PHẠM (CHƯA MỞ / ĐÃ MỞ HỒ SƠ)
@@ -989,27 +933,27 @@ html, body {
   position: relative;
   width: 100%;
   height: 100%;
-  min-height: 168px;
+  min-height: 162px;
   border-radius: 12px;
   padding: 11px 13px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 8px;
+  gap: 7px;
   box-shadow: var(--shadow-card);
   transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
   overflow: hidden;
   user-select: none;
 }
 .board-shell[data-n="4"] .suspect-card {
-  min-height: 152px;
+  min-height: 148px;
   padding: 10px 11px;
 }
 .board-shell[data-n="5"] .suspect-card {
-  min-height: 136px;
+  min-height: 132px;
   padding: 8px 9px;
   border-radius: 10px;
-  gap: 6px;
+  gap: 5px;
 }
 
 .suspect-card.unsolved {
@@ -1026,17 +970,11 @@ html, body {
   background: var(--paper-innocent);
   border: 2px solid var(--paper-innocent-border);
   color: var(--card-back-ink);
-  cursor: pointer;
 }
 .suspect-card.revealed-criminal {
   background: var(--paper-criminal);
   border: 2px solid var(--paper-criminal-border);
   color: var(--card-back-ink);
-  cursor: pointer;
-}
-.suspect-card.revealed-innocent:hover,
-.suspect-card.revealed-criminal:hover {
-  transform: translateY(-2px);
 }
 
 .suspect-card.selected-clue {
@@ -1045,6 +983,20 @@ html, body {
 .suspect-card.hinted {
   border-color: var(--gold-bright) !important;
   box-shadow: 0 0 0 2.5px var(--gold-bright), var(--shadow-card);
+}
+
+/* Hiệu ứng khi bật nút hỗ trợ Soi vùng lời khai (không đè lên nút bấm) */
+.suspect-card.hl-card-ref {
+  border-color: var(--hl-ref) !important;
+  box-shadow: 0 0 0 2.5px var(--hl-ref), var(--shadow-card);
+}
+.suspect-card.hl-card-right {
+  border-color: var(--hl-right) !important;
+  box-shadow: 0 0 0 2.5px var(--hl-right), var(--shadow-card);
+}
+.suspect-card.hl-card-overlap {
+  border-color: var(--hl-overlap) !important;
+  box-shadow: 0 0 0 2.5px var(--hl-overlap), var(--shadow-card);
 }
 
 [data-motion="on"] .anim-flip {
@@ -1075,6 +1027,11 @@ html, body {
   z-index: 2;
   flex-shrink: 0;
 }
+.card-top-left {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
 .coord-pill {
   font-family: var(--font-mono);
   font-size: 11px;
@@ -1092,6 +1049,25 @@ html, body {
 .board-shell[data-n="5"] .coord-pill {
   font-size: 10px;
   padding: 1.5px 5px;
+}
+
+.hl-top-tag {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.03em;
+  background: var(--hl-ref);
+  color: #090B10;
+}
+.hl-top-tag.hl-right {
+  background: var(--hl-right);
+  color: #090B10;
+}
+.hl-top-tag.hl-overlap {
+  background: var(--hl-overlap);
+  color: #FFFFFF;
 }
 
 .stamp-badge {
@@ -1266,32 +1242,44 @@ html, body {
   color: #FFFFFF;
 }
 
-/* Khung khoanh vùng lời khai */
-.region-overlay-svg {
-  position: absolute;
-  inset: 3px;
-  width: calc(100% - 6px);
-  height: calc(100% - 6px);
-  pointer-events: none;
-  z-index: 4;
+/* Nút hỗ trợ riêng "Soi vùng lời khai" trên thẻ đã mở */
+.btn-clue-helper {
+  width: 100%;
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(15, 23, 42, 0.16);
+  background: rgba(15, 23, 42, 0.05);
+  color: #334155;
+  font-family: var(--font-sans);
+  font-size: 10.5px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  transition: all 0.14s ease;
+  flex-shrink: 0;
 }
-.region-role-pill {
-  position: absolute;
-  bottom: 6px;
-  right: 6px;
-  z-index: 5;
-  pointer-events: none;
-  font-family: var(--font-mono);
-  font-size: 9px;
-  font-weight: 800;
-  padding: 2px 6px;
-  border-radius: 4px;
-  background: var(--hl-ref);
+.btn-clue-helper:hover {
+  background: rgba(217, 119, 6, 0.14);
+  border-color: #D97706;
+  color: #92400E;
+}
+.btn-clue-helper.active {
+  background: #F59E0B;
+  border-color: #D97706;
   color: #090B10;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
 }
-.region-role-pill[data-role="RIGHT"] { background: var(--hl-right); }
-.region-role-pill[data-role="L∩R"] { background: var(--hl-overlap); color: #FFF; }
+.icon-svg-sm {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+.board-shell[data-n="5"] .btn-clue-helper {
+  padding: 3px 5px;
+  font-size: 9px;
+}
 
 /* =========================================================================
    NGĂN KÉO TRƯỢT PHÂN TÍCH AI (SLIDE-OVER AI & CNF DRAWER)
