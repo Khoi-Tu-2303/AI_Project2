@@ -38,12 +38,12 @@ class AtmosphereEngine {
       this.particles.push({
         x: Math.random() * this.width,
         y: Math.random() * this.height,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: -0.15 - Math.random() * 0.35,
-        size: 0.9 + Math.random() * 2.2,
-        baseAlpha: 0.12 + Math.random() * 0.45,
+        vx: (Math.random() - 0.5) * 0.45,
+        vy: -0.2 - Math.random() * 0.4,
+        size: 1.2 + Math.random() * 2.8,
+        baseAlpha: 0.25 + Math.random() * 0.55,
         pulseOffset: Math.random() * Math.PI * 2,
-        isSmoke: Math.random() < 0.22,
+        isSmoke: Math.random() < 0.25,
       });
     }
 
@@ -76,34 +76,55 @@ class AtmosphereEngine {
     const idleTime = Date.now() - this.lastMouseMove;
     if (idleTime > 1600) {
       const angle = (t * 0.00035);
-      const wanderX = this.width * 0.5 + Math.cos(angle) * (this.width * 0.24);
-      const wanderY = this.height * 0.38 + Math.sin(angle * 1.4) * (this.height * 0.16);
-      this.spotX += (wanderX - this.spotX) * 0.025;
-      this.spotY += (wanderY - this.spotY) * 0.025;
+      const wanderX = this.width * 0.5 + Math.cos(angle) * (this.width * 0.22);
+      const wanderY = this.height * 0.38 + Math.sin(angle * 1.4) * (this.height * 0.14);
+      this.spotX += (wanderX - this.spotX) * 0.03;
+      this.spotY += (wanderY - this.spotY) * 0.03;
     } else {
-      this.spotX += (this.mouseX - this.spotX) * 0.065;
-      this.spotY += (this.mouseY - this.spotY) * 0.065;
+      this.spotX += (this.mouseX - this.spotX) * 0.07;
+      this.spotY += (this.mouseY - this.spotY) * 0.07;
     }
 
-    // 2. Vẽ quầng sáng đèn bàn thám tử (Desk Lamp Spotlight)
-    const spotRadius = Math.max(380, Math.min(this.width, this.height) * 0.65);
+    // 2. Nền bóng đêm ấm áp của phòng điều tra
+    ctx.fillStyle = "#090C14";
+    ctx.fillRect(0, 0, this.width, this.height);
+
+    // 3. Lưới sa bàn mờ nhẹ trên mặt bàn thám tử
+    ctx.strokeStyle = "rgba(245, 175, 65, 0.035)";
+    ctx.lineWidth = 1;
+    const step = 48;
+    for (let x = 0; x < this.width; x += step) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, this.height);
+      ctx.stroke();
+    }
+    for (let y = 0; y < this.height; y += step) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(this.width, y);
+      ctx.stroke();
+    }
+
+    // 4. Vẽ quầng sáng đèn bàn thám tử rọi sáng (Desk Lamp Spotlight)
+    const spotRadius = Math.max(460, Math.min(this.width, this.height) * 0.72);
     const spotGrad = ctx.createRadialGradient(
-      this.spotX, this.spotY, 30,
+      this.spotX, this.spotY, 20,
       this.spotX, this.spotY, spotRadius
     );
-    spotGrad.addColorStop(0, "rgba(230, 160, 50, 0.12)");
-    spotGrad.addColorStop(0.35, "rgba(210, 140, 40, 0.05)");
-    spotGrad.addColorStop(0.72, "rgba(16, 20, 30, 0.45)");
-    spotGrad.addColorStop(1, "rgba(7, 9, 14, 0.90)");
+    spotGrad.addColorStop(0, "rgba(255, 185, 65, 0.24)");
+    spotGrad.addColorStop(0.28, "rgba(230, 150, 45, 0.12)");
+    spotGrad.addColorStop(0.65, "rgba(160, 95, 25, 0.04)");
+    spotGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
 
     ctx.fillStyle = spotGrad;
     ctx.fillRect(0, 0, this.width, this.height);
 
-    // 3. Chuyển động hạt bụi vàng và khói thuốc lơ lửng
+    // 5. Chuyển động hạt bụi vàng và khói thuốc lơ lửng
     const timeSec = t * 0.001;
     for (let i = 0; i < this.particles.length; i++) {
       const p = this.particles[i];
-      p.x += p.vx + Math.sin(timeSec + p.pulseOffset) * 0.18;
+      p.x += p.vx + Math.sin(timeSec + p.pulseOffset) * 0.22;
       p.y += p.vy;
 
       if (p.y < -15) {
@@ -114,15 +135,19 @@ class AtmosphereEngine {
       if (p.x > this.width + 15) p.x = -10;
 
       const dist = Math.hypot(p.x - this.spotX, p.y - this.spotY);
-      const spotFactor = Math.max(0.35, 1.35 - dist / spotRadius);
-      const alpha = p.baseAlpha * (0.7 + 0.3 * Math.sin(timeSec * 2.2 + p.pulseOffset)) * spotFactor;
+      const spotFactor = Math.max(0.45, 1.6 - dist / spotRadius);
+      const alpha = p.baseAlpha * (0.65 + 0.35 * Math.sin(timeSec * 2.4 + p.pulseOffset)) * spotFactor;
 
       ctx.beginPath();
       if (p.isSmoke) {
-        ctx.arc(p.x, p.y, p.size * 2.6, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(215, 195, 165, ${alpha * 0.28})`;
+        ctx.arc(p.x, p.y, p.size * 3.2, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(220, 195, 160, ${alpha * 0.35})`;
       } else {
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 195, 75, ${alpha * 1.2})`;
+      }
+      ctx.fill();
+    }
         ctx.fillStyle = `rgba(245, 185, 75, ${alpha})`;
       }
       ctx.fill();
