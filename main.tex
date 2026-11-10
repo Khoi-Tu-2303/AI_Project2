@@ -1,0 +1,242 @@
+\documentclass[12pt,a4paper]{report}
+\usepackage{lmodern}
+\usepackage[T5]{fontenc}
+\usepackage[utf8]{inputenc}
+\DeclareTextSymbolDefault{\DH}{T1}
+\usepackage[vietnamese]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{float}
+\usepackage[left=2.5cm,right=2cm,top=2cm,bottom=2.5cm]{geometry} 
+\setlength{\parindent}{0pt}
+\usepackage{graphicx} 
+\graphicspath{ {figures/} {Images/} }
+\usepackage[table,x11names]{xcolor}
+\usepackage{tikz}
+\usepackage{scrextend}
+\usepackage{xurl}
+\usepackage[
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue,
+    citecolor=blue
+]{hyperref}
+% \changefontsizes{14pt}
+\usetikzlibrary{calc, positioning, shapes.geometric, arrows, fit, shadows}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{listings}
+\usepackage{tabularx}
+\usepackage{pgfplots}
+\usepackage[most]{tcolorbox}
+\pgfplotsset{compat=1.18}
+
+% Gói hỗ trợ thuật toán trong đồ án
+\usepackage{algorithm,algorithmic}
+
+% Bảng biểu bổ trợ
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+% Tài liệu tham khảo
+\usepackage[
+	sorting=none,
+	backend=biber,
+	defernumbers=true]{biblatex}
+\IfFileExists{References/references.bib}{
+  \addbibresource{References/references.bib}
+}{
+  \IfFileExists{Project1/References/references.bib}{
+    \addbibresource{Project1/References/references.bib}
+  }{}
+}
+
+\makeatletter
+\def\blx@maxline{77}
+\makeatother
+
+% Định nghĩa màu sắc cho code (Giống VS Code)
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.96,0.96,0.96}
+\definecolor{dodo}{RGB}{153,0,0}
+
+% Cấu hình chung (Fix lỗi tràn lề Overfull hbox)
+\lstset{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{blue},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{red},
+    basicstyle=\ttfamily\footnotesize, % Dùng font nhỏ hơn để vừa trang giấy
+    breakatwhitespace=false,         
+    breaklines=true,                 % QUAN TRỌNG: Tự động xuống dòng
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,                       % Tab nhỏ lại để đỡ chiếm chỗ
+    frame=single,                    % Khung viền đơn giản
+    extendedchars=true,              % Hỗ trợ ký tự đặc biệt
+    literate={á}{{\'a}}1 {à}{{\`a}}1 {ả}{{\h{a}}}1 {ã}{{\~a}}1 {ạ}{{\d{a}}}1 % Hỗ trợ tiếng Việt trong comment
+}
+
+% Định nghĩa code JavaScript
+\lstdefinelanguage{JavaScript}{
+  keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break, const, let, async, await},
+  keywordstyle=\color{blue}\bfseries,
+  ndkeywords={class, export, boolean, throw, implements, import, this, window, document, console},
+  ndkeywordstyle=\color{teal}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=false,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{green!60!black}\ttfamily,
+  stringstyle=\color{red}\ttfamily,
+  morestring=[b]',
+  morestring=[b]"
+}
+
+% Định nghĩa style cho code C#
+\lstdefinelanguage{CSharp}{
+  keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break, string, byte, public, private, void, static},
+  keywordstyle=\color{blue}\bfseries,
+  ndkeywords={class, export, boolean, throw, implements, import, this},
+  ndkeywordstyle=\color{darkgray}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=false,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{green!60!black}\ttfamily,
+  stringstyle=\color{red}\ttfamily,
+  morestring=[b]",
+  basicstyle=\small\ttfamily,
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  stepnumber=1,
+  numbersep=10pt,
+  tabsize=2,
+  showstringspaces=false,
+  breaklines=true,
+  frame=lines,
+  backgroundcolor=\color{gray!5}
+}
+
+% Đổi tên mặc định
+\renewcommand{\chaptername}{Chương}
+\renewcommand{\figurename}{Hình}
+\renewcommand{\tablename}{Bảng}
+\renewcommand{\contentsname}{Mục lục}
+\renewcommand{\listfigurename}{Danh sách hình}
+\renewcommand{\listtablename}{Danh sách bảng}
+\renewcommand{\appendixname}{Phụ lục}
+
+% Định dạng chapter
+\usepackage{titlesec}
+\titleformat{\chapter}
+    [display] 
+    {\normalfont\bfseries\Large}{\chaptername \ \thechapter}{10pt}{\huge}
+\titlespacing*{\chapter}{0pt}{-10pt}{40pt} %khoảng cách giữa chapter và đầu trang
+
+\titleformat{\section}
+    {\normalfont\bfseries\large}{\thesection}{1em}{}
+ 
+\titleformat{\subsection}
+    {\normalfont\bfseries\normalsize}{\thesubsection}{1em}{}
+
+% --- 2. GÓI HEADER (CHỈ KHAI BÁO, CHƯA BẬT) ---
+\usepackage{fancyhdr}
+
+\begin{document}
+\thispagestyle{fancy}
+
+% --- TRANG BÌA ---
+\input{Title/title.tex}
+
+% --- MỤC LỤC ---
+\pagestyle{plain} % Quan trọng: Header trắng, chỉ có số trang ở dưới
+\pagenumbering{roman} % Đánh số i, ii, iii, ...
+\tableofcontents
+\addcontentsline{toc}{chapter}{Mục lục}
+
+% Phần đánh giá thành viên
+\IfFileExists{Appendix/danhgiatv.tex}{
+  \include{Appendix/danhgiatv}
+}{
+  \IfFileExists{Project1/Appendix/danhgiatv.tex}{
+    \include{Project1/Appendix/danhgiatv}
+  }{}
+}
+
+% Phần đánh giá mức độ hoàn thành
+\IfFileExists{Appendix/danhgiamucdohoanthanh.tex}{
+  \include{Appendix/danhgiamucdohoanthanh}
+}{
+  \IfFileExists{Project1/Appendix/danhgiamucdohoanthanh.tex}{
+    \include{Project1/Appendix/danhgiamucdohoanthanh}
+  }{}
+}
+
+% Tạo danh sách hình bảng
+\listoffigures
+\addcontentsline{toc}{chapter}{Danh sách hình}
+\listoftables
+\addcontentsline{toc}{chapter}{Danh sách bảng}
+
+\IfFileExists{Appendix/noidung.tex}{\include{Appendix/noidung}}{
+  \IfFileExists{Project1/Appendix/noidung.tex}{\include{Project1/Appendix/noidung}}{}
+}
+
+\clearpage
+
+\pagenumbering{arabic} % Đánh số 1, 2, 3, ...
+
+% Chương 1: Giới thiệu
+\include{Chapter1/chapter1}
+ 
+% Chương 2: Tổng quan cài đặt trò chơi
+\include{Chapter2/chapter2}
+ 
+% Chương 3: Hình thức hóa bài toán suy luận
+\include{Chapter3/chapter3}
+ 
+% Chương 4: Các thuật toán suy luận
+\include{Chapter4/chapter4}
+ 
+% Chương 5: Thực nghiệm và đánh giá
+\include{Chapter5/chapter5}
+ 
+% Chương 6: Kết luận và hướng phát triển
+\include{Chapter6/chapter6}
+
+\include{Appendix/appendix.tex}
+
+% In tài liệu tham khảo
+\IfFileExists{References/references.bib}{
+  \nocite{*}
+  \printbibheading[title={Tài liệu tham khảo}]
+  \addcontentsline{toc}{chapter}{Tài liệu tham khảo}
+  \printbibliography[heading=subbibliography, title={Tài liệu tiếng Việt}, keyword=Viet, resetnumbers=true]
+  \DeclareNameAlias{sortname}{last-first}
+  \DeclareNameAlias{default}{last-first}
+  \printbibliography[heading=subbibliography, title={Tài liệu tiếng Anh}, keyword=English]
+  \printbibliography[heading=subbibliography, title={Mã nguồn và Liên kết tham khảo}, keyword=Source]
+}{}
+
+% % Báo cáo làm việc
+% \IfFileExists{Appendix/baocaolamviec.tex}{
+%   \include{Appendix/baocaolamviec}
+% }{
+%   \IfFileExists{Project1/Appendix/baocaolamviec.tex}{
+%     \include{Project1/Appendix/baocaolamviec}
+%   }{}
+% }
+
+\end{document}

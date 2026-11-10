@@ -1,0 +1,95 @@
+\chapter*{Đánh giá thành viên}
+\phantomsection
+\addcontentsline{toc}{chapter}{Đánh giá thành viên}
+
+Bảng dưới đây tổng hợp sự phân công vai trò, khối lượng công việc phụ trách và mức độ hoàn thành nhiệm vụ của từng thành viên trong nhóm trong suốt quá trình thực hiện đồ án.
+
+\begin{center}
+\textbf{Bảng tổng hợp phân công nhiệm vụ và đánh giá mức độ hoàn thành của các thành viên}
+\vspace{6pt}
+
+\begingroup
+\small
+\setlength{\tabcolsep}{6pt}
+\renewcommand{\arraystretch}{1.35}
+\begin{tabularx}{\textwidth}{|c|l|c|X|c|}
+\hline
+\rowcolor{gray!15}
+\textbf{STT} & \textbf{Họ và tên} & \textbf{MSSV} & \textbf{Vai trò và nội dung phụ trách chính} & \textbf{Hoàn thành} \\
+\hline
+1 & \textbf{Đinh Như Phát} & 24122002 & Phụ trách lõi trò chơi (\texttt{Game}), mô hình hóa trạng thái, luật di chuyển và cơ chế ô đặc biệt; điều phối tích hợp mã nguồn và xây dựng kịch bản video demo. & \textbf{100\%} \\
+\hline
+2 & \textbf{Phạm Nguyên Phương} & 24122011 & Hiện thực thuật toán UCS và mô hình chi phí địa hình; đối soát nghiệm tối ưu chi phí; tổng hợp bảng biểu thực nghiệm, viết phần kết luận và rà soát bản thảo báo cáo. & \textbf{100\%} \\
+\hline
+3 & \textbf{Từ Văn Khôi} & 24122019 & Hiện thực thuật toán A* và thiết kế hàm đánh giá heuristic; xây dựng bộ công cụ đo kiểm tự động (\texttt{benchmark runner}), vẽ biểu đồ và phân tích dữ liệu thực nghiệm. & \textbf{100\%} \\
+\hline
+4 & \textbf{Nguyễn Cao Bản} & 24122029 & Thiết kế và nâng cấp giao diện đồ họa Pygame, hệ thống hiệu ứng hình ảnh/âm thanh, bảng điều khiển bộ giải AI, mô phỏng bước đi và kiểm thử chấp nhận giao diện. & \textbf{100\%} \\
+\hline
+5 & \textbf{Trần Lê Minh Đức} & 24122031 & Hiện thực thuật toán BFS và DFS; tối ưu hóa cơ chế băm trạng thái (\texttt{state hashing}) và kiểm soát chu trình; xây dựng bộ kiểm thử tự động (\texttt{pytest}) và viết báo cáo lý thuyết. & \textbf{100\%} \\
+\hline
+\end{tabularx}
+\endgroup
+\end{center}
+
+\section*{Chi tiết công việc thực hiện của từng thành viên}
+
+\subsection*{1. Đinh Như Phát -- MSSV: 24122002}
+\begin{itemize}
+    \item \textbf{Nhiệm vụ chuyên môn:}
+    \begin{itemize}
+        \item Thiết kế cấu trúc biểu diễn trạng thái $s = (C, a, b)$ bất biến và xây dựng lõi xử lý trò chơi (\texttt{Game}), bao gồm hệ thống luật di chuyển và hàm sinh trạng thái kế tiếp.
+        \item Kiểm chứng hình học các tư thế của khối hộp $1 \times 1 \times 2$ và 12 phép chuyển tiếp hướng lăn trên lưới tọa độ.
+        \item Hiện thực và kiểm thử chuyên sâu các cơ chế ô nâng cao: ô dễ vỡ (\textit{fragile tiles}), cầu đóng/mở theo mặt nạ bit (\textit{bridges}), công tắc nhẹ/nặng (\textit{soft/heavy switches}) và công tắc phân tách/hợp nhất khối (\textit{split/merge}).
+        \item Rà soát mã nguồn (\textit{code review}), giải quyết xung đột khi tích hợp các nhánh phát triển và chuẩn bị kịch bản, quay dựng video minh họa sản phẩm.
+        \item Tham gia biên soạn Chương 1 (Giới thiệu) và Chương 3 (Hình thức hóa bài toán tìm kiếm).
+    \end{itemize}
+    \item \textbf{Mức độ hoàn thành:} \textbf{100\%} (Đóng góp đồng đều: 20\% khối lượng toàn đồ án).
+\end{itemize}
+
+\subsection*{2. Phạm Nguyên Phương -- MSSV: 24122011}
+\begin{itemize}
+    \item \textbf{Nhiệm vụ chuyên môn:}
+    \begin{itemize}
+        \item Nghiên cứu và hiện thực thuật toán Tìm kiếm chi phí đồng nhất (Uniform-Cost Search -- UCS) sử dụng cấu trúc hàng đợi ưu tiên Min-Heap.
+        \item Thiết lập công thức chi phí địa hình $c(s, u, s') = 1 + 2F(s,s') + B(s,s')$ và kiểm chứng cơ chế cập nhật chi phí tốt nhất (\texttt{best\_cost}).
+        \item Tổng hợp số liệu đo lường thực nghiệm trên 32 màn kiểm thử, thiết kế hệ thống bảng thống kê định lượng và đối chiếu độ lệch chi phí giữa các thuật toán.
+        \item Biên soạn nội dung phần UCS trong Chương 4, tổng hợp bảng biểu Chương 5, viết Chương 6 (Kết luận và hướng phát triển) và kiểm tra quy chuẩn trình bày file PDF nộp cuối kỳ.
+    \end{itemize}
+    \item \textbf{Mức độ hoàn thành:} \textbf{100\%} (Đóng góp đồng đều: 20\% khối lượng toàn đồ án).
+\end{itemize}
+
+\subsection*{3. Từ Văn Khôi -- MSSV: 24122019}
+\begin{itemize}
+    \item \textbf{Nhiệm vụ chuyên môn:}
+    \begin{itemize}
+        \item Nghiên cứu và hiện thực thuật toán Tìm kiếm có thông tin A* (A-Star Search).
+        \item Thiết kế hàm đánh giá heuristic dựa trên khoảng cách Chebyshev chia đôi, chứng minh tính chấp nhận được (\textit{admissible}) và tính nhất quán (\textit{consistent}) trên cả trạng thái nguyên khối và phân tách.
+        \item Xây dựng mô-đun chạy thực nghiệm tự động (\texttt{benchmark runner}) đo thời gian thực thi bằng \texttt{time.perf\_counter} và đỉnh bộ nhớ bằng \texttt{tracemalloc}, xuất dữ liệu chuẩn hóa ra định dạng CSV/JSON.
+        \item Trực quan hóa dữ liệu thành hệ thống biểu đồ so sánh 4 chỉ số hiệu năng theo từng nhóm độ khó và viết phần phân tích chuyên sâu trong Chương 4 và Chương 5.
+    \end{itemize}
+    \item \textbf{Mức độ hoàn thành:} \textbf{100\%} (Đóng góp đồng đều: 20\% khối lượng toàn đồ án).
+\end{itemize}
+
+\subsection*{4. Nguyễn Cao Bản -- MSSV: 24122029}
+\begin{itemize}
+    \item \textbf{Nhiệm vụ chuyên môn:}
+    \begin{itemize}
+        \item Xây dựng và hoàn thiện giao diện đồ họa người dùng (GUI) bằng thư viện Pygame, bao gồm màn hình chính, màn hình chọn màn chơi, hướng dẫn và màn hình chơi trực tiếp.
+        \item Tích hợp bảng điều khiển bộ giải AI (\textit{solver panel}), chức năng phát lại lời giải từng bước (\textit{step-by-step replay}), điều chỉnh tốc độ diễn hoạt và hiển thị trực tiếp các chỉ số đo lường.
+        \item Nâng cấp hệ thống trang phục khối lăn (\textit{skins}), phông nền đồng bộ, góc nhìn chiếu (\textit{camera scaling}), hiệu ứng hạt vật lý và âm thanh tổng hợp.
+        \item Thực hiện kiểm thử chấp nhận thủ công (\textit{manual acceptance testing}) trên toàn bộ các màn chơi và biên soạn Chương 2 (Cài đặt trò chơi Bloxorz) cùng Phụ lục giao diện.
+    \end{itemize}
+    \item \textbf{Mức độ hoàn thành:} \textbf{100\%} (Đóng góp đồng đều: 20\% khối lượng toàn đồ án).
+\end{itemize}
+
+\subsection*{5. Trần Lê Minh Đức -- MSSV: 24122031}
+\begin{itemize}
+    \item \textbf{Nhiệm vụ chuyên môn:}
+    \begin{itemize}
+        \item Nghiên cứu và hiện thực hai thuật toán Tìm kiếm theo chiều rộng (BFS) và Tìm kiếm theo chiều sâu (DFS).
+        \item Tối ưu hóa cơ chế băm trạng thái (\texttt{state hashing}) và quản lý tập trạng thái đã thăm (\texttt{visited set}), bảo đảm BFS luôn trả về nghiệm có số bước ngắn nhất và DFS không bị rơi vào chu trình lặp vô hạn.
+        \item Xây dựng bộ kiểm thử tự động (\texttt{pytest}) để tự động phát lại (\textit{replay}) kiểm chứng tính hợp lệ của lời giải cũng như xử lý an toàn các trường hợp bản đồ vô nghiệm.
+        \item Biên soạn cơ sở lý thuyết, mã giả và phân tích độ phức tạp của BFS, DFS trong Chương 4 cùng phần phương pháp luận thực nghiệm trong Chương 5.
+    \end{itemize}
+    \item \textbf{Mức độ hoàn thành:} \textbf{100\%} (Đóng góp đồng đều: 20\% khối lượng toàn đồ án).
+\end{itemize}

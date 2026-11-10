@@ -1,0 +1,66 @@
+\chapter*{Đánh giá mức độ hoàn thành từng danh mục}
+\phantomsection
+\addcontentsline{toc}{chapter}{Đánh giá mức độ hoàn thành từng danh mục}
+
+Nhóm đã tiến hành rà soát, đối chiếu toàn bộ kết quả thực hiện với các yêu cầu đề ra của Đồ án 1 (Bài toán tự động giải trò chơi Bloxorz bằng các thuật toán tìm kiếm AI). Bảng dưới đây trình bày chi tiết mức độ hoàn thành của từng hạng mục công việc.
+
+\begin{center}
+\textbf{Bảng đánh giá chi tiết mức độ hoàn thành theo từng danh mục yêu cầu của đồ án}
+\vspace{6pt}
+
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.35}
+\begin{tabularx}{\textwidth}{|c|p{0.24\textwidth}|X|c|}
+\hline
+\rowcolor{gray!15}
+\textbf{STT} & \textbf{Danh mục yêu cầu} & \textbf{Nội dung chi tiết và kết quả đạt được} & \textbf{Mức độ hoàn thành} \\
+\hline
+\multirow{3}{*}{1} & \multirow{3}{=}{\textbf{Mô hình hóa bài toán và xây dựng lõi trò chơi Bloxorz}} 
+& Biểu diễn chính xác không gian trạng thái $s = (C, a, b)$ cho cả khối hộp $1 \times 1 \times 2$ (đứng, nằm ngang, nằm dọc) và hai khối đơn $1 \times 1 \times 1$ khi phân tách. & \textbf{100\%} \\
+\cline{3-4}
+& & Hiện thực đầy đủ toàn bộ cơ chế ô địa hình: ô thường, ô đích ($G$), ô dễ vỡ (\textit{fragile tiles}), công tắc nhẹ hình tròn (\textit{soft switch}), công tắc nặng chữ X (\textit{heavy switch}), công tắc phân tách (\textit{split switch}) và hệ thống cầu đóng/mở theo mặt nạ bit (\textit{bitmask}). & \textbf{100\%} \\
+\cline{3-4}
+& & Kiểm tra chặt chẽ điều kiện biên, rơi khỏi bàn chơi, sập ô dễ vỡ khi đứng thẳng và xác nhận trạng thái đích hợp lệ. & \textbf{100\%} \\
+\hline
+
+\multirow{4}{*}{2} & \multirow{4}{=}{\textbf{Hiện thực các thuật toán tìm kiếm AI}} 
+& \textbf{Thuật toán BFS:} Duyệt theo lớp bằng hàng đợi FIFO, kiểm tra trùng lặp trạng thái qua bảng băm, bảo đảm tìm ra lời giải có số bước di chuyển $L$ tối thiểu. & \textbf{100\%} \\
+\cline{3-4}
+& & \textbf{Thuật toán DFS:} Duyệt theo chiều sâu bằng ngăn xếp LIFO, quản lý chặt chẽ tập trạng thái đã thăm để triệt tiêu hoàn toàn chu trình lặp vô hạn. & \textbf{100\%} \\
+\cline{3-4}
+& & \textbf{Thuật toán UCS:} Duyệt theo chi phí tích lũy bằng hàng đợi ưu tiên Min-Heap với hàm chi phí địa hình $c(s, u, s') = 1 + 2F + B$, bảo đảm nghiệm có tổng chi phí $C$ nhỏ nhất. & \textbf{100\%} \\
+\cline{3-4}
+& & \textbf{Thuật toán A*:} Kết hợp chi phí tích lũy $g(n)$ và hàm đánh giá heuristic $h(n)$ dựa trên khoảng cách Chebyshev chia đôi; thỏa mãn tính chấp nhận được (\textit{admissible}) và nhất quán (\textit{consistent}), giúp giảm mạnh số nút mở rộng. & \textbf{100\%} \\
+\hline
+
+\multirow{3}{*}{3} & \multirow{3}{=}{\textbf{Giao diện đồ họa (GUI) và trực quan hóa}} 
+& Thiết kế giao diện Pygame trực quan với đầy đủ màn hình chính, màn hình chọn màn chơi, hướng dẫn, cài đặt và màn hình chơi trực tiếp. & \textbf{100\%} \\
+\cline{3-4}
+& & Tích hợp bảng điều khiển AI ngay trong màn hình chơi: chọn thuật toán (BFS, DFS, UCS, A*), diễn hoạt tự động từng bước (\textit{step-by-step replay}), điều chỉnh tốc độ và hiển thị trực tiếp các chỉ số đo lường. & \textbf{100\%} \\
+\cline{3-4}
+& & Bổ sung tính năng nâng cao: hệ thống đa trang phục (\textit{skins}) cho khối lăn đồng bộ cùng phông nền môi trường, hiệu ứng hạt vật lý (bụi, mảnh vỡ, tia lửa) và âm thanh tổng hợp. & \textbf{100\%} \\
+\hline
+
+\multirow{3}{*}{4} & \multirow{3}{=}{\textbf{Thực nghiệm, kiểm thử và đánh giá định lượng}} 
+& Thiết kế bộ dữ liệu chuẩn gồm 32 màn kiểm thử (\texttt{*.json}) chia làm 4 nhóm đặc trưng (Cơ bản, Ô dễ vỡ, Công tắc và cầu, Kết hợp) có thống kê cấu trúc chi tiết. & \textbf{100\%} \\
+\cline{3-4}
+& & Đo đạc tự động 4 chỉ số (Thời gian chạy \texttt{perf\_counter}, Đỉnh bộ nhớ \texttt{tracemalloc}, Số nút mở rộng, Độ dài và chi phí lời giải) qua 128 lượt khởi động và 640 lượt đo chính thức. & \textbf{100\%} \\
+\cline{3-4}
+& & Xây dựng bộ kiểm thử tự động (\texttt{pytest}) kiểm chứng lại 100\% lời giải bằng phương thức \texttt{Game.step}, bảo đảm tính chính xác tuyệt đối của mọi thuật toán. & \textbf{100\%} \\
+\hline
+
+\multirow{3}{*}{5} & \multirow{3}{=}{\textbf{Báo cáo khoa học và đóng gói sản phẩm}} 
+& Biên soạn báo cáo chuẩn LaTeX gồm 6 chương và phụ lục: trình bày rõ ràng cơ sở lý thuyết, hình thức hóa toán học, mã giả thuật toán và chứng minh tính chất của hàm heuristic. & \textbf{100\%} \\
+\cline{3-4}
+& & Trực quan hóa kết quả thực nghiệm bằng hệ thống bảng thống kê đầy đủ và biểu đồ so sánh 4 thuật toán theo từng nhóm màn chơi, rút ra nhận xét chuyên sâu về ưu/nhược điểm. & \textbf{100\%} \\
+\cline{3-4}
+& & Hoàn thiện danh mục tài liệu và mã nguồn tham khảo, tổ chức kho mã nguồn khoa học kèm tài liệu hướng dẫn cài đặt và video demo. & \textbf{100\%} \\
+\hline
+\rowcolor{gray!15}
+\multicolumn{3}{|r|}{\textbf{TỔNG ĐÁNH GIÁ MỨC ĐỘ HOÀN THÀNH TOÀN ĐỒ ÁN}} & \textbf{100\%} \\
+\hline
+\end{tabularx}
+\endgroup
+\end{center}

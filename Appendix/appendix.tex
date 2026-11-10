@@ -1,0 +1,216 @@
+\chapter{Phụ lục}
+
+\section{Prompt cải thiện giao diện}
+\label{app:updateui}
+ 
+\subsection*{Prompt: Thêm hiệu ứng, âm thanh}
+\label{sec:prompt-u1}
+
+\begin{quote}
+\small
+\setlength{\emergencystretch}{2em}
+Thêm lớp cảm giác cho game Bloxorz (pygame-ce) mà không đổi luật chơi.
+
+\begin{enumerate}
+  \item Hiệu ứng hạt, mô phỏng trong tọa độ thế giới (hàng, cột, độ cao) và chiếu theo góc nhìn của bàn:
+  \begin{itemize}
+    \item Bụi: bắn ra từ rìa vùng chân khối khi khối đáp xuống; vẽ phía sau khối.
+    \item Mảnh vỡ: bay lên từ ô dễ vỡ khi ô gãy; vẽ phía trước khối.
+    \item Tia lửa: bật ra từ công tắc vừa được kích hoạt, bắt đầu ngay ngoài vùng khối đang đứng trên nó; vẽ phía trước khối và có hiệu ứng cộng sáng.
+    \item Số hạt tồn tại cùng lúc phải bị giới hạn ở mức tối đa.
+  \end{itemize}
+
+  \item Âm thanh được tổng hợp hoàn toàn bằng mã, không dùng tệp âm thanh bên ngoài, gồm các âm: lăn, đổi khối, công tắc, vỡ, rơi, va chạm, thắng.
+
+  \item Nâng cấp hình ảnh bàn và khối:
+  \begin{itemize}
+    \item Mặt đá sáng hơn so với cạnh bên, cạnh mảnh có bevel.
+    \item Có bóng tiếp xúc dưới khối.
+    \item Ba mặt của khối phân cấp độ sáng rõ ràng.
+  \end{itemize}
+
+  \item Mỗi sự kiện trong game (đáp, vỡ, bật công tắc, rơi, thắng) phải kích hoạt hiệu ứng và âm thanh tương ứng.
+\end{enumerate}
+\end{quote}
+
+\subsection*{Prompt: Đổi phong cách giao diện}
+\label{sec:prompt-u4}
+
+\begin{quote}
+\small
+\setlength{\emergencystretch}{2em}
+Nâng cấp trang chủ và không khí hình ảnh của Bloxorz theo phong cách hầm ngục cổ (obsidian và vàng rèn).
+
+\begin{enumerate}
+  \item Lớp không khí hình ảnh, vẽ theo thứ tự chiều sâu từ xa đến gần:
+  \begin{itemize}
+    \item Ảnh nền có hiệu ứng parallax theo chuyển động của chuột.
+    \item Tia sáng xiên, sương trôi, đốm lửa và bụi lơ lửng, sao băng.
+    \item Sóng lan ra khi khối đáp xuống.
+    \item Viền tối (vignette) quanh màn hình.
+    \item Mưa sao băng ăn mừng khi thắng.
+  \end{itemize}
+
+  \item Trang chủ:
+  \begin{itemize}
+    \item Chữ BLOXORZ gồm 7 khối đá 3D (chữ đùn khối, có bóng), rơi tuần tự theo trọng lực. Mỗi chữ chạm đáy sinh tia lửa, vòng sóng và tiếng động; chữ cuối kèm rung nhẹ.
+    \item Bên phải là bàn cờ mẫu có khối $1\times1\times2$ tự lăn, chu kỳ đồng bộ với hiệu ứng của chữ và lặp lại khi chữ khởi động lại.
+    \item Nút chính có chevron vàng trượt khi di chuột lên.
+    \item Các animation không được chặn việc bấm nút.
+  \end{itemize}
+
+  \item Camera 3D:
+  \begin{itemize}
+    \item Có 5 chế độ góc nhìn: Cổ điển ($25^\circ$/$-20^\circ$), Isometric ($30^\circ$/$+45^\circ$), Góc phải ($28^\circ$/$+32^\circ$), Trên cao ($68^\circ$/$-15^\circ$), Điện ảnh ($15^\circ$/$-35^\circ$).
+    \item Chuyển giữa các góc nhìn mượt; phím V đổi góc nhìn.
+    \item Phím Q/E hoặc kéo chuột phải để xoay quanh bàn (orbit).
+    \item Góc màn hình có la bàn khối hộp 3D thu nhỏ.
+  \end{itemize}
+
+  \item Hiệu ứng thị giác bổ sung:
+  \begin{itemize}
+    \item Xoáy vực và ảnh mờ dư khi khối rơi.
+    \item Rune nổi trên khối đang được chọn khi khối tách.
+    \item Mảnh rune bay ra khi thắng.
+  \end{itemize}
+\end{enumerate}
+\end{quote}
+
+\subsection*{Prompt: Nâng cấp phong cách giao diện hoàn chỉnh}
+\label{sec:prompt-obsidian}
+
+\begin{quote}
+\small
+\setlength{\emergencystretch}{2em}
+Nâng cấp giao diện Bloxorz lên bản Obsidian Sanctuary hoàn chỉnh. Giữ nguyên luật chơi và tiêu chí của các solver BFS/DFS/UCS/A*. Làm lần lượt theo từng cụm.
+
+\begin{enumerate}[label=\Alph*.]
+  \item Bố cục thích ứng:
+  \begin{itemize}
+    \item Canvas có đúng kích thước vùng hiển thị của cửa sổ, không scale từ $1920\times1080$.
+    \item Từ 1100~px trở lên: bàn ở bên trái, thanh bên (sidebar) ở bên phải rộng 400~px (có thể 450 hoặc 500~px ở màn rộng).
+    \item Dưới 1100~px: thanh bên trở thành ngăn AI cuộn được, mở bằng nút hoặc phím F2, tự đóng khi bắt đầu phát lời giải.
+    \item Thay đổi kích thước cửa sổ phải giữ nguyên trạng thái game, lịch sử, solver, camera và kết quả.
+    \item Kiểm tra ở các kích thước $768\times432$, $1280\times720$, $1600\times900$, $1920\times1080$, $2880\times1800$.
+  \end{itemize}
+
+  \item Floating Dock: thanh kính mờ bo tròn ở giữa đỉnh màn hình, hiển thị tên màn, số bước, trạng thái và nút chính; tự thu gọn thành capsule khi khối đang lăn, bung ra khi rê chuột.
+
+  \item Chiến dịch:
+  \begin{itemize}
+    \item 33 màn chia thành 4 giai đoạn (1--10, 11--20, 21--30, 31--33), mỗi giai đoạn có tên và mô tả riêng.
+    \item Banner điện ảnh mở đầu mỗi màn.
+    \item Nút Tiếp tục/Bắt đầu dựa trên màn chiến dịch đã lưu trong tùy chọn người chơi.
+    \item Hộp thoại chọn chế độ: phím 1 chọn Chiến dịch, phím 2 chọn Sandbox, Esc để đóng.
+    \item Không khóa màn nếu chưa có yêu cầu.
+  \end{itemize}
+
+  \item Trang phục (skin) của khối:
+  \begin{itemize}
+    \item Mỗi skin gồm màu gốc, hệ số khung/viền/sheen, kiểu rivet, glyph trung tâm, màu tia lửa, màu khối tách, bóng gợi ý và texture tùy chọn.
+    \item Có 7 skin dựng sẵn: classic, magma, cyber, ice, jade, gold, wood.
+    \item Chọn skin đổi cả bảng màu của menu và của bàn.
+  \end{itemize}
+
+  \item Cài đặt:
+  \begin{itemize}
+    \item Hộp thoại (modal) có 4 tab: Âm thanh, Hiển thị, Bàn chơi, Trang phục. Tab Trang phục có xem trước khối 3D xoay.
+    \item Tùy chọn người chơi được lưu dưới dạng JSON theo cách nguyên tử (ghi tệp tạm rồi thay thế); đọc lỗi thì dùng giá trị mặc định.
+    \item Mỗi tùy chọn (âm thanh, nhạc nền, toàn màn hình, giảm chuyển động, hạt nền, tọa độ ô, đường lời giải) phải tác động thật lên game.
+  \end{itemize}
+
+  \item Chọn màn:
+  \begin{itemize}
+    \item Ô tìm kiếm riêng, hỗ trợ nhập văn bản, Ctrl+F, Ctrl+A, Esc, và tìm không dấu theo tên hoặc số màn.
+    \item Lọc theo nguồn màn và theo cơ chế (suy ra từ các loại ô và công tắc có trong màn).
+    \item Thanh công cụ cố định; thẻ màn bị cắt ở mép dưới vùng cuộn.
+    \item Bố cục 4/3/2 cột tùy độ rộng.
+    \item Thumbnail dựng lười, chỉ dựng cho thẻ đang hiển thị.
+    \item Giữ lựa chọn và bộ lọc khi đổi kích thước cửa sổ.
+  \end{itemize}
+
+  \item Trải nghiệm solver:
+  \begin{itemize}
+    \item Các trạng thái hiển thị: chờ, đang tìm (kèm thời gian), gợi ý, phát, tạm dừng, thành công, vô nghiệm, hết giới hạn, đã hủy, lỗi.
+    \item Tìm kiếm chạy nền; khi đổi màn hoặc hủy thì kết quả cũ bị bỏ.
+    \item Giới hạn mặc định: 30~s hoặc 500.000 nút.
+    \item Phát lại: tạm dừng/tiếp tục, bước tới, tốc độ $0.5$--$3\times$.
+    \item Số bước của AI được tách khỏi tổng số bước của lượt chơi.
+  \end{itemize}
+
+  \item So sánh solver:
+  \begin{itemize}
+    \item Bốn solver chạy tuần tự trên cùng một trạng thái game được chụp tại thời điểm người chơi bấm.
+    \item Có hai tab Kết quả và Biểu đồ.
+    \item Sắp xếp theo số bước, chi phí, thời gian, số nút, bộ nhớ; thứ tự mặc định là BFS, DFS, UCS, A*.
+    \item Chỉ tô giá trị nhỏ nhất trong các kết quả thành công.
+  \end{itemize}
+\end{enumerate}
+\end{quote}
+
+\subsection*{Prompt: Nền riêng cho từng skin}
+\label{sec:prompt-u8}
+
+\begin{quote}
+\small
+\setlength{\emergencystretch}{2em}
+Thêm mỗi skin có ảnh nền riêng.
+
+\begin{enumerate}
+  \item Mỗi skin có thêm các thuộc tính: ảnh nền, màu pha khí quyển, màu tia sáng xiên và màu viền tối (vignette). Giá trị mặc định là bộ nền hiện có.
+
+  \item Tải và lưu đệm (cache) ảnh nền theo từng skin; nếu thiếu tệp ảnh của skin thì dùng nền mặc định. Việc dựng nền chỉ thực hiện một lần cho mỗi tổ hợp kích thước, skin và độ phủ tối, và được dựng lại khi các thông số này thay đổi. Bộ đệm bị xóa khi đổi skin hoặc đổi kích thước cửa sổ.
+
+  \item Độ phủ tối mặc định là 36 (không phải 92), để tranh nền hiện rõ nhưng bàn cờ vẫn là tiêu điểm.
+
+  \item Lớp không khí hình ảnh lấy màu tia sáng và màu viền tối từ skin đang chọn.
+
+  \item Tạo 6 ảnh nền JPG kích thước $1920\times1080$, tối ưu dung lượng, cho các skin cyber, gold, ice, jade, magma và wood. Kèm theo công cụ sinh và cài đặt các ảnh này, và công cụ kiểm tra sự tồn tại, kích thước và độ sáng trung bình của từng ảnh.
+\end{enumerate}
+\end{quote}
+
+\section{Prompt thiết kế bộ màn kiểm thử}
+\label{app:testcase}
+ 
+Prompt dưới đây được sử dụng để xây dựng bộ 32 màn kiểm thử Bloxorz.
+ 
+\begin{quote}
+\small
+\setlength{\emergencystretch}{2em}
+Bạn là người thiết kế dữ liệu kiểm thử cho game Bloxorz trong repository này. Hãy đọc bộ nạp JSON, luật lăn khối, ô dễ vỡ và công tắc của game trước khi tạo dữ liệu. Tạo 32 màn mới, chia thành đúng 4 nhóm, mỗi nhóm đúng 8 màn:
+ 
+\noindent A. simple --- Simple cases without advanced tiles. Chỉ dùng sàn thường \#, vị trí xuất phát S, đích G và vực. Không có ô dễ vỡ F, công tắc mềm o, công tắc nặng x, công tắc tấch p hoặc cầu 0-9. Đa dạng bàn rộng, đường hẹp, lỗ khuyết, ngã rẽ, đường vòng và vị trí cần đổi hướng khối. Mục tiêu: kiểm thử chuyển tư thế đứng/nằm, biên bàn, chu trình và tìm đích.
+ 
+\noindent B. fragile --- Cases with fragile tiles. Dùng các ô của nhóm A ở trên và thêm ô dễ vỡ F; không có công tắc, cầu hoặc tách khối. Khối được nằm trên F nhưng đứng trên F sẽ thua; F không phải sàn sụp sau mỗi lượt đi. Bắt buộc phải chiếm ít nhất một F trên mọi lời giải. Đa dạng dải F, mật độ F, chỗ quay khối và đường vòng để phân biệt đường ngắn nhất với đường có chi phí địa hình thấp.
+ 
+\noindent C. switches --- Cases with switches. Dùng \#, S, G, ., công tắc mềm o, công tắc nặng x và cầu nhóm 0--9. Không có F hoặc tách khối p. Công tắc mềm kích hoạt khi nằm hoặc đứng; công tắc nặng chỉ kích hoạt khi đứng. Phối hợp toggle (đảo đóng/mở) và permanent (mở, kích hoạt lại vẫn mở), từ một tới nhiều nhóm cầu. Cầu ban đầu đóng. Mỗi công tắc điều khiển một nhóm cầu cần thiết; vô hiệu hóa riêng bất kỳ công tắc nào phải làm màn vô nghiệm. Mục tiêu: kiểm thử điều kiện kích hoạt và trạng thái gồm vị trí, tư thế, bitmask cầu; cùng vị trí nhưng bitmask khác không được gộp thành một state.
+ 
+\noindent D. mixed --- Cases combining both features. Có cả F, công tắc mềm/nặng và cầu; không có tách khối p. Phải đi qua F và kích hoạt các công tắc cần thiết để tới G. Đa dạng thứ tự mở cầu, vị trí dải F, chỗ cần đứng kích hoạt x và chỗ chỉ được nằm trên F. Mục tiêu: kiểm thử tương tác hai cơ chế.
+ 
+\noindent Yêu cầu chung:
+\begin{enumerate}
+  \item Mỗi nhóm có 2 màn dễ, 2 trung bình, 2 khó, 2 rất khó. Dùng độ dài lời giải BFS ngắn nhất L: dễ 4--8 bước; trung bình 9--14; khó 15--22; rất khó 23--40.
+ 
+  \item Các màn có hình dạng, kích thước, mật độ lỗ và vị trí S/G khác nhau; không dùng bản sao chỉ đổi tên, dịch tọa độ, xoay hoặc phản chiếu. Tất cả có đúng một S, một G và lời giải hợp lệ theo Game.
+ 
+  \item Lưu 32 JSON trong src/levels/testcase/, category="testcase", tên Testcase Simple/\allowbreak{}Fragile/\allowbreak{}Switches/\allowbreak{}Mixed 01--08, ID riêng không trùng. Giữ lời giải, thống kê và metadata báo cáo ở ngoài thư mục màn chơi.
+ 
+  \item JSON dùng schema sẵn có: name, id, category, description, grid, bridges.\allowbreak{}initially\_\allowbreak{}open và switches[\{pos, kind, targets, mode\}]. Tọa độ [row, col] bắt đầu từ 0. Các hàng grid phải có cùng chiều dài.
+ 
+  \item Tích hợp một tab riêng tên chính xác "testcase" trong thư viện màn chơi, cho phép xem đủ 32 màn, tìm theo nhóm, mở chơi và chạy các solver hiện có.
+ 
+  \item Kiểm chứng bằng BFS thật của game và phát lại từng lời giải tới WIN. 
+  % Nhóm B/D: tìm kiếm với ràng buộc cấm chiếm mọi F phải vô nghiệm. Nhóm C/D: thay riêng từng công tắc bằng sàn thường, xóa định nghĩa tương ứng, giữ cầu ban đầu đóng; BFS phải vô nghiệm. Lưu chứng cứ cùng hash SHA-256 của JSON để có thể kiểm tra lại.
+ 
+  % \item Xuất báo cáo Markdown với mô tả rõ đặc điểm từng nhóm, ví dụ từng màn, và 4 bảng thống kê, mỗi bảng 8 hàng, gồm: mã màn, độ khó, kích thước H\(\times\)W, số ô có mặt sàn, số vực, số sàn thường (kể S), số đích G, số F, số o, số x, số ô cầu, số nhóm cầu, tổng ô nâng cao (F+o+x+cầu), L tối ưu và số nút BFS mở rộng. Tổng ô có mặt sàn bao gồm cầu dù ban đầu đóng; tổng đó cộng số vực phải bằng H\(\times\)W. Xuất thêm CSV cùng số liệu và JSON lời giải/chứng cứ kiểm chứng.
+ 
+  % \item Dùng quy trình có seed cố định, ghi rõ seed/cách tái tạo. Không bịa số liệu hoặc dùng số bước của một lời giải bất kỳ làm số bước tối ưu.
+ 
+\end{enumerate}
+
+\section{Video Demo}
+\href{https://www.youtube.com/watch?v=KgBhIWJ7A10}{Đường dẫn đến video demo}
+
+\end{quote}
+
+
