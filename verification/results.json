@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-11-10T10:51:44.263287+00:00",
+  "timestamp": "2026-11-10T15:10:07.480511+00:00",
   "scope": "all",
   "require_real": true,
-  "overall_status": "BLOCKED",
-  "exit_code": 2,
+  "overall_status": "PASS",
+  "exit_code": 0,
   "gates": {
     "G-A": {
       "gate_id": "G-A",
@@ -19,49 +19,49 @@
           "description": "Imports and layout boundaries",
           "status": "PASS",
           "evidence": "All common and engine modules import cleanly without external dependencies",
-          "duration_ms": 31.26
+          "duration_ms": 37.89
         },
         {
           "check_id": "A-02",
           "description": "Coordinates, bounds, and neighbors",
           "status": "PASS",
           "evidence": "Cell coordinates, bounds, row-major order, and neighbor counts verified for 3x3, 4x4, 5x5",
-          "duration_ms": 0.3
+          "duration_ms": 0.12
         },
         {
           "check_id": "A-03/04",
           "description": "Regions and referenced_cells for 8 clues",
           "status": "PASS",
           "evidence": "Region resolution and referenced_cells verified with COMPARE overlap",
-          "duration_ms": 0.07
+          "duration_ms": 0.04
         },
         {
           "check_id": "A-05/06",
           "description": "Strict JSON IO and Puzzle structure",
           "status": "PASS",
           "evidence": "Strict JSON parsed and round-tripped fixture 3x3_chain.json",
-          "duration_ms": 1.41
+          "duration_ms": 1.56
         },
         {
           "check_id": "A-07",
           "description": "Manifest loader and security",
           "status": "PASS",
           "evidence": "Manifest loader loaded index.json and enforced path security",
-          "duration_ms": 12.89
+          "duration_ms": 8.94
         },
         {
           "check_id": "A-08..18",
           "description": "GameEngine lifecycle and verdict transactions",
           "status": "PASS",
           "evidence": "Engine load, verdict submission, token increment, and isolation verified",
-          "duration_ms": 1.98
+          "duration_ms": 1.05
         },
         {
           "check_id": "A-19",
           "description": "Sequential chain solving via OracleClassifier",
           "status": "PASS",
           "evidence": "8-step sequential chain reveal fully verified with independent Oracle",
-          "duration_ms": 40.74
+          "duration_ms": 14.1
         }
       ]
     },
@@ -79,77 +79,77 @@
           "description": "test_b01_varmap_bijection",
           "status": "PASS",
           "evidence": "Real Module B implementation checked against independent oracles",
-          "duration_ms": 0.64
+          "duration_ms": 0.24
         },
         {
           "check_id": "test_b02_binary_projection",
           "description": "test_b02_binary_projection",
           "status": "PASS",
           "evidence": "Real Module B implementation checked against independent oracles",
-          "duration_ms": 224.52
+          "duration_ms": 45.5
         },
         {
           "check_id": "test_b03_counting_all_bounds",
           "description": "test_b03_counting_all_bounds",
           "status": "PASS",
           "evidence": "Real Module B implementation checked against independent oracles",
-          "duration_ms": 27273.33
+          "duration_ms": 7761.72
         },
         {
           "check_id": "test_b04_parity_and_region_kinds",
           "description": "test_b04_parity_and_region_kinds",
           "status": "PASS",
           "evidence": "Real Module B implementation checked against independent oracles",
-          "duration_ms": 758.86
+          "duration_ms": 223.84
         },
         {
           "check_id": "test_b05_compare_overlap_and_identical_regions",
           "description": "test_b05_compare_overlap_and_identical_regions",
           "status": "PASS",
           "evidence": "Real Module B implementation checked against independent oracles",
-          "duration_ms": 4008.44
+          "duration_ms": 1521.45
         },
         {
           "check_id": "test_b06_independent_bruteforce_auxiliary_projection",
           "description": "test_b06_independent_bruteforce_auxiliary_projection",
           "status": "PASS",
           "evidence": "Real Module B implementation checked against independent oracles",
-          "duration_ms": 93.65
+          "duration_ms": 219.36
         },
         {
           "check_id": "test_b07_kb_rebuild_isolation_and_public_inputs",
           "description": "test_b07_kb_rebuild_isolation_and_public_inputs",
           "status": "PASS",
           "evidence": "Real Module B implementation checked against independent oracles",
-          "duration_ms": 91.56
+          "duration_ms": 733.48
         },
         {
           "check_id": "test_b08_standalone_clues_do_not_reuse_auxiliaries",
           "description": "test_b08_standalone_clues_do_not_reuse_auxiliaries",
           "status": "PASS",
           "evidence": "Real Module B implementation checked against independent oracles",
-          "duration_ms": 55.67
+          "duration_ms": 215.06
         },
         {
           "check_id": "test_b09_reject_invalid_clues_and_assignments",
           "description": "test_b09_reject_invalid_clues_and_assignments",
           "status": "PASS",
           "evidence": "Real Module B implementation checked against independent oracles",
-          "duration_ms": 0.43
+          "duration_ms": 0.44
         },
         {
           "check_id": "test_b10_larger_boards_have_bounded_encoding",
           "description": "test_b10_larger_boards_have_bounded_encoding",
           "status": "PASS",
           "evidence": "Real Module B implementation checked against independent oracles",
-          "duration_ms": 1768.52
+          "duration_ms": 7411.88
         },
         {
           "check_id": "test_b11_only_public_snapshot_enters_kb",
           "description": "test_b11_only_public_snapshot_enters_kb",
           "status": "PASS",
           "evidence": "Real Module B implementation checked against independent oracles",
-          "duration_ms": 3.45
+          "duration_ms": 6.43
         }
       ]
     },
@@ -167,14 +167,14 @@
           "description": "C-01: [] SAT, [[]] UNSAT, [x] & [-x] UNSAT, complete model assignment.",
           "status": "PASS",
           "evidence": "Real Module C implementation verified",
-          "duration_ms": 0.31
+          "duration_ms": 0.27
         },
         {
           "check_id": "test_c03_pdf_example",
           "description": "C-03: (A or B) and (-A or B): B is criminal, A is unknown.",
           "status": "PASS",
           "evidence": "Real Module C implementation verified",
-          "duration_ms": 1.06
+          "duration_ms": 0.55
         }
       ]
     },
@@ -192,88 +192,123 @@
           "description": "Verify puzzle case 'chain_demo' (examples/3x3_chain.json)",
           "status": "PASS",
           "evidence": "Case 'chain_demo' (3x3, normal) verified: uniqueness=UNIQUE, run=SOLVED",
-          "duration_ms": 40.09
+          "duration_ms": 450.79
         },
         {
           "check_id": "P-3x3_classic",
           "description": "Verify puzzle case '3x3_classic' (examples/3x3_classic.json)",
           "status": "PASS",
           "evidence": "Case '3x3_classic' (3x3, normal) verified: uniqueness=UNIQUE, run=SOLVED",
-          "duration_ms": 70.13
+          "duration_ms": 311.88
         },
         {
           "check_id": "P-3x3_extensions",
           "description": "Verify puzzle case '3x3_extensions' (examples/3x3_extensions.json)",
           "status": "PASS",
           "evidence": "Case '3x3_extensions' (3x3, normal) verified: uniqueness=UNIQUE, run=SOLVED",
-          "duration_ms": 99.21
+          "duration_ms": 270.63
         },
         {
           "check_id": "P-4x4_detective",
           "description": "Verify puzzle case '4x4_detective' (examples/4x4_detective.json)",
           "status": "PASS",
           "evidence": "Case '4x4_detective' (4x4, normal) verified: uniqueness=UNIQUE, run=SOLVED",
-          "duration_ms": 377.44
+          "duration_ms": 1244.43
         },
         {
           "check_id": "P-4x4_crossfire",
           "description": "Verify puzzle case '4x4_crossfire' (examples/4x4_crossfire.json)",
           "status": "PASS",
           "evidence": "Case '4x4_crossfire' (4x4, normal) verified: uniqueness=UNIQUE, run=SOLVED",
-          "duration_ms": 580.81
+          "duration_ms": 2088.45
         },
         {
           "check_id": "P-5x5_mastermind",
           "description": "Verify puzzle case '5x5_mastermind' (examples/5x5_mastermind.json)",
           "status": "PASS",
           "evidence": "Case '5x5_mastermind' (5x5, stress) verified: uniqueness=UNIQUE, run=SOLVED",
-          "duration_ms": 1215.33
+          "duration_ms": 3412.07
         },
         {
           "check_id": "P-5x5_syndicate",
           "description": "Verify puzzle case '5x5_syndicate' (examples/5x5_syndicate.json)",
           "status": "PASS",
           "evidence": "Case '5x5_syndicate' (5x5, stress) verified: uniqueness=UNIQUE, run=SOLVED",
-          "duration_ms": 1190.5
+          "duration_ms": 2078.27
         },
         {
           "check_id": "P-3x3_stuck",
           "description": "Verify puzzle case '3x3_stuck' (examples/3x3_stuck.json)",
           "status": "PASS",
           "evidence": "Case '3x3_stuck' (3x3, stuck) verified: uniqueness=UNIQUE, run=STUCK",
-          "duration_ms": 10.01
+          "duration_ms": 4.43
         },
         {
           "check_id": "P-3x3_multi",
           "description": "Verify puzzle case '3x3_multi' (examples/3x3_multi.json)",
           "status": "PASS",
           "evidence": "Case '3x3_multi' (3x3, multi_solution) verified: uniqueness=MULTIPLE, run=STUCK",
-          "duration_ms": 57.42
+          "duration_ms": 26.66
         },
         {
           "check_id": "P-3x3_inconsistent",
           "description": "Verify puzzle case '3x3_inconsistent' (examples/3x3_inconsistent.json)",
           "status": "PASS",
           "evidence": "Case '3x3_inconsistent' (3x3, inconsistent) verified: uniqueness=UNSAT, run=INCONSISTENT",
-          "duration_ms": 10.84
+          "duration_ms": 14.41
         }
       ]
     },
     "G-D": {
       "gate_id": "G-D",
       "module_owner": "D (Logic Agent)",
-      "status": "BLOCKED",
-      "passed_count": 0,
+      "status": "PASS",
+      "passed_count": 6,
       "failed_count": 0,
-      "blocked_count": 1,
-      "total_count": 1,
+      "blocked_count": 0,
+      "total_count": 6,
       "subchecks": [
         {
-          "check_id": "G-D-MOD",
-          "description": "Inspect availability of agent.logic_agent",
-          "status": "BLOCKED",
-          "evidence": "Module 'agent.logic_agent' is not yet implemented or delivered by D (Logic Agent)",
-          "duration_ms": 0.0
+          "check_id": "test_d01_no_guess_entailment_only",
+          "description": "D-01: Agent makes only entailed verdicts with no guessing in row-major order.",
+          "status": "PASS",
+          "evidence": "Real Module D implementation verified",
+          "duration_ms": 49.9
+        },
+        {
+          "check_id": "test_d02_hint_identifies_forced_cell",
+          "description": "D-02: Hint function identifies forced character without modifying game state.",
+          "status": "PASS",
+          "evidence": "Real Module D implementation verified",
+          "duration_ms": 2.89
+        },
+        {
+          "check_id": "test_d03_stuck_puzzle_stops_cleanly",
+          "description": "D-03: Agent stops cleanly with STUCK and never guesses when no cell is entailed.",
+          "status": "PASS",
+          "evidence": "Real Module D implementation verified",
+          "duration_ms": 7.0
+        },
+        {
+          "check_id": "test_d04_inconsistent_puzzle_reports_failure",
+          "description": "D-04: Agent detects unsatisfiable KB and halts with INCONSISTENT status.",
+          "status": "PASS",
+          "evidence": "Real Module D implementation verified",
+          "duration_ms": 2.17
+        },
+        {
+          "check_id": "test_d05_deduction_trace_contains_sat_queries",
+          "description": "D-05: Deduction trace records active clues, step numbers, and SAT queries.",
+          "status": "PASS",
+          "evidence": "Real Module D implementation verified",
+          "duration_ms": 26.31
+        },
+        {
+          "check_id": "test_d08_offline_uniqueness",
+          "description": "D-08: Offline uniqueness check on complete clue set without hidden solution.",
+          "status": "PASS",
+          "evidence": "Real Module D implementation verified",
+          "duration_ms": 14.2
         }
       ]
     },
@@ -291,67 +326,81 @@
           "description": "E-01: GUIController tải và làm mới màn chơi qua PublicState mà không làm lộ solution.",
           "status": "PASS",
           "evidence": "Real Module E implementation verified",
-          "duration_ms": 7.49
+          "duration_ms": 9.34
         },
         {
           "check_id": "test_e02_clue_highlighting_and_overlap",
           "description": "E-02: Chọn lời khai trả về đúng vùng ô tham chiếu và phân tách Trái/Phải/Giao nhau của COMPARE.",
           "status": "PASS",
           "evidence": "Real Module E implementation verified",
-          "duration_ms": 20.81
+          "duration_ms": 14.65
         },
         {
           "check_id": "test_e03_manual_verdict_outcomes",
           "description": "E-03: Phân biệt rõ NOT_PROVABLE, CONTRADICTED và ACCEPTED mà không đổi trạng thái khi bị từ chối.",
           "status": "PASS",
           "evidence": "Real Module E implementation verified",
-          "duration_ms": 11.47
+          "duration_ms": 11.93
         },
         {
           "check_id": "test_e04_hint_and_autosolve_isolation",
           "description": "E-04: Gợi ý tìm đúng ô bị ép buộc mà không tự lật thẻ; Tự động phá án giải trọn vẹn.",
           "status": "PASS",
           "evidence": "Real Module E implementation verified",
-          "duration_ms": 91.17
+          "duration_ms": 51.67
         },
         {
           "check_id": "test_e05_clue_formatter_and_layout_metrics",
           "description": "E-05: Trình dịch lời khai Tiếng Việt hỗ trợ đủ 8 mẫu ClueType và bố cục bàn cờ cân đối.",
           "status": "PASS",
           "evidence": "Real Module E implementation verified",
-          "duration_ms": 5.22
+          "duration_ms": 5.14
         },
         {
           "check_id": "test_e06_puzzle_suite_and_manifest_verification",
           "description": "E-06: Toàn bộ 9 màn chơi trong puzzles/index.json khớp tính duy nhất nghiệm và thứ tự suy diễn.",
           "status": "PASS",
           "evidence": "Real Module E implementation verified",
-          "duration_ms": 3709.32
+          "duration_ms": 2032.73
         },
         {
           "check_id": "test_e07_web_gui_vietnamese_screens_and_api",
           "description": "E-07: Giao diện Web Tiếng Việt có đủ 3 màn hình (Bắt đầu, Kho Hồ Sơ, Bàn cờ 3D) và các endpoint API.",
           "status": "PASS",
           "evidence": "Real Module E implementation verified",
-          "duration_ms": 164.97
+          "duration_ms": 153.72
         }
       ]
     },
     "G-I": {
       "gate_id": "G-I",
       "module_owner": "Integration (All Members)",
-      "status": "BLOCKED",
-      "passed_count": 0,
+      "status": "PASS",
+      "passed_count": 3,
       "failed_count": 0,
-      "blocked_count": 1,
-      "total_count": 1,
+      "blocked_count": 0,
+      "total_count": 3,
       "subchecks": [
         {
-          "check_id": "G-I-MOD",
-          "description": "Inspect availability of Full stack (logic & agent)",
-          "status": "BLOCKED",
-          "evidence": "Module 'Full stack (logic & agent)' is not yet implemented or delivered by Integration (All Members)",
-          "duration_ms": 0.0
+          "check_id": "test_full_chain_solve_real",
+          "description": "G-I: End-to-end solving of 3x3 chain using real B, C, D without test doubles.",
+          "status": "PASS",
+          "evidence": "Full stack end-to-end integration verified",
+          "duration_ms": 4.98
+        },
+        {
+          "check_id": "test_full_stack_5x5_stress",
+          "description": "G-I: End-to-end stress test solving 5x5 mastermind puzzle (25 characters).",
+          "status": "PASS",
+          "evidence": "Full stack end-to-end integration verified",
+          "duration_ms": 223.03
+        },
+        {
+          "check_id": "test_full_stack_crossfire_4x4",
+          "description": "G-I: End-to-end solving of 4x4 crossfire puzzle with PARITY and COMPARE extensions.",
+          "status": "PASS",
+          "evidence": "Full stack end-to-end integration verified",
+          "duration_ms": 86.68
         }
       ]
     }

@@ -62,7 +62,7 @@ def test_runner_missing_module_yields_blocked(monkeypatch) -> None:
     monkeypatch.setattr(
         integration_runner,
         "is_module_available",
-        lambda name: False if name in ("logic.encoder", "logic.dpll", "gui.app", "gui.controller") else original(name),
+        lambda name: False if name in ("logic.encoder", "logic.dpll", "agent.logic_agent", "gui.app", "gui.controller") else original(name),
     )
 
     report_b = runner.run_scope("b")

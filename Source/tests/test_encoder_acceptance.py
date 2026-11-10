@@ -128,7 +128,8 @@ def test_b06_independent_bruteforce_auxiliary_projection():
         models = brute_force_cnf_models(clauses, encoder.varmap.num_vars)
         projected = {tuple(model[i] for i in range(1, 10)) for model in models}
         expected = {tuple(a.values()) for a in _assignments() if evaluate_clue_semantic(clue, a, 3)}
-        assert projected == expected
+        if projected != expected:
+            raise AssertionError(f"Projection mismatch: len {len(projected)} != {len(expected)}")
 
 
 def test_b07_kb_rebuild_isolation_and_public_inputs():

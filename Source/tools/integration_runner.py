@@ -426,6 +426,88 @@ class IntegrationRunner:
             subchecks=subchecks,
         )
 
+    def run_gate_d(self) -> GateResult:
+        """Execute Gate G-D: Real Module D LogicAgent and uniqueness checks."""
+        try:
+            import pytest
+            from tests import test_agent_acceptance as checks
+
+            functions = [
+                (name, getattr(checks, name))
+                for name in sorted(dir(checks))
+                if name.startswith("test_d")
+            ]
+            if not functions:
+                raise RuntimeError("No Module D acceptance checks found")
+
+            def invoke(func):
+                try:
+                    func()
+                except (pytest.fail.Exception, pytest.skip.Exception) as exc:
+                    raise AssertionError(f"Acceptance check did not pass: {exc}") from exc
+                return "Real Module D implementation verified"
+
+            subchecks = [
+                self.run_check(name, func.__doc__ or name, lambda func=func: invoke(func))
+                for name, func in functions
+            ]
+        except Exception as exc:
+            subchecks = [SubCheckResult("G-D-IMPORT", "Load Module D checks", "FAIL", str(exc))]
+
+        passed = sum(1 for c in subchecks if c.status == "PASS")
+        failed = len(subchecks) - passed
+        return GateResult(
+            gate_id=GATE_D,
+            module_owner="D (Logic Agent)",
+            status="FAIL" if failed else "PASS",
+            passed_count=passed,
+            failed_count=failed,
+            blocked_count=0,
+            total_count=len(subchecks),
+            subchecks=subchecks,
+        )
+
+    def run_gate_i(self) -> GateResult:
+        """Execute Gate G-I: End-to-end integration across all modules."""
+        try:
+            import pytest
+            from tests import test_integration as checks
+
+            functions = [
+                (name, getattr(checks, name))
+                for name in sorted(dir(checks))
+                if name.startswith("test_")
+            ]
+            if not functions:
+                raise RuntimeError("No Integration acceptance checks found")
+
+            def invoke(func):
+                try:
+                    func()
+                except (pytest.fail.Exception, pytest.skip.Exception) as exc:
+                    raise AssertionError(f"Acceptance check did not pass: {exc}") from exc
+                return "Full stack end-to-end integration verified"
+
+            subchecks = [
+                self.run_check(name, func.__doc__ or name, lambda func=func: invoke(func))
+                for name, func in functions
+            ]
+        except Exception as exc:
+            subchecks = [SubCheckResult("G-I-IMPORT", "Load Integration checks", "FAIL", str(exc))]
+
+        passed = sum(1 for c in subchecks if c.status == "PASS")
+        failed = len(subchecks) - passed
+        return GateResult(
+            gate_id=GATE_I,
+            module_owner="Integration (All Members)",
+            status="FAIL" if failed else "PASS",
+            passed_count=passed,
+            failed_count=failed,
+            blocked_count=0,
+            total_count=len(subchecks),
+            subchecks=subchecks,
+        )
+
     def create_blocked_gate(self, gate_id: str, owner: str, module_name: str) -> GateResult:
         """Create a standard BLOCKED gate report when a member's module is missing."""
         sub = SubCheckResult(
@@ -480,7 +562,7 @@ class IntegrationRunner:
             if not is_module_available("agent.logic_agent"):
                 gates[GATE_D] = self.create_blocked_gate(GATE_D, "D (Logic Agent)", "agent.logic_agent")
             else:
-                gates[GATE_D] = self.create_blocked_gate(GATE_D, "D (Logic Agent)", "agent.logic_agent")
+                gates[GATE_D] = self.run_gate_d()
 
         # G-E
         if scope_lower in ("e", "all"):
@@ -494,7 +576,7 @@ class IntegrationRunner:
             if not (is_module_available("logic.encoder") and is_module_available("logic.dpll") and is_module_available("agent.logic_agent")):
                 gates[GATE_I] = self.create_blocked_gate(GATE_I, "Integration (All Members)", "Full stack (logic & agent)")
             else:
-                gates[GATE_I] = self.create_blocked_gate(GATE_I, "Integration (All Members)", "Full stack (logic & agent)")
+                gates[GATE_I] = self.run_gate_i()
 
         # Determine overall status and exit code
         has_fail = any(g.status == "FAIL" for g in gates.values())
