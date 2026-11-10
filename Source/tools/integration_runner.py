@@ -262,6 +262,46 @@ class IntegrationRunner:
                           passed_count=passed, failed_count=failed,
                           total_count=len(subchecks), subchecks=subchecks)
 
+    def run_gate_c(self) -> GateResult:
+        """Execute Gate G-C: Real Module C DPLL solver and entailment checker checks."""
+        try:
+            import pytest
+            from tests import test_solver_acceptance as checks
+
+            functions = [
+                (name, getattr(checks, name))
+                for name in sorted(dir(checks))
+                if name.startswith("test_c")
+            ]
+            if not functions:
+                raise RuntimeError("No Module C acceptance checks found")
+
+            def invoke(func):
+                try:
+                    func()
+                except (pytest.fail.Exception, pytest.skip.Exception) as exc:
+                    raise AssertionError(f"Acceptance check did not pass: {exc}") from exc
+                return "Real Module C implementation verified"
+
+            subchecks = [
+                self.run_check(name, func.__doc__ or name, lambda func=func: invoke(func))
+                for name, func in functions
+            ]
+        except Exception as exc:
+            subchecks = [SubCheckResult("G-C-IMPORT", "Load Module C checks", "FAIL", str(exc))]
+
+        passed = sum(c.status == "PASS" for c in subchecks)
+        failed = len(subchecks) - passed
+        return GateResult(
+            GATE_C,
+            "C (DPLL Solver)",
+            "FAIL" if failed else "PASS",
+            passed_count=passed,
+            failed_count=failed,
+            total_count=len(subchecks),
+            subchecks=subchecks,
+        )
+
     def run_gate_p(self) -> GateResult:
         """Execute Gate G-P: Puzzle suite manifest validation, uniqueness, and deductive order."""
         subchecks: list[SubCheckResult] = []
@@ -426,7 +466,7 @@ class IntegrationRunner:
             if not is_module_available("logic.dpll"):
                 gates[GATE_C] = self.create_blocked_gate(GATE_C, "C (DPLL Solver)", "logic.dpll")
             else:
-                gates[GATE_C] = self.create_blocked_gate(GATE_C, "C (DPLL Solver)", "logic.dpll")
+                gates[GATE_C] = self.run_gate_c()
 
         # G-P
         if scope_lower in ("p", "integration", "all"):
