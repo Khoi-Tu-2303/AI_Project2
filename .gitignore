@@ -1,5 +1,4 @@
-Report.pdf
-report.pdf
+*.pdf
 .venv/
 __pycache__/
 *.pyc

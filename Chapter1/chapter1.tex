@@ -3,8 +3,20 @@
 
 \section{Bài toán Griductive}
 \label{sec:bai-toan-griductive}
-% Giới thiệu bối cảnh trò chơi Griductive, quy tắc suy luận tất định và nguyên tắc không đoán mò.
+
+Griductive là trò chơi suy luận xã hội trên bảng lưới hai chiều, trong đó mỗi nhân vật tại một vị trí ô cờ bí mật mang một trong hai thân phận là Tội phạm hoặc Vô tội. Mục tiêu của người chơi là xác định chính xác danh tính của toàn bộ các nhân vật trên bàn cờ dựa trên những phát biểu gợi ý được cung cấp theo từng thẻ bài.
+
+Điểm đặc trưng của trò chơi nằm ở nguyên tắc phát ngôn chân thực: mọi câu gợi ý một khi đã được lật mở đều phản ánh sự thật tuyệt đối và không phụ thuộc vào việc người nắm giữ gợi ý đó là Tội phạm hay Vô tội. Điều này phân biệt Griductive với các dạng câu đố logic về kẻ nói thật và kẻ nói dối kinh điển. Ban đầu, bàn cờ chỉ hiển thị trạng thái và gợi ý của một số lượng nhỏ nhân vật được mở sẵn làm điểm xuất phát. Khi người chơi đưa ra một phán quyết chính xác về thân phận của một nhân vật chưa lật, thẻ bài tại ô đó sẽ được mở ra và cung cấp thêm một gợi ý mới, qua đó mở rộng dần lượng tri thức khả dụng trên bàn cờ.
+
+Nguyên tắc trọng tâm mang tính sống còn trong trò chơi là suy luận tất định và không được đoán mò. Hệ thống chỉ công nhận phán quyết của người chơi khi và chỉ khi phán quyết đó là một hệ quả logic bắt buộc phải xảy ra từ toàn bộ các dữ kiện công khai tại thời điểm hiện tại. Bất kỳ suy đoán mang tính may rủi nào, cho dù tình cờ trùng khớp với thân phận ẩn của nhân vật, đều bị hệ thống từ chối và giữ nguyên trạng thái úp của thẻ bài. Đặc điểm này biến Griductive thành một bài toán mẫu mực để nghiên cứu và ứng dụng các phương pháp biểu diễn tri thức cùng kỹ thuật suy diễn tự động trong Trí tuệ nhân tạo.
 
 \section{Mục tiêu và phạm vi}
 \label{sec:muc-tieu-pham-vi}
-% Trình bày các mục tiêu chính của đồ án và phạm vi nghiên cứu, hiện thực hệ thống.
+
+Đồ án hướng tới việc thiết kế và xây dựng một hệ thống hoàn chỉnh có khả năng tự động giải trò chơi Griductive theo nguyên tắc suy luận tất định không đoán mò. Đề tài tập trung giải quyết hai mục tiêu chính:
+
+Thứ nhất, xây dựng mô hình trò chơi Griductive bằng ngôn ngữ Python với giao diện đồ họa trực quan, tuân thủ kiến trúc phân tách nghiêm ngặt giữa lõi xử lý trò chơi và cổng giao tiếp suy luận nhằm ngăn chặn tuyệt đối tình trạng rò rỉ dữ liệu ẩn.
+
+Thứ hai, nghiên cứu và hiện thực tác tử suy luận tự động dựa trên nền tảng logic mệnh đề, cơ chế chuyển đổi tự động sang dạng chuẩn hội và bộ giải bài toán thỏa mệnh đề tự cài đặt theo thủ tục Davis, Putnam, Logemann và Loveland. Hệ thống được đánh giá định lượng trên các bộ câu đố chuẩn kích thước 3x3, 4x4 và câu đố thử tải cực hạn 5x5 để kiểm chứng tính đúng đắn, tốc độ xử lý cũng như khả năng nhận diện các trường hợp mâu thuẫn hay bế tắc.
+
+Bố cục của báo cáo được tổ chức thành 6 chương: Chương~\ref{chap:tong-quan-cai-dat} trình bày tổng quan cài đặt trò chơi, quy cách cấu trúc câu đố và thiết kế kiến trúc hệ thống. Chương~\ref{chap:hinh-thuc-hoa} tập trung hình thức hóa bài toán suy luận sang logic mệnh đề và kỹ thuật mã hóa sang dạng chuẩn hội. Chương~\ref{chap:cac-thuat-toan} mô tả chi tiết các thuật toán cốt lõi bao gồm thủ tục giải bài toán thỏa mệnh đề, thuật toán suy diễn hệ quả logic và vòng lặp suy luận của tác tử. Chương~\ref{chap:thuc-nghiem-danh-gia} trình bày phương pháp thực nghiệm, phân tích bảng số liệu định lượng và đánh giá hành vi tìm kiếm. Chương~\ref{chap:ket-luan-huong-phat-trien} tổng kết toàn bộ kết quả đạt được, chỉ ra những hạn chế và đề xuất hướng phát triển trong tương lai.

@@ -3,34 +3,115 @@
 
 \section{Luật chơi và các loại gợi ý}
 \label{sec:luat-choi-cac-loai-goi-y}
-% Trình bày luật chơi cơ bản, cấu trúc lưới, nhân vật và phân loại các mẫu gợi ý.
+
+Bàn cờ của trò chơi Griductive được thiết lập dưới dạng một lưới vuông hai chiều kích thước $N \times N$, trong đó tham số kích thước $N$ thường nhận các giá trị 3, 4 hoặc 5. Tọa độ của mỗi ô cờ được xác định bởi ký hiệu cột viết hoa ghép với chỉ số hàng số nguyên. Cụ thể, các cột được gắn chữ cái liên tục từ trái sang phải bắt đầu từ A, còn các hàng được đánh số từ trên xuống dưới bắt đầu từ 1. Ví dụ, vị trí C2 đại diện cho ô cờ nằm tại giao điểm của cột C và hàng 2. Mỗi ô trên bàn cờ do đúng một nhân vật nắm giữ với hai thông tin mô tả là họ tên và chức danh nghề nghiệp. Nhằm bảo đảm tính tất định và thuận tiện cho việc hiển thị, danh sách toàn bộ các nhân vật trên bàn cờ luôn được sắp xếp theo thứ tự bảng chữ cái dựa trên tên hiển thị.
+
+Tại mỗi bước của trò chơi, mỗi nhân vật mang một trạng thái bản thể bí mật là Tội phạm hoặc Vô tội. Đi kèm với mỗi nhân vật là một phát biểu gợi ý duy nhất mang cấu trúc logic chặt chẽ. Trò chơi khởi đầu với một số lượng nhỏ các thẻ bài được lật mở sẵn, hình thành nên trạng thái ban đầu của cơ sở tri thức công khai. Toàn bộ các thẻ bài còn lại được đặt úp và chỉ được phép lật mở khi người chơi hoặc tác tử logic chứng minh được thân phận của nhân vật sở hữu thẻ đó bằng suy luận hình thức.
+
+Các gợi ý trong trò chơi tham chiếu đến bốn loại vùng hình học xác định trên lưới bàn cờ:
+\begin{itemize}
+    \item Vùng hàng: Tập hợp toàn bộ các ô cờ có cùng chỉ số hàng.
+    \item Vùng cột: Tập hợp toàn bộ các ô cờ có cùng chữ cái đại diện cho cột.
+    \item Vùng lân cận: Tập hợp các ô cờ tiếp xúc trực tiếp với ô trung tâm theo phương ngang, phương dọc hoặc đường chéo, không bao gồm chính ô trung tâm đó. Do giới hạn của biên bàn cờ, một ô nằm hoàn toàn bên trong sẽ có đủ 8 ô lân cận, trong khi các ô nằm ở cạnh biên có 5 ô lân cận và các ô nằm tại góc bàn cờ chỉ có 3 ô lân cận.
+    \item Vùng chỉ định tường minh: Một danh sách hữu hạn các ô cờ cụ thể được liệt kê trực tiếp trong nội dung của gợi ý.
+\end{itemize}
+
+Hệ thống hỗ trợ tám mẫu gợi ý có cấu trúc, bao gồm sáu mẫu cơ bản phục vụ suy luận cốt lõi và hai mẫu mở rộng nâng cao nhằm gia tăng tính biểu đạt của bài toán:
+\begin{enumerate}
+    \item Gợi ý sự thật đơn lẻ: Khẳng định trực tiếp thân phận của một nhân vật cụ thể là Tội phạm hoặc Vô tội.
+    \item Gợi ý đồng nhất trạng thái: Xác nhận hai nhân vật được chỉ định có cùng thân phận với nhau.
+    \item Gợi ý khác biệt trạng thái: Xác nhận hai nhân vật được chỉ định có thân phận đối lập nhau.
+    \item Gợi ý đếm chính xác số lượng: Xác định có đúng một số nguyên $k$ tội phạm nằm trong một vùng tham chiếu nhất định.
+    \item Gợi ý đếm số lượng tối thiểu: Xác định có ít nhất một số nguyên $k$ tội phạm nằm trong vùng tham chiếu.
+    \item Gợi ý đếm số lượng tối đa: Xác định có nhiều nhất một số nguyên $k$ tội phạm nằm trong vùng tham chiếu.
+    \item Ràng buộc tính chẵn lẻ: Khẳng định tổng số lượng tội phạm trong một vùng tham chiếu là một số chẵn hoặc một số lẻ.
+    \item Ràng buộc so sánh tương quan giữa hai vùng: Thiết lập mối quan hệ so sánh lớn hơn, nhỏ hơn hoặc bằng nhau giữa số lượng tội phạm của hai vùng tham chiếu riêng biệt.
+\end{enumerate}
 
 \section{Định dạng câu đố và kiến trúc mã nguồn}
 \label{sec:dinh-dang-kien-truc}
 
 \subsection{Định dạng câu đố}
 \label{subsec:dinh-dang-cau-do}
-% Mô tả lược đồ dữ liệu và cấu trúc tệp biểu diễn câu đố.
+
+Các màn chơi câu đố được lưu trữ độc lập dưới dạng các tệp văn bản định dạng JSON theo quy chuẩn cấu trúc phiên bản 2. Cùng một tệp dữ liệu được sử dụng thống nhất cho môi trường chơi của người dùng, tác tử giải tự động và các kịch bản kiểm thử đo lường. Cấu trúc chi tiết của các trường dữ liệu trong tệp câu đố được trình bày tại Bảng~\ref{tab:truong-cau-do}.
+
+\begin{table}[H]
+\centering
+\small
+\renewcommand{\arraystretch}{1.3}
+\caption{Các trường dữ liệu trong tệp mô tả câu đố dạng JSON.}
+\label{tab:truong-cau-do}
+\begin{tabularx}{\textwidth}{|l|l|X|}
+\hline
+\rowcolor{gray!15}
+\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Ý nghĩa và quy định ràng buộc} \\
+\hline
+\texttt{schema\_version} & Số nguyên & Phiên bản quy chuẩn của cấu trúc dữ liệu, nhận giá trị cố định bằng 2. \\
+\hline
+\texttt{id} & Chuỗi ký tự & Mã định danh duy nhất của câu đố trong toàn bộ hệ thống. \\
+\hline
+\texttt{n} & Số nguyên & Kích thước cạnh của bảng cờ vuông, thuộc tập giá trị 3, 4 hoặc 5. \\
+\hline
+\texttt{characters} & Danh sách & Mảng gồm đúng $n^2$ đối tượng nhân vật, mỗi đối tượng chứa vị trí ô cờ, họ tên và chức danh nghề nghiệp, sắp xếp tăng dần theo tên. \\
+\hline
+\texttt{clues} & Từ điển ánh xạ & Tập hợp gồm đúng $n^2$ gợi ý có cấu trúc, mỗi gợi ý được gán tương ứng với một ô cờ làm khóa tra cứu. \\
+\hline
+\texttt{initial\_revealed} & Từ điển ánh xạ & Tập hợp các ô cờ được lật mở ban đầu kèm thân phận đã biết của chúng, đóng vai trò tri thức khởi tạo. \\
+\hline
+\texttt{solution} & Từ điển ánh xạ & Lời giải chân trị toàn phần của $n^2$ ô cờ, phục vụ việc kiểm tra và chấm phán quyết trong lõi trò chơi. \\
+\hline
+\end{tabularx}
+\end{table}
+
+Trước khi một màn chơi được nạp vào bộ nhớ, bộ phân tích dữ liệu tiến hành kiểm tra tính hợp lệ toàn diện: xác thực đúng số lượng $n^2$ nhân vật và gợi ý, kiểm tra các ô tọa độ nằm trong phạm vi bàn cờ, bảo đảm trật tự từ điển của tên nhân vật, kiểm tra tính tương thích giữa trạng thái khởi tạo và lời giải ẩn, đồng thời xác thực cấu trúc nội tại của từng mẫu gợi ý theo đúng miền giá trị cho phép.
 
 \subsection{Kiến trúc mã nguồn}
 \label{subsec:kien-truc-ma-nguon}
-% Trình bày cấu trúc thư mục và phân định vai trò giữa lõi trò chơi và tác tử logic.
+
+Mã nguồn của hệ thống được tổ chức phân tầng rõ ràng theo nguyên lý mô-đun hóa, phân tách rạch ròi giữa cấu trúc dữ liệu nền tảng, lõi xử lý luật chơi, bộ mã hóa logic, bộ giải tìm kiếm và giao diện đồ họa. Cấu trúc thư mục của dự án như sau:
+
+\begin{center}
+\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\texttt{AI\_Project2/} & \\
+\texttt{+-- main.py} & Điểm khởi chạy chính của ứng dụng. \\
+\texttt{+-- requirements.txt} & Danh mục các thư viện phụ thuộc. \\
+\texttt{+-- README.md} & Tài liệu hướng dẫn cài đặt và sử dụng. \\
+\texttt{+-- Source/} & \\
+\texttt{~~~~+-- common/} & Các cấu trúc dữ liệu bất biến, phân tích vùng và kiểm định. \\
+\texttt{~~~~+-- engine/} & Lõi xử lý trò chơi và cổng giao tiếp bảo vệ thông tin. \\
+\texttt{~~~~+-- logic/} & Bộ ánh xạ biến, bộ mã hóa chuẩn hội và bộ giải DPLL. \\
+\texttt{~~~~+-- agent/} & Tác tử suy luận logic tự động và kiểm tra tính duy nhất. \\
+\texttt{~~~~+-- gui/} & Giao diện đồ họa người dùng và bộ chuyển dịch ngôn ngữ. \\
+\texttt{~~~~+-- puzzles/} & Bộ dữ liệu câu đố chuẩn và danh mục phân loại màn chơi. \\
+\texttt{~~~~+-- tests/} & Bộ kiểm thử tự động toàn diện theo phương thức pytest. \\
+\texttt{~~~~+-- tools/} & Công cụ kiểm chứng tích hợp và đo đạc chỉ số tự động. \\
+\end{tabularx}
+\end{center}
+
+Điểm mấu chốt trong kiến trúc hệ thống là sự phân định tuyệt đối giữa hai vai trò:
+\begin{itemize}
+    \item Lõi xử lý trò chơi do lớp GameEngine đảm nhiệm: Nắm giữ toàn bộ dữ liệu của câu đố, bao gồm lời giải chân trị ẩn và nội dung của các gợi ý chưa được lật mở. GameEngine chịu trách nhiệm tiếp nhận phán quyết của người chơi hoặc tác tử, xác thực tính hợp lệ của bước đi và cập nhật trạng thái lật thẻ khi phán quyết được chứng minh.
+    \item Cổng giao tiếp công khai do giao diện GamePort định nghĩa: Đóng vai trò lớp vỏ bọc bảo vệ. Tác tử logic hay giao diện hiển thị hoàn toàn không được tiếp cận trực tiếp với GameEngine mà chỉ tương tác thông qua GamePort. Qua cổng này, tác tử chỉ có thể đọc ảnh chụp trạng thái công khai chứa các thẻ bài đã lật cùng các phán quyết đã được chấp nhận, và gửi yêu cầu thẩm định phán quyết mới. Toàn bộ các cấu trúc dữ liệu trả về đều được đóng gói dưới dạng bất biến nhằm loại bỏ triệt để nguy cơ can thiệp hoặc rò rỉ thông tin ẩn.
+\end{itemize}
 
 \section{Giao diện đồ họa}
 \label{sec:giao-dien-do-hoa}
 
 \subsection{Bàn cờ và hiển thị gợi ý}
 \label{subsec:ban-co-hien-thi}
-% Trình bày thiết kế giao diện bàn cờ và trực quan hóa vùng tham chiếu của gợi ý.
+% Phần này do thành viên phụ trách giao diện (Module E) biên soạn.
 
 \subsection{Tương tác lật thẻ và phán đoán}
 \label{subsec:tuong-tac-lat-the}
-% Trình bày tương tác người dùng khi đưa ra phán quyết và phản hồi lật thẻ.
+% Phần này do thành viên phụ trách giao diện (Module E) biên soạn.
 
 \subsection{Bảng điều khiển bộ giải}
 \label{subsec:bang-dieu-khien-bo-giai}
-% Mô tả các chức năng điều khiển nạp màn, khởi động lại, gợi ý nước đi và tự động giải.
+% Phần này do thành viên phụ trách giao diện (Module E) biên soạn.
 
 \section{Video demo}
 \label{sec:video-demo}
-% Giới thiệu video minh họa hoạt động của chương trình và liên kết xem video.
+% Phần này do thành viên phụ trách giao diện và demo (Module E) biên soạn.

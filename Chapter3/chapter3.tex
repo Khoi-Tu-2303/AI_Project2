@@ -3,34 +3,117 @@
 
 \section{Biểu diễn biến mệnh đề và cơ sở tri thức}
 \label{sec:bien-menh-de-kb}
-% Định nghĩa hệ thống biến mệnh đề cơ sở và mô hình cơ sở tri thức công khai.
+
+Để áp dụng các kỹ thuật suy luận hình thức vào việc giải quyết trò chơi Griductive, toàn bộ trạng thái của bàn cờ và nội dung các gợi ý được chuyển đổi sang ngôn ngữ của logic mệnh đề. 
+
+Xét một bàn cờ kích thước $n \times n$ với $n$ nhận giá trị thuộc tập 3, 4 hoặc 5. Tọa độ của mỗi ô cờ được chuẩn hóa thành cặp chỉ số gồm chỉ số hàng $r$ và chỉ số cột $c$, trong đó cả hai chỉ số đều nhận giá trị nguyên từ 0 đến $n - 1$. Với mỗi vị trí ô cờ $i$ tương ứng với tọa độ $(r, c)$, ta định nghĩa đúng một biến mệnh đề Boole cơ sở ký hiệu là $C_i$. Giá trị chân lý của biến này phản ánh thân phận bí mật của nhân vật tại ô cờ tương ứng:
+\[
+C_i = 
+\begin{cases}
+\text{True}, & \text{nếu nhân vật tại ô } i \text{ là Tội phạm}, \\
+\text{False}, & \text{nếu nhân vật tại ô } i \text{ là Vô tội}.
+\end{cases}
+\]
+
+Nhằm bảo đảm tính nhất quán trong toàn bộ quá trình mã hóa và giải toán, ánh xạ từ tọa độ ô cờ sang tập các biến số nguyên dương được thiết lập theo thứ tự ưu tiên hàng trước như sau:
+\[
+\text{var}(r, c) = r \cdot n + c + 1 \in \{1, 2, \dots, n^2\}
+\]
+
+Hàm ánh xạ trên thiết lập một quan hệ song ánh tất định giữa $n^2$ ô cờ và tập các số nguyên từ 1 đến $n^2$. Đối với các mệnh đề đếm số lượng phức tạp đòi hỏi sử dụng thêm các biến phụ nhằm giảm thiểu số lượng mệnh đề tuyển, các biến phụ này luôn được cấp phát bắt đầu từ chỉ số $n^2 + 1$ trở đi và được phân lập rạch ròi khỏi tập các biến mệnh đề cơ sở.
+
+Tại mỗi bước suy luận $t$ trong tiến trình trò chơi, cơ sở tri thức công khai ký hiệu là $KB_t$ đại diện cho toàn bộ thông tin hợp thức mà người chơi hoặc tác tử logic được phép tiếp cận. Cơ sở tri thức này được kiến tạo từ hai nguồn dữ kiện chính: tập hợp các mệnh đề chuẩn hội chuyển đổi từ các gợi ý đã được lật mở và tập hợp các mệnh đề đơn vị khẳng định thân phận của các nhân vật đã được chứng minh:
+\[
+KB_t = \left( \bigwedge_{c \in \text{RevealedClues}_t} \text{CNF}(c) \right) \land \left( \bigwedge_{i \in \text{KnownStatuses}_t} \text{UnitClause}(i, \text{Status}(i)) \right)
+\]
+
+Cơ sở tri thức $KB_t$ phải tuân thủ nghiêm ngặt nguyên tắc bảo toàn thông tin: tuyệt đối không chứa thân phận ẩn của các ô cờ đang úp, không chứa nội dung của các gợi ý chưa được lật, và không chứa bất kỳ giả định bổ sung nào ngoài những dữ kiện đã công bố.
+
+Tiến trình lật thẻ bài được điều phối thông qua giao thức suy luận dựa trên nguyên lý hệ quả logic. Trước tiên, hệ thống kiểm tra tính thỏa được của cơ sở tri thức công khai $KB_t$. Nếu $KB_t$ rơi vào trạng thái không thỏa được, điều đó đồng nghĩa với việc xuất hiện mâu thuẫn trong tập dữ kiện và hệ thống sẽ thông báo trạng thái mâu thuẫn. Khi $KB_t$ thỏa được, với mỗi ô cờ $i$ chưa lật, việc xác định thân phận của nhân vật được thực hiện thông qua phương pháp phản chứng:
+\[
+KB_t \models C_i \iff KB_t \land \neg C_i \text{ không thỏa được}
+\]
+\[
+KB_t \models \neg C_i \iff KB_t \land C_i \text{ không thỏa được}
+\]
+
+Dựa trên kết quả kiểm tra tính thỏa được của hai công thức trên, trạng thái suy luận của ô cờ $i$ được phân loại cụ thể như sau:
+\begin{itemize}
+    \item Nếu $KB_t \land \neg C_i$ không thỏa được, nhân vật tại $i$ bắt buộc phải là Tội phạm.
+    \item Nếu $KB_t \land C_i$ không thỏa được, nhân vật tại $i$ bắt buộc phải là Vô tội.
+    \item Nếu cả hai công thức $KB_t \land \neg C_i$ và $KB_t \land C_i$ đều thỏa được, thông tin hiện tại chưa đủ để đưa ra kết luận và trạng thái của ô cờ được xác định là Chưa xác định.
+\end{itemize}
+
+Khi người chơi hoặc tác tử gửi một phán quyết về thân phận của ô cờ $i$, hệ thống sẽ phản hồi theo một trong ba trường hợp: Chấp nhận phán quyết khi và chỉ khi thân phận đó đã được chứng minh bắt buộc từ cơ sở tri thức hiện tại, khi đó thẻ bài được lật mở và gợi ý mới được bổ sung vào $KB_{t+1}$; Từ chối với lý do chưa thể chứng minh khi ô cờ mang trạng thái chưa xác định; và Từ chối với lý do mâu thuẫn khi ô cờ bị suy diễn bắt buộc mang thân phận ngược lại với phán quyết. Trong hai trường hợp từ chối, trạng thái bàn cờ hoàn toàn không thay đổi và thẻ bài vẫn giữ nguyên trạng thái úp nhằm ngăn chặn hành vi đoán mò.
 
 \section{Ngữ nghĩa các mẫu gợi ý}
 \label{sec:ngu-nghia-goi-y}
 
 \subsection{Các mẫu gợi ý cơ bản}
 \label{subsec:goi-y-co-ban}
-% Định nghĩa ngữ nghĩa logic cho sáu mẫu gợi ý cơ bản.
+
+Hệ thống hỗ trợ sáu mẫu gợi ý cốt lõi, phản ánh các mối quan hệ logic cơ bản giữa các nhân vật và các vùng hình học trên lưới:
+
+\begin{enumerate}
+    \item Gợi ý sự thật đơn lẻ: Xác nhận trực tiếp thân phận của đúng một ô cờ $i$. Biểu thức logic tương ứng là mệnh đề đơn vị $C_i$ nếu nhân vật là Tội phạm, hoặc phủ định $\neg C_i$ nếu nhân vật là Vô tội.
+    \item Gợi ý đồng nhất trạng thái: Xác nhận hai nhân vật tại ô $i$ và ô $j$ có cùng thân phận với nhau, nghĩa là cả hai cùng là Tội phạm hoặc cùng là Vô tội. Mối quan hệ này tương ứng với phép tương đương logic:
+    \[
+    C_i \leftrightarrow C_j
+    \]
+    \item Gợi ý khác biệt trạng thái: Xác nhận hai nhân vật tại ô $i$ và ô $j$ có thân phận đối lập nhau, nghĩa là một người là Tội phạm và người còn lại là Vô tội. Mối quan hệ này tương ứng với phép tuyển loại trừ:
+    \[
+    C_i \oplus C_j
+    \]
+    \item Gợi ý đếm chính xác số lượng: Khẳng định trong vùng tham chiếu $R$, tổng số lượng tội phạm đúng bằng một số nguyên $k$, với điều kiện $k$ nằm trong đoạn từ 0 đến kích thước của vùng $R$. Biểu thức toán học tương ứng là:
+    \[
+    \sum_{i \in R} C_i = k
+    \]
+    \item Gợi ý đếm số lượng tối thiểu: Khẳng định trong vùng tham chiếu $R$, số lượng tội phạm đạt ít nhất là $k$, tương ứng với bất đẳng thức:
+    \[
+    \sum_{i \in R} C_i \ge k
+    \]
+    \item Gợi ý đếm số lượng tối đa: Khẳng định trong vùng tham chiếu $R$, số lượng tội phạm không vượt quá $k$, tương ứng với bất đẳng thức:
+    \[
+    \sum_{i \in R} C_i \le k
+    \]
+\end{enumerate}
 
 \subsection{Các mẫu gợi ý mở rộng}
 \label{subsec:goi-y-mo-rong}
-% Định nghĩa ngữ nghĩa logic cho các ràng buộc mở rộng như tính chẵn lẻ và so sánh vùng.
+
+Bên cạnh sáu mẫu cốt lõi, đồ án hiện thực thêm hai mẫu gợi ý mở rộng nhằm tăng cường khả năng biểu diễn các ràng buộc phức tạp hơn trong thực tế:
+
+\begin{enumerate}
+    \item Ràng buộc tính chẵn lẻ: Xác định tính chất chẵn lẻ của tổng số tội phạm có mặt trong một vùng tham chiếu $R$. Biểu thức toán học được mô tả thông qua phép toán đồng dư theo mô-đun 2:
+    \[
+    \left(\sum_{i \in R} C_i\right) \bmod 2 = 
+    \begin{cases}
+    0, & \text{nếu tính chất là Chẵn}, \\
+    1, & \text{nếu tính chất là Lẻ}.
+    \end{cases}
+    \]
+    \item Ràng buộc so sánh tương đối giữa hai vùng: Thiết lập mối quan hệ định lượng giữa số lượng tội phạm trong vùng bên trái $L$ và vùng bên phải $R$ thông qua một toán tử so sánh thuộc tập các phép toán lớn hơn, lớn hơn hoặc bằng, nhỏ hơn, nhỏ hơn hoặc bằng, bằng nhau hoặc khác nhau:
+    \[
+    \sum_{i \in L} C_i \quad \text{op} \quad \sum_{j \in R} C_j
+    \]
+    Trong trường hợp hai vùng tham chiếu có các ô cờ giao nhau, các ô thuộc phần giao này được tính độc lập ở cả hai vế theo đúng định nghĩa số học, bảo đảm tính tự nhiên và chính xác của phát biểu logic mà không yêu cầu người tạo câu đố phải khử trùng lặp thủ công.
+\end{enumerate}
 
 \section{Mã hóa sang dạng chuẩn hội (CNF)}
 \label{sec:ma-hoa-cnf}
 
 \subsection{Dẫn xuất toán học cho gợi ý nhị phân}
 \label{subsec:dan-xuat-nhi-phan}
-% Trình bày các bước biến đổi logic tương đương sang dạng chuẩn hội cho gợi ý nhị phân.
+% Phần này do thành viên phụ trách bộ mã hóa (Module B) biên soạn.
 
 \subsection{Dẫn xuất toán học cho gợi ý đếm số lượng}
 \label{subsec:dan-xuat-dem-so-luong}
-% Trình bày kỹ thuật và công thức toán học mã hóa ràng buộc số lượng sang dạng chuẩn hội.
+% Phần này do thành viên phụ trách bộ mã hóa (Module B) biên soạn.
 
 \subsection{Mã hóa các gợi ý mở rộng và quản lý biến phụ}
 \label{subsec:ma-hoa-mo-rong-bien-phu}
-% Trình bày giải pháp mã hóa gợi ý mở rộng và nguyên tắc cấp phát, phân lập biến phụ.
+% Phần này do thành viên phụ trách bộ mã hóa (Module B) biên soạn.
 
 \section{Đánh giá ngữ nghĩa trực tiếp}
 \label{sec:danh-gia-ngu-nghia-truc-tiep}
-% Trình bày phương pháp kiểm tra giá trị chân lý trực tiếp của gợi ý trên gán trị toàn phần.
+% Phần này do thành viên phụ trách bộ mã hóa (Module B) biên soạn.
