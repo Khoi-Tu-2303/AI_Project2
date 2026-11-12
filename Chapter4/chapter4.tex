@@ -3,7 +3,157 @@
 
 \section{Thuật toán DPLL giải bài toán SAT}
 \label{sec:thuat-toan-dpll}
-% Trình bày thủ tục DPLL với lan truyền đơn vị, phát hiện mâu thuẫn, chọn biến và quay lui.
+
+Mọi kết luận của hệ thống đều quy về một câu hỏi duy nhất: một công thức dạng chuẩn hội (CNF) có thỏa được hay không. Mục này trình bày bộ giải SAT được cài đặt thủ công theo thủ tục Davis--Putnam--Logemann--Loveland (DPLL), gồm ba thành phần: lan truyền đơn vị, chọn biến để rẽ nhánh và quay lui khi gặp mâu thuẫn.
+
+\subsection{Bài toán SAT và cách biểu diễn}
+\label{subsec:bai-toan-sat}
+
+Cho một công thức CNF $F = K_1 \land K_2 \land \dots \land K_m$ trên tập $N$ biến mệnh đề $\{x_1, \dots, x_N\}$, trong đó mỗi mệnh đề $K_j$ là một phép tuyển của các literal (biến hoặc phủ định của biến). Bài toán SAT yêu cầu quyết định tồn tại hay không một phép gán $\alpha : \{x_1,\dots,x_N\} \to \{\text{True}, \text{False}\}$ làm cho mọi mệnh đề đều đúng. Nếu tồn tại, $F$ là \emph{thỏa được} (SAT) và $\alpha$ được gọi là một \emph{mô hình}; ngược lại $F$ là \emph{không thỏa được} (UNSAT).
+
+Trong đồ án, công thức $F$ chính là cơ sở tri thức $KB_t$ đã được mã hóa ở Chương~\ref{chap:hinh-thuc-hoa}, và các biến $x_1, \dots, x_{n^2}$ là các biến cơ sở $C_i$ của từng ô cờ, còn các biến từ $x_{n^2+1}$ trở đi là biến phụ, với $n$ là kích thước bàn cờ. Như vậy tổng số biến là $N = n^2 + n_{\text{phụ}}$, trong đó $n_{\text{phụ}}$ là số biến phụ. Bộ giải sử dụng các quy ước biểu diễn sau:
+\begin{itemize}
+    \item Literal là số nguyên khác 0 có dấu: $+v$ biểu diễn biến $x_v$ nhận giá trị True (Tội phạm) và $-v$ biểu diễn $x_v$ nhận giá trị False (Vô tội). Mệnh đề là danh sách các literal.
+    \item Phép gán hiện thời được lưu trong một mảng $\alpha[v] \in \{0, +1, -1\}$, với $0$ nghĩa là biến chưa được gán.
+    \item Mọi literal được gán đều được ghi vào một ngăn xếp gọi là \emph{trail} theo đúng thứ tự gán. Khi quay lui, bộ giải chỉ việc lấy các literal ở đỉnh trail ra và đặt lại $\alpha[v] = 0$, nên không cần sao chép phép gán ở mỗi nhánh.
+\end{itemize}
+
+\subsection{Khởi tạo và trạng thái gốc}
+\label{subsec:dpll-khoi-tao}
+
+Bộ giải nhận công thức một lần duy nhất khi khởi tạo và chuẩn bị một \emph{trạng thái gốc} dùng chung cho mọi lần giải sau đó. Quá trình khởi tạo gồm các bước:
+\begin{enumerate}
+    \item \textbf{Chuẩn hóa từng mệnh đề.} Loại các literal lặp lại trong cùng một mệnh đề; loại hẳn các mệnh đề hằng đúng (chứa đồng thời $x$ và $\neg x$); kiểm tra mỗi literal phải là số nguyên khác 0 với $|\ell| \le N$, nếu không báo lỗi.
+    \item \textbf{Phân loại mệnh đề.} Mệnh đề rỗng làm cho $F$ không thỏa được ngay lập tức. Mệnh đề đơn vị (một literal) được ghi nhận là \emph{sự thật gốc}. Các mệnh đề còn lại có từ hai literal trở lên được lưu vào kho mệnh đề.
+    \item \textbf{Lan truyền gốc.} Gán toàn bộ sự thật gốc rồi chạy lan truyền đơn vị một lần. Độ dài trail sau bước này được ghi nhớ; mọi lần gọi giải về sau đều bắt đầu từ trạng thái này và quay về đúng trạng thái này khi kết thúc.
+    \item \textbf{Thứ tự chọn biến.} Các biến do bên gọi chỉ định được đặt lên trước, tiếp theo là các biến còn lại theo thứ tự tăng dần. Bộ suy diễn của đồ án chỉ định các biến cơ sở $x_1,\dots,x_{n^2}$ làm biến quyết định, vì các biến phụ đã được xác định hàm theo biến cơ sở và không cần phải thử cả hai giá trị. Nhờ vậy, không gian tìm kiếm nhánh giảm từ $2^{N}$ xuống tối đa $2^{n^2}$.
+\end{enumerate}
+
+Do các sự thật gốc (thân phận của các ô đã được chứng minh) chỉ cần lan truyền một lần, các truy vấn lặp lại trên cùng một cơ sở tri thức không phải trả lại chi phí này.
+
+\subsection{Lan truyền đơn vị}
+\label{subsec:lan-truyen-don-vi}
+
+Với mõi phép gán hiện tại, một mệnh đề ở một trong bốn trạng thái: đã được thỏa (có ít nhất một literal đúng), bị vi phạm (mọi literal đều sai), đơn vị (đúng một literal chưa gán, các literal còn lại đều sai) hoặc chưa quyết định. Trong trạng thái đơn vị, literal duy nhất chưa gán buộc phải nhận giá trị True, nếu không mệnh đề sẽ bị vi phạm; việc gán này là hệ quả tất yếu của $F$ và phép gán hiện tại, nên không làm mất nghiệm nào.
+
+\begin{algorithm}[H]
+\caption{Lan truyền đơn vị \textsc{UnitPropagate}}
+\label{alg:unit-propagate}
+\begin{algorithmic}[1]
+\REQUIRE Kho mệnh đề $\mathcal{K}$ (độ dài $\ge 2$), phép gán hiện tại $\alpha$, trail $T$
+\ENSURE \textbf{True} nếu không có xung đột; \textbf{False} nếu có mệnh đề bị vi phạm
+\REPEAT
+    \STATE $\textit{changed} \leftarrow \text{False}$
+    \FORALL{mệnh đề $K \in \mathcal{K}$}
+        \IF{$K$ có một literal đúng dưới $\alpha$}
+            \STATE \textbf{continue}
+        \ENDIF
+        \STATE $U \leftarrow$ tập các literal chưa gán của $K$
+        \IF{$U = \emptyset$}
+            \RETURN \textbf{False} \COMMENT{mọi literal đều sai: xung đột}
+        \ELSIF{$|U| = 1$}
+            \STATE gán $\ell \in U$ bằng True; ghi $\ell$ vào $T$
+            \STATE $\textit{changed} \leftarrow \text{True}$
+        \ENDIF
+    \ENDFOR
+\UNTIL{$\textit{changed} = \text{False}$}
+\RETURN \textbf{True}
+\end{algorithmic}
+\end{algorithm}
+
+Thủ tục quét lặp lại toàn bộ kho mệnh đề cho đến khi không còn literal nào được gán thêm. Mỗi lượt quét tốn thời gian tuyến tính theo tổng số literal $S$ của công thức, nên một lần lan truyền tốn $O(N \cdot S)$ trong trường hợp xấu nhất.
+
+\subsection{Chọn biến, rẽ nhánh và quay lui}
+\label{subsec:dpll-re-nhanh}
+
+Khi lan truyền đơn vị kết thúc mà chưa có xung đột và vẫn còn biến chưa gán, bộ giải chọn biến chưa gán đầu tiên theo thứ tự đã dựng ở Mục~\ref{subsec:dpll-khoi-tao} rồi thử lần lượt hai giá trị. Giá trị False (Vô tội) được thử trước, giá trị True (Tội phạm) được thử sau. Thứ tự cố định này làm cho kết quả, kể cả mô hình được tìm thấy, hoàn toàn tất định và có thể tái lập.
+
+\begin{algorithm}[H]
+\caption{Thủ tục đệ quy \textsc{DPLL}}
+\label{alg:dpll}
+\begin{algorithmic}[1]
+\REQUIRE Lan truyền đơn vị đã hoàn tất và không có xung đột
+\ENSURE SAT hoặc UNSAT
+\STATE $v \leftarrow$ biến chưa gán đầu tiên theo thứ tự chọn biến
+\IF{không còn biến chưa gán}
+    \RETURN SAT \COMMENT{phép gán đầy đủ, không có xung đột}
+\ENDIF
+\STATE $\textit{mark} \leftarrow |T|$ \COMMENT{điểm quay lui}
+\FORALL{$\ell \in (\neg v,\ v)$}
+    \STATE gán $\ell$ bằng True; ghi $\ell$ vào $T$
+    \IF{\textsc{UnitPropagate} trả về True}
+        \IF{\textsc{DPLL} trả về SAT}
+            \RETURN SAT \COMMENT{tìm được mô hình: dừng ngay}
+        \ENDIF
+    \ENDIF
+    \STATE hoàn tác trail $T$ về độ dài $\textit{mark}$ \COMMENT{quay lui}
+\ENDFOR
+\RETURN UNSAT \COMMENT{cả hai giá trị của $v$ đều thất bại}
+\end{algorithmic}
+\end{algorithm}
+
+Điểm đáng chú ý của thủ tục là cách quản lý trạng thái. Khi một nhánh thất bại, mọi literal được gán kể từ điểm $\textit{mark}$ (gồm literal quyết định và các literal được lan truyền sau đó) đều bị hoàn tác trong một thao tác duy nhất; nhờ đó khi thủ tục trả về UNSAT, trạng thái bộ giải đúng bằng trạng thái lúc bắt đầu gọi. Ngược lại, khi trả về SAT, phép gán đầy đủ được giữ nguyên để hàm bên ngoài đọc mô hình trước khi dọn dẹp. Vì mỗi lời gọi đệ quy gán thêm ít nhất một biến, độ sâu đệ quy không vượt quá $N$.
+
+\subsection{Giải với giả định và tái sử dụng bộ giải}
+\label{subsec:dpll-gia-dinh}
+
+Bài toán suy diễn ở Chương~\ref{chap:hinh-thuc-hoa} đòi hỏi hàng chục đến hàng trăm truy vấn dạng $KB_t \land \ell$ trên cùng một cơ sở tri thức, trong đó $\ell$ là literal của một ô cờ. Thay vì dựng lại bộ giải cho từng truy vấn, giao diện giải nhận một dãy \emph{giả định} (các literal đơn vị tạm thời) và quyết định tính thỏa mãn.
+
+\begin{algorithm}[H]
+\caption{Giải với giả định \textsc{Solve}}
+\label{alg:solve}
+\begin{algorithmic}[1]
+\REQUIRE Danh sách giả định $A$
+\ENSURE Kết quả $(\textit{status}, \textit{model})$
+\IF{$F$ đã không thỏa được ở trạng thái gốc}
+    \RETURN UNSAT
+\ENDIF
+\STATE gán lần lượt các literal trong $A$; nếu có literal đã sai thì xung đột
+\IF{không xung đột \AND \textsc{UnitPropagate} trả về True}
+    \STATE $\textit{status} \leftarrow \textsc{DPLL}$
+    \IF{$\textit{status} = $ SAT}
+        \STATE đọc mô hình
+    \ENDIF
+\ELSE
+    \STATE $\textit{status} \leftarrow$ UNSAT
+\ENDIF
+\STATE hoàn tác trail về trạng thái gốc \COMMENT{luôn thực hiện, kể cả khi lỗi}
+\RETURN $(\textit{status}, \textit{model})$
+\end{algorithmic}
+\end{algorithm}
+
+Bước hoàn tác về trạng thái gốc luôn được thực hiện, kể cả khi xảy ra ngoại lệ, nên một đối tượng bộ giải có thể được gọi lại nhiều lần với các giả định khác nhau mà không có rò rỉ trạng thái giữa các truy vấn.
+
+% \subsection{Hạn chót và thống kê}
+% \label{subsec:dpll-thong-ke}
+
+% Mỗi lần giải nhận một hạn chót là mốc thời gian tuyệt đối theo đồng hồ đơn điệu. Hạn chót được kiểm tra ngay khi bắt đầu giải và ở đầu mỗi lời gọi đệ quy. Khi vượt hạn, bộ giải trả về TIMEOUT. Kết quả này tuyệt đối \emph{không} được coi là bằng chứng UNSAT: các tầng trên của hệ thống xử lý nó như một lỗi suy luận và không bao giờ dùng nó để chấp nhận hay bác bỏ một phán quyết.
+
+% Để phục vụ giao diện và thực nghiệm (Chương~\ref{chap:thuc-nghiem-danh-gia}), mỗi lần giải ghi lại các bộ đếm trong bảng~\ref{tab:dpll-stats}. Các bộ đếm hỗ trợ phép cộng theo từng trường để cộng dồn qua nhiều lần giải trong cùng một lượt suy luận.
+
+% \begin{table}[H]
+% \centering
+% \caption{Các bộ đếm thống kê của một lần giải}
+% \label{tab:dpll-stats}
+% \renewcommand{\arraystretch}{1.2}
+% \begin{tabularx}{\textwidth}{|l|X|}
+% \hline
+% \textbf{Bộ đếm} & \textbf{Ý nghĩa} \\ \hline
+% \texttt{decisions} & Số biến bộ giải phải chọn giá trị để rẽ nhánh. \\ \hline
+% \texttt{conflicts} & Số lần lan truyền sau một quyết định kết thúc bằng xung đột. \\ \hline
+% \texttt{propagations} & Số literal được gán trong lần giải (gồm giả định, quyết định và literal bị ép); lan truyền ở trạng thái gốc không được tính lại. \\ \hline
+% \texttt{backtracks} & Số nhánh bị bỏ (một giá trị của một biến bị hoàn tác). \\ \hline
+% \texttt{runtime\_seconds} & Thời gian thực thi của toàn bộ lời gọi giải. \\ \hline
+% \end{tabularx}
+% \end{table}
+
+\subsection{Tính đúng đắn và độ phức tạp}
+\label{subsec:dpll-dung-dan}
+
+\textbf{Tính đúng đắn.} Lan truyền đơn vị chỉ gán những literal là hệ quả tất yếu của công thức và phép gán hiện thời, nên không loại bỏ bất kỳ mô hình nào. Thủ tục rẽ nhánh thử cả hai giá trị của mỗi biến quyết định trước khi kết luận UNSAT nên không bỏ sót nhánh nào. Khi mọi biến đã được gán và không có mệnh đề nào bị vi phạm, phép gán đó thỏa mọi mệnh đề, nên kết luận SAT luôn đi kèm một mô hình hợp lệ. Thủ tục luôn dừng vì mỗi lời gọi đệ quy làm tăng thực sự số biến đã gán.
+
+\textbf{Độ phức tạp.} Trong trường hợp xấu nhất, DPLL duyệt $O(2^{n^2})$ nhánh, vì chỉ có $n^2$ biến cơ sở của bàn cờ $n \times n$ được dùng làm biến quyết định (các biến phụ do lan truyền đơn vị suy ra). Mỗi nhánh tốn một lần lan truyền với độ phức tạp $O(N \cdot S)$; đây là hệ quả của việc SAT là bài toán NP-complete và bộ giải không có kỹ thuật học mệnh đề (\emph{clause learning}) hay chọn biến theo heuristic.
+%  Tuy nhiên, các gợi ý của trò chơi sinh ra những công thức có cấu trúc rất chặt: sau khi một vài ô được xác định, lan truyền đơn vị thường ép được phần lớn các ô còn lại. Điều này thể hiện rõ ở các số liệu thực nghiệm của Chương~\ref{chap:thuc-nghiem-danh-gia}, khi toàn bộ các hồ sơ vụ án thử nghiệm đều được giải với số lần quay lui bằng 0.
 
 \section{Thuật toán suy diễn logic và phân loại trạng thái}
 \label{sec:suy-dien-logic}
