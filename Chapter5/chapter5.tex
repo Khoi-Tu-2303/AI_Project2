@@ -3,31 +3,142 @@
 
 \section{Thiết kế bộ dữ liệu câu đố}
 \label{sec:thiet-ke-du-lieu}
-% Mô tả phương pháp xây dựng, phân loại và cấu trúc các bộ câu đố kiểm thử.
+
+Để đánh giá toàn diện năng lực biểu diễn logic, tính đúng đắn của bộ giải và hiệu năng suy luận của tác tử, nhóm đã xây dựng một bộ dữ liệu kiểm thử chuẩn gồm 10 hồ sơ vụ án độc lập. Bộ câu đố được định dạng theo cấu trúc JSON Schema phiên bản 2 và đăng ký quản lý tập trung thông qua tệp danh mục \texttt{Source/puzzles/index.json}.
+
+Các hồ sơ câu đố được phân loại thành bốn nhóm thử nghiệm đặc trưng:
+\begin{enumerate}
+    \item \textbf{Nhóm cơ bản $3 \times 3$ (Normal Cases):} Bao gồm các màn chơi kích thước $3 \times 3$ nhằm kiểm tra các mẫu gợi ý nền tảng:
+    \begin{itemize}
+        \item \texttt{chain\_demo} (\textit{Hồ sơ \#01: Mắt xích đầu tiên}): Câu đố suy luận chuỗi tuần tự kinh điển mở khóa lần lượt từng ô cờ theo trật tự hàng trước.
+        \item \texttt{3x3\_classic} (\textit{Hồ sơ \#02: Đêm Gala thượng lưu}): Tổ hợp các gợi ý sự thật, đồng nhất, khác biệt và đếm số lượng trên hàng, cột và vùng lân cận.
+        \item \texttt{3x3\_extensions} (\textit{Mở rộng \#07: Mật mã chẵn lẻ}): Tích hợp trực tiếp hai mẫu gợi ý nâng cao là tính chẵn lẻ (\texttt{PARITY}) và đối chiếu vùng (\texttt{COMPARE}).
+    \end{itemize}
+    \item \textbf{Nhóm nâng cao $4 \times 4$ (Advanced Cases):} Tăng quy mô không gian trạng thái lên 16 ô cờ với mạng lưới gợi ý đan chéo phức tạp:
+    \begin{itemize}
+        \item \texttt{4x4\_detective} (\textit{Hồ sơ \#03: Chuyên án dinh thự cổ}): 16 nghi phạm với các ràng buộc đếm số lượng trên cả hàng và cột.
+        \item \texttt{4x4\_crossfire} (\textit{Hồ sơ \#04: Mạng lưới giao thoa}): Tích hợp vùng giao thoa phức tạp giữa Hàng 1 và Cột A kết hợp các phép toán so sánh tương quan \texttt{COMPARE}.
+    \end{itemize}
+    \item \textbf{Nhóm thử tải cực hạn $5 \times 5$ (Stress Tests):} Bàn cờ quy mô lớn nhất theo đặc tả môn học gồm 25 nghi phạm:
+    \begin{itemize}
+        \item \texttt{5x5\_mastermind} (\textit{Hồ sơ \#05: Trùm cuối tuyệt mật}): 25 nhân vật với hàng trăm mệnh đề CNF được sinh tự động.
+        \item \texttt{5x5\_syndicate} (\textit{Hồ sơ \#06: Mạng lưới ngầm}): Kết hợp toàn bộ 8 mẫu gợi ý cùng các ràng buộc đếm ngưỡng cao trên toàn bộ 25 ô cờ.
+    \end{itemize}
+    \item \textbf{Nhóm kiểm thử trường hợp biên và bất thường (Negative Cases):} Nhằm xác thực cơ chế an toàn và nguyên tắc không đoán mò:
+    \begin{itemize}
+        \item \texttt{3x3\_stuck} (\textit{Manh mối bỏ ngỏ}): Câu đố có nghiệm duy nhất nhưng chuỗi dữ kiện bị đứt gãy giữa chừng, kiểm chứng tác tử phải dừng lại an toàn (\texttt{STUCK}) thay vì đoán mò.
+        \item \texttt{3x3\_multi} (\textit{Hồ sơ đa nghĩa}): Câu đố tồn tại từ 2 nghiệm trở lên, kiểm chứng thuật toán kiểm tra tính duy nhất nhận diện đúng trạng thái \texttt{MULTIPLE}.
+        \item \texttt{3x3\_inconsistent} (\textit{Lời khai mâu thuẫn}): Chứa các phát biểu triệt tiêu lẫn nhau, kiểm chứng hệ thống phát hiện ngay mâu thuẫn khởi tạo \texttt{INCONSISTENT}.
+    \end{itemize}
+\end{enumerate}
 
 \section{Phương pháp và chỉ số đo lường}
 \label{sec:phuong-phap-do-luong}
-% Trình bày môi trường thực nghiệm, quy trình kiểm thử và các chỉ số đo lường hiệu năng.
+
+\subsection{Môi trường thực nghiệm}
+Toàn bộ các bài thử nghiệm được chạy tự động thông qua công cụ \texttt{Source/experiments/run\_experiments.py} trên cùng một cấu hình phần cứng tiêu chuẩn:
+\begin{itemize}
+    \item Hệ điều hành: Microsoft Windows 11 Pro 64-bit.
+    \item Bộ vi xử lý: AMD / Intel x86\_64 đa nhân thế hệ mới.
+    \item Môi trường phần mềm: Python phiên bản 3.12.6, chỉ sử dụng thuần túy thư viện chuẩn (Standard Library) cho toàn bộ quá trình biểu diễn, mã hóa và giải toán.
+    \item Đo thời gian: Sử dụng đồng hồ độ phân giải nano-giây \texttt{time.perf\_counter()} của Python.
+\end{itemize}
+
+\subsection{Hệ thống 6 chỉ số đo lường cốt lõi}
+Theo đúng yêu cầu tại Mục 4.5 của đề bài, hệ thống ghi nhận chi tiết 6 chỉ số định lượng độc lập cho từng màn kiểm thử:
+\begin{enumerate}
+    \item \textbf{Số biến mệnh đề chính và biến phụ ($N_{\text{pri}} / N_{\text{aux}}$):} Số biến chính đại diện cho thân phận nhân vật ($n^2$) và số biến phụ được cấp phát bởi bộ mã hóa mạch đếm và chuỗi XOR.
+    \item \textbf{Số mệnh đề chuẩn hội ($N_{\text{clauses}}$):} Tổng số mệnh đề CNF được sinh ra khi biểu diễn toàn bộ hệ thống gợi ý của câu đố.
+    \item \textbf{Số lượt gọi bộ giải SAT ($N_{\text{SAT}}$):} Tổng số lần tác tử triệu gọi thủ tục \texttt{DPLLSolver.solve()} xuyên suốt quá trình phá án.
+    \item \textbf{Thống kê hành vi bộ giải DPLL:}
+    \begin{itemize}
+        \item Số lần phân nhánh lựa chọn giá trị (\textit{Decisions}).
+        \item Số literal được suy diễn gán giá trị thông qua lan truyền đơn vị (\textit{Propagations}).
+        \item Số nhánh tìm kiếm bị xung đột phải hủy bỏ và quay lui (\textit{Backtracks}).
+    \end{itemize}
+    \item \textbf{Số bước suy luận lật bài ($N_{\text{steps}}$):} Số lần tác tử đưa ra phán quyết được chấp nhận và lật mở thẻ bài mới thành công.
+    \item \textbf{Thời gian thực thi ($T_{\text{run}}$):} Thời gian xử lý toàn bộ vòng lặp suy luận của tác tử, tính bằng mili-giây (ms).
+\end{enumerate}
 
 \section{Kết quả định lượng}
 \label{sec:ket-qua-dinh-luong}
 
-\subsection{Kết quả trên các câu đố 3x3}
+Bảng~\ref{tab:benchmark-full} tổng hợp toàn bộ số liệu đo lường thực nghiệm thu được từ quá trình chạy tự động trên 10 hồ sơ vụ án chuẩn của đồ án.
+
+\begin{table}[H]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{3.5pt}
+\renewcommand{\arraystretch}{1.3}
+\caption{Bảng số liệu thực nghiệm đo lường hiệu năng tổng thể trên 10 hồ sơ vụ án.}
+\label{tab:benchmark-full}
+\begin{tabular}{|l|c|c|c|c|c|c|c|c|c|c|c|r|}
+\hline
+\rowcolor{gray!15}
+\textbf{Mã hồ sơ} & \textbf{Lưới} & \textbf{Loại} & \textbf{Nghiệm} & \textbf{Kết quả} & \textbf{Bước} & \textbf{Pri/Aux} & \textbf{CNF} & \textbf{SAT} & \textbf{Dec} & \textbf{Prop} & \textbf{Back} & \textbf{Thời gian} \\
+\hline
+\texttt{chain\_demo} & 3×3 & normal & UNIQUE & \textbf{SOLVED} & 8 & 9 / 0 & 9 & 44 & 140 & 168 & 0 & 4.51 ms \\
+\hline
+\texttt{3x3\_classic} & 3×3 & normal & UNIQUE & \textbf{SOLVED} & 7 & 9 / 43 & 146 & 35 & 91 & 112 & 0 & 10.27 ms \\
+\hline
+\texttt{3x3\_extensions} & 3×3 & normal & UNIQUE & \textbf{SOLVED} & 7 & 9 / 56 & 186 & 34 & 62 & 100 & 0 & 11.96 ms \\
+\hline
+\texttt{4x4\_detective} & 4×4 & normal & UNIQUE & \textbf{SOLVED} & 14 & 16 / 157 & 499 & 119 & 595 & 691 & 0 & 61.64 ms \\
+\hline
+\texttt{4x4\_crossfire} & 4×4 & normal & UNIQUE & \textbf{SOLVED} & 14 & 16 / 172 & 545 & 117 & 544 & 638 & 0 & 85.98 ms \\
+\hline
+\texttt{5x5\_mastermind} & 5×5 & stress & UNIQUE & \textbf{SOLVED} & 23 & 25 / 244 & 777 & 299 & 2890 & 3094 & 0 & 206.06 ms \\
+\hline
+\texttt{5x5\_syndicate} & 5×5 & stress & UNIQUE & \textbf{SOLVED} & 23 & 25 / 292 & 924 & 299 & 3751 & 4002 & 0 & 254.65 ms \\
+\hline
+\texttt{3x3\_stuck} & 3×3 & stuck & UNIQUE & \textbf{STUCK} & 1 & 9 / 9 & 37 & 9 & 49 & 56 & 0 & 1.06 ms \\
+\hline
+\texttt{3x3\_multi} & 3×3 & multi & MULTIPLE & \textbf{STUCK} & 6 & 9 / 7 & 32 & 39 & 139 & 166 & 0 & 7.82 ms \\
+\hline
+\texttt{3x3\_inconsistent} & 3×3 & incons & NONE & \textbf{INCONS} & 0 & 9 / 5 & 24 & 0 & 0 & 0 & 0 & 0.50 ms \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Kết quả trên nhóm câu đố $3 \times 3$}
 \label{subsec:ket-qua-3x3}
-% Bảng số liệu và nhận xét kết quả trên nhóm câu đố 3x3.
+Trên nhóm câu đố $3 \times 3$, kích thước không gian tìm kiếm nhỏ ($2^9 = 512$ trạng thái lý thuyết). Toàn bộ các câu đố hợp lệ (\texttt{chain\_demo}, \texttt{3x3\_classic}, \texttt{3x3\_extensions}) đều được tác tử giải quyết triệt để trong thời gian chỉ từ $4.5$ đến $12.0$ ms. Số lượng mệnh đề CNF dao động từ 9 mệnh đề (chuỗi đơn giản) đến 186 mệnh đề (khi có các biểu thức so sánh vùng phức tạp). Đặc biệt, tỷ lệ phân nhánh quay lui hoàn toàn bằng 0, chứng minh năng lực suy diễn đơn bước cực mạnh của bộ giải SAT.
 
-\subsection{Kết quả trên các câu đố 4x4}
+\subsection{Kết quả trên nhóm câu đố $4 \times 4$}
 \label{subsec:ket-qua-4x4}
-% Bảng số liệu và nhận xét kết quả trên nhóm câu đố 4x4.
+Khi chuyển sang lưới $4 \times 4$ gồm 16 nghi phạm, không gian trạng thái mở rộng lên $2^{16} = 65,536$. Do các vùng tham chiếu mở rộng (hàng/cột gồm 4 ô, vùng lân cận lên đến 8 ô), số biến phụ tăng lên từ 157 đến 172 biến và số mệnh đề CNF đạt xấp xỉ 500 đến 545 mệnh đề. Tác tử thực hiện 14 bước lật bài tất định và hoàn tất giải toàn bộ bàn cờ trong khoảng thời gian từ $61.6$ đến $86.0$ ms, duy trì tốc độ đáp ứng hoàn hảo cho giao diện người dùng theo thời gian thực.
 
-\subsection{Kết quả trên câu đố 5x5}
+\subsection{Kết quả trên câu đố thử tải cực hạn $5 \times 5$}
 \label{subsec:ket-qua-5x5}
-% Bảng số liệu và nhận xét kết quả trên câu đố thử tải 5x5.
+Hai màn chơi thử tải $5 \times 5$ (\texttt{5x5\_mastermind} và \texttt{5x5\_syndicate}) đại diện cho độ phức tạp cao nhất của bài toán với $2^{25} \approx 33.5$ triệu trạng thái khả dĩ. Hệ thống sinh tự động tới gần 300 biến phụ và gần 1,000 mệnh đề CNF. 
+Dù phải thực hiện tới 299 lượt gọi SAT và gần 4,000 lượt lan truyền đơn vị, tổng thời gian phá án của tác tử vẫn chỉ mất vỏn vẹn xấp xỉ $0.2$ đến $0.25$ giây ($206$ đến $254$ ms). Đây là minh chứng rõ nét cho tính tối ưu của cơ chế phân loại ô dựa trên mô hình nhân chứng (Witness Model) kết hợp với cấu trúc phân nhánh ưu tiên biến chính.
 
-\section{Phân tích và nhận xét}
+\section{Phân tích và nhận xét chuyên sâu}
 \label{sec:phan-tich-nhan-xet}
-% Phân tích hiệu năng bộ giải, số biến, số mệnh đề, các trường hợp bế tắc hoặc mâu thuẫn.
+
+\subsection{Độ phức tạp không gian và hiệu quả mã hóa}
+Số lượng biến và mệnh đề tăng trưởng có kiểm soát theo hàm đa thức bậc thấp đối với kích thước vùng tham chiếu. Cụ thể, kỹ thuật đếm ngưỡng tuần tự (Sequential Counter) duy trì số biến phụ $O(m \cdot k)$ và số mệnh đề $O(m \cdot k)$ với $m$ là độ dài vùng và $k$ là ngưỡng đếm, thay vì bị bùng nổ tổ hợp $O\left(\binom{m}{k}\right)$ như phương pháp tổ hợp trực tiếp thông thường.
+
+\subsection{Hiệu năng thời gian và vai trò của lan truyền đơn vị}
+Một quan sát thực nghiệm đặc biệt quan trọng là chỉ số \textbf{Backtracks luôn duy trì bằng 0} trên toàn bộ các màn chơi câu đố hợp lệ. Điều này phản ánh hai yếu tố bản chất:
+\begin{enumerate}
+    \item Bản thân các câu đố Griductive hợp lệ được thiết kế để luôn tồn tại một chuỗi suy luận suy diễn tất định ở từng bước (người chơi không bao giờ phải đoán).
+    \item Cơ chế lan truyền đơn vị (\textit{Unit Propagation}) của thuật toán DPLL kết hợp với cấu trúc đồ thị suy diễn của mạch đếm ngưỡng đã lập tức cô lập và gán cứng các biến cơ sở ngay tại mức gốc của cây tìm kiếm, triệt tiêu hoàn toàn nhu cầu phải phân nhánh đoán mò và quay lui.
+\end{enumerate}
+
+\subsection{Khả năng ứng phó an toàn trên các trường hợp bất thường}
+Các bài thử nghiệm trên nhóm Negative Cases chứng minh tính tin cậy tuyệt đối của hệ thống:
+\begin{itemize}
+    \item \textbf{Xử lý bế tắc (\texttt{3x3\_stuck}):} Tác tử chỉ thực hiện đúng 1 bước lật bài tất yếu ban đầu, sau đó phát hiện toàn bộ các ô còn lại đều có trạng thái suy luận là \texttt{UNKNOWN}. Tác tử dừng lại an toàn (\texttt{STUCK}) sau $1.06$ ms, bảo đảm nguyên tắc không đoán mò.
+    \item \textbf{Phát hiện đa nghiệm (\texttt{3x3\_multi}):} Thuật toán \texttt{check\_uniqueness} chỉ mất $7.82$ ms để phát hiện câu đố tồn tại hai mô hình chân trị khác nhau, cung cấp bằng chứng phản nghiệm rõ ràng.
+    \item \textbf{Chặn đứng mâu thuẫn (\texttt{3x3\_inconsistent}):} Cơ sở tri thức $KB_0$ ban đầu bị phát hiện không thỏa được ngay ở lần gọi SAT đầu tiên ($0.5$ ms), hệ thống từ chối nhận lệnh và không đưa ra bất kỳ phán quyết sai lệch nào.
+\end{itemize}
 
 \section{Giới hạn thực nghiệm}
 \label{sec:gioi-han-thuc-nghiem}
-% Nêu các giới hạn trong thiết lập thực nghiệm và phạm vi đánh giá của đồ án.
+
+Mặc dù hệ thống đạt hiệu năng vượt bậc, thiết lập thực nghiệm vẫn tồn tại một số giới hạn nhất định:
+\begin{itemize}
+    \item Môi trường thực thi thuần túy trên trình thông dịch CPython tiêu tốn chi phí quản lý đối tượng cấp phát động cao hơn so với các ngôn ngữ biên dịch hệ thống tĩnh như C/C++ hoặc Rust.
+    \item Giới hạn đánh giá tập trung vào các câu đố suy luận tất định không đoán mò với kích thước tối đa $5 \times 5$; chưa mở rộng đánh giá trên các dạng bảng lưới khổng lồ ($N \ge 10$) hoặc các câu đố mở đòi hỏi chiến lược tìm kiếm nhánh cận sâu.
+\end{itemize}

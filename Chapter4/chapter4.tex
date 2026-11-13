@@ -294,4 +294,123 @@ Cách đếm toàn bộ nghiệm có thể tốn số lần gọi bộ giải t�
 
 \section{Vòng lặp suy luận của tác tử logic}
 \label{sec:vong-lap-suy-luan}
-% Trình bày vòng lặp suy luận không đoán mò, cập nhật cơ sở tri thức và cơ chế gợi ý nước đi.
+
+Tác tử suy luận logic (\texttt{LogicAgent}) là thành phần đóng vai trò trung tâm trong việc tự động giải quyết câu đố Griductive. Tác tử hoạt động hoàn toàn dựa trên cổng giao tiếp suy luận (\texttt{GamePort}) và bộ phân loại trạng thái logic (\texttt{EntailmentClassifier}), tuân thủ tuyệt đối các nguyên tắc thiết kế kiến trúc: không truy cập thông tin ẩn, suy luận tất định và không bao giờ phán đoán may rủi.
+
+\subsection{Nguyên tắc suy luận không đoán mò (No-Guess Policy)}
+\label{subsec:no-guess-policy}
+
+Nguyên tắc cốt lõi chi phối mọi hành vi của tác tử là: \textbf{chỉ đưa ra phán quyết khi và chỉ khi thân phận của ô cờ là một hệ quả logic tất yếu ($KB_t \models \ell$)}. Cụ thể:
+\begin{itemize}
+    \item Nếu một ô cờ có trạng thái phân loại là \textsc{Unknown} (cả hai khả năng Tội phạm và Vô tội đều thỏa mãn $KB_t$), tác tử tuyệt đối không được phép "thử vận may" bằng cách chọn ngẫu nhiên một trong hai giá trị.
+    \item Nếu tại một thời điểm $t$, toàn bộ các ô cờ chưa lật đều có trạng thái là \textsc{Unknown}, tác tử nhận diện rằng chuỗi suy luận đã rơi vào trạng thái bế tắc logic (\textsc{Stuck}) và lập tức dừng lại, trả về kết quả an toàn thay vì tiếp tục phân nhánh tìm kiếm mò mẫm.
+    \item Cơ chế này bảo đảm rằng mọi phán quyết được gửi tới cổng trò chơi đều được chứng minh bằng toán học 100\%, ngăn ngừa tối đa nguy cơ bị phạt điểm hoặc nhận phán quyết sai do suy đoán vô căn cứ.
+\end{itemize}
+
+\subsection{Một bước suy luận đơn lẻ và trật tự chọn ô tất định}
+\label{subsec:single-step-deduction}
+
+Tại mỗi bước suy luận đơn lẻ, phương thức \texttt{step(port)} thực hiện một chu kỳ suy diễn khép kín gồm các giai đoạn sau:
+
+\begin{enumerate}
+    \item \textbf{Thu thập trạng thái công khai:} Lấy ảnh chụp trạng thái công khai $S_t = \text{port.get\_public\_state()}$. Nếu tập hợp các ô chưa lật $S_t.\text{unsolved}$ rỗng, trò chơi đã hoàn thành.
+    \item \textbf{Phân loại trạng thái logic:} Gọi bộ phân loại suy diễn $\textsc{ClassifyState}(S_t)$ để thu được báo cáo phân loại trạng thái. Nếu $KB_t$ rơi vào trạng thái mâu thuẫn (\textsc{Inconsistent}) hoặc quá thời gian (\textsc{Timeout}), tác tử lập tức ghi nhận lỗi và dừng lại.
+    \item \textbf{Lọc tập ô bị ép buộc (Forced cells):} Tập hợp toàn bộ các ô cờ chưa lật có thân phận đã được chứng minh bắt buộc:
+    \[
+    \mathcal{F} = \{c \in S_t.\text{unsolved} \mid \text{report.by\_cell}[c] \in \{\text{Criminal}, \text{Innocent}\}\}
+    \]
+    \item \textbf{Lựa chọn tất định theo thứ tự hàng trước (Row-Major Order):}
+    Trong trường hợp có nhiều hơn một ô cờ cùng được chứng minh đồng thời ($|\mathcal{F}| > 1$), tác tử áp dụng quy tắc ưu tiên tất định: luôn chọn ô cờ có vị trí xuất hiện sớm nhất theo thứ tự quét từ trên xuống dưới, từ trái sang phải:
+    \[
+    c^* = \arg\min_{(r, c) \in \mathcal{F}} (r \cdot n + c)
+    \]
+    Quy tắc này bảo đảm tính nhất quán tuyệt đối: với cùng một trạng thái bàn cờ ban đầu, tác tử luôn thực hiện một chuỗi các bước đi duy nhất và có thể tái lập hoàn toàn trong các bài kiểm thử.
+    \item \textbf{Gửi phán quyết nguyên tử kèm token:} Tác tử gửi phán quyết của ô $c^*$ tới cổng trò chơi kèm theo thẻ trạng thái mong đợi:
+    \[
+    \text{outcome} = \text{port.submit\_verdict}(c^*, v^*, \text{expected\_token} = S_t.\text{token})
+    \]
+    Việc đối soát \texttt{expected\_token} bảo đảm tính nguyên tử: nếu trạng thái bàn cờ đã bị thay đổi ngoài ý muốn bởi tiến trình khác, phán quyết sẽ bị từ chối bằng lỗi trạng thái lỗi thời (\texttt{StaleStateError}).
+    \item \textbf{Ghi nhận vết suy luận (\textit{Deduction Trace}):} Toàn bộ thông tin của bước đi gồm số thứ tự bước, tọa độ ô $c^*$, phán quyết $v^*$, phản hồi chấp nhận từ động cơ, gợi ý mới được mở ra và thống kê truy vấn SAT được đóng gói vào đối tượng \texttt{StepResult} để phục vụ công tác gỡ lỗi, kiểm định và hiển thị trực quan.
+\end{enumerate}
+
+Thuật toán~\ref{alg:deductive-agent-step} mô tả chi tiết quy trình thực thi một bước của tác tử.
+
+\begin{algorithm}[H]
+\caption{Một bước suy luận của tác tử \textsc{DeductiveLogicAgentStep}}
+\label{alg:deductive-agent-step}
+\begin{algorithmic}[1]
+\REQUIRE Cổng giao tiếp trò chơi $port$, bộ phân loại trạng thái $classifier$
+\ENSURE Kết quả bước đi $step\_result$, hoặc trạng thái kết thúc (\textsc{Solved}, \textsc{Stuck}, \textsc{Inconsistent}, \textsc{Timeout})
+\STATE $S \leftarrow port.\text{get\_public\_state}()$
+\IF{$S.\text{unsolved} = \emptyset$}
+    \RETURN Trạng thái \textsc{Solved}
+\ENDIF
+\STATE $report \leftarrow classifier.\text{classify\_state}(S)$
+\IF{$report.\text{status} = \textsc{Inconsistent}$}
+    \RETURN Trạng thái \textsc{Inconsistent}
+\ELSIF{$report.\text{status} = \textsc{Timeout}$}
+    \RETURN Trạng thái \textsc{Timeout}
+\ENDIF
+\STATE $\mathcal{F} \leftarrow [\,]$ \COMMENT{Danh sách các ô bị ép buộc theo thứ tự hàng trước}
+\FORALL{$(r, c) \in S.\text{unsolved}$ theo thứ tự hàng trước}
+    \IF{$report.\text{by\_cell}[(r, c)] \in \{\textsc{Criminal}, \textsc{Innocent}\}$}
+        \STATE Thêm $((r, c), report.\text{by\_cell}[(r, c)])$ vào $\mathcal{F}$
+    \ENDIF
+\ENDFOR
+\IF{$\mathcal{F}$ rỗng}
+    \RETURN Trạng thái \textsc{Stuck} \COMMENT{Không có ô nào suy luận được, dừng lại an toàn}
+\ENDIF
+\STATE $((r^*, c^*), v^*) \leftarrow \mathcal{F}[0]$ \COMMENT{Chọn ô đầu tiên theo trật tự hàng trước}
+\STATE $outcome \leftarrow port.\text{submit\_verdict}((r^*, c^*), v^*, S.\text{token})$
+\STATE $step\_result \leftarrow \text{Khởi tạo } \texttt{StepResult}((r^*, c^*), v^*, outcome, report)$
+\RETURN $step\_result$
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Vòng lặp giải tự động toàn cục và vết suy luận}
+\label{subsec:full-loop}
+
+Vòng lặp tự động toàn cục của tác tử được hiện thực trong phương thức \texttt{run(port, max\_steps)}. Tại mỗi vòng lặp, tác tử gọi hàm \texttt{step(port)} và tích lũy vết suy luận cho đến khi gặp một trong các điều kiện dừng xác định trước.
+
+\begin{algorithm}[H]
+\caption{Vòng lặp giải toàn cục \textsc{DeductiveLogicAgentRun}}
+\label{alg:deductive-agent-run}
+\begin{algorithmic}[1]
+\REQUIRE Cổng giao tiếp $port$, giới hạn số bước $max\_steps$
+\ENSURE Bản ghi kết quả toàn cục \texttt{RunResult}
+\STATE $trace \leftarrow [\,]$; $step\_count \leftarrow 0$
+\WHILE{$step\_count < max\_steps$}
+    \STATE $res \leftarrow \textsc{DeductiveLogicAgentStep}(port, classifier)$
+    \IF{$res$ là kết quả hoàn thành hoặc lỗi dừng (\textsc{Solved}, \textsc{Stuck}, \textsc{Inconsistent}, \textsc{Timeout})}
+        \STATE $final\_state \leftarrow port.\text{get\_public\_state}()$
+        \RETURN \texttt{RunResult}($res$, $trace$, $final\_state$)
+    \ENDIF
+    \STATE Thêm $res$ vào danh sách $trace$
+    \STATE $step\_count \leftarrow step\_count + 1$
+\ENDWHILE
+\RETURN \texttt{RunResult}(\textsc{Timeout}, $trace$, $port.\text{get\_public\_state}()$)
+\end{algorithmic}
+\end{algorithm}
+
+Kết quả của toàn bộ quá trình chạy được chuẩn hóa trong đối tượng \texttt{RunResult}, lưu trữ:
+\begin{itemize}
+    \item Trạng thái dừng cuối cùng (\texttt{status}): Một trong các giá trị \textsc{Solved}, \textsc{Stuck}, \textsc{Inconsistent}, \textsc{Timeout}, hoặc \textsc{Rejected}.
+    \item Toàn bộ chuỗi vết suy luận (\texttt{steps}): Danh sách tuần tự các đối tượng \texttt{StepResult}.
+    \item Trạng thái bàn cờ cuối cùng (\texttt{final\_state}): Ảnh chụp bàn cờ khi dừng.
+    \item Thống kê tổng hợp: Tổng số bước đi, tổng số lần gọi bộ giải SAT và tổng số phép lan truyền đơn vị đã tích lũy.
+\end{itemize}
+
+\subsection{Cơ chế gợi ý nước đi (Hint)}
+\label{subsec:hint-mechanism}
+
+Bên cạnh chế độ tự động giải toàn cục, tác tử cung cấp chức năng hỗ trợ người chơi thông qua cơ chế gợi ý nước đi (\texttt{hint}). Khi người chơi gặp khó khăn và yêu cầu trợ giúp, phương thức \texttt{hint(state)} tiến hành phân tích trạng thái công khai $S_t$ mà không thực hiện hành vi phán quyết hay làm thay đổi bàn cờ.
+
+Quy trình gợi ý nước đi diễn ra như sau:
+\begin{enumerate}
+    \item Gọi bộ phân loại trạng thái $\textsc{ClassifyState}(S_t)$ trên ảnh chụp công khai hiện tại.
+    \item Lọc và tìm ô cờ đầu tiên bị ép buộc theo thứ tự hàng trước $c^* \in \mathcal{F}$. Nếu không tìm thấy ô nào bị ép buộc, cơ chế gợi ý thông báo không có bước đi tất định khả dụng.
+    \item \textbf{Truy vết các manh mối liên quan:} Sử dụng hàm phân tích hình học \texttt{referenced\_cells} (trong mô-đun \texttt{common.regions}) để xác định tập hợp các ô cờ công khai mang gợi ý có vùng tham chiếu giao cắt với vị trí ô $c^*$. Đây chính là các dữ kiện tiên đề cấu thành nên chứng minh logic cho ô $c^*$.
+    \item Đóng gói và trả về đối tượng \texttt{Hint(token, cell, verdict, clue\_ids)}, bao gồm tọa độ ô cần đi tiếp, danh tính bắt buộc và danh sách các mã gợi ý làm bằng chứng.
+\end{enumerate}
+
+Chức năng gợi ý đóng vai trò là một trợ thủ suy luận thuần túy (\textit{Pure Query}), bảo đảm tính toàn vẹn của trạng thái trò chơi và cung cấp căn cứ minh bạch giúp người chơi hiểu rõ lý do đằng sau mỗi bước suy luận.

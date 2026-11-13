@@ -25,7 +25,7 @@ Bảng dưới đây tổng hợp sự phân công vai trò, khối lượng cô
 \hline
 4 & \textbf{Nguyễn Cao Bản} & 24122029 & Thiết kế và nâng cấp giao diện đồ họa Pygame, hệ thống hiệu ứng hình ảnh/âm thanh, bảng điều khiển bộ giải AI, mô phỏng bước đi và kiểm thử chấp nhận giao diện. & \textbf{100\%} \\
 \hline
-5 & \textbf{Trần Lê Minh Đức} & 24122031 & Hiện thực thuật toán BFS và DFS; tối ưu hóa cơ chế băm trạng thái (\texttt{state hashing}) và kiểm soát chu trình; xây dựng bộ kiểm thử tự động (\texttt{pytest}) và viết báo cáo lý thuyết. & \textbf{100\%} \\
+5 & \textbf{Trần Lê Minh Đức} & 24122031 & Hiện thực tác tử suy luận logic (\texttt{LogicAgent}), nguyên tắc không đoán mò, cơ chế gợi ý (\texttt{hint}) và truy vết suy luận; cài đặt thuật toán kiểm tra tính duy nhất (\texttt{check\_uniqueness}); xây dựng hệ thống thực nghiệm đánh giá hiệu năng (Chương 5). & \textbf{100\%} \\
 \hline
 \end{tabularx}
 \endgroup
@@ -86,10 +86,11 @@ Bảng dưới đây tổng hợp sự phân công vai trò, khối lượng cô
 \begin{itemize}
     \item \textbf{Nhiệm vụ chuyên môn:}
     \begin{itemize}
-        \item Nghiên cứu và hiện thực hai thuật toán Tìm kiếm theo chiều rộng (BFS) và Tìm kiếm theo chiều sâu (DFS).
-        \item Tối ưu hóa cơ chế băm trạng thái (\texttt{state hashing}) và quản lý tập trạng thái đã thăm (\texttt{visited set}), bảo đảm BFS luôn trả về nghiệm có số bước ngắn nhất và DFS không bị rơi vào chu trình lặp vô hạn.
-        \item Xây dựng bộ kiểm thử tự động (\texttt{pytest}) để tự động phát lại (\textit{replay}) kiểm chứng tính hợp lệ của lời giải cũng như xử lý an toàn các trường hợp bản đồ vô nghiệm.
-        \item Biên soạn cơ sở lý thuyết, mã giả và phân tích độ phức tạp của BFS, DFS trong Chương 4 cùng phần phương pháp luận thực nghiệm trong Chương 5.
+        \item Thiết kế và hiện thực tác tử suy luận logic tự động (\texttt{LogicAgent}) theo nguyên tắc suy luận tất định không đoán mò (\textit{no-guess deduction policy}).
+        \item Xây dựng thuật toán thực thi bước suy luận đơn lẻ (\texttt{step}) với cơ chế lựa chọn ô cờ bị ép buộc tất định theo thứ tự hàng trước (\textit{row-major order}) và vòng lặp giải toàn cục (\texttt{run}).
+        \item Phát triển cơ chế gợi ý nước đi thông minh (\texttt{hint}) và truy vết chuỗi dữ kiện liên quan (\texttt{clue\_ids}) thông qua hàm phân tích vùng hình học.
+        \item Hiện thực thuật toán kiểm tra tính duy nhất của nghiệm ngoại tuyến (\texttt{check\_uniqueness}) độc lập không sử dụng đáp án ẩn, chứng minh tính đơn nhất chỉ với tối đa $1 + n^2$ lần gọi SAT.
+        \item Thiết kế và triển khai kịch bản thực nghiệm đo lường 6 chỉ số trên toàn bộ 10 hồ sơ vụ án chuẩn và biên soạn toàn bộ Chương 5 (Thực nghiệm và Đánh giá) cùng các mục liên quan trong Chương 4.
     \end{itemize}
     \item \textbf{Mức độ hoàn thành:} \textbf{100\%} (Đóng góp đồng đều: 20\% khối lượng toàn đồ án).
 \end{itemize}
