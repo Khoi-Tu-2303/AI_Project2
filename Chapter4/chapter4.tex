@@ -157,11 +157,140 @@ Bước hoàn tác về trạng thái gốc luôn được thực hiện, kể c
 
 \section{Thuật toán suy diễn logic và phân loại trạng thái}
 \label{sec:suy-dien-logic}
-% Trình bày nguyên lý hệ quả logic qua bài toán không thỏa được và quy trình phân loại trạng thái.
 
+Bộ giải DPLL ở Mục~\ref{sec:thuat-toan-dpll} chỉ trả lời câu hỏi "công thức có thỏa được hay không". Nguyên lý hệ quả logic bằng phương pháp phản chứng và ba nhãn phân loại của một ô (Tội phạm, Vô tội, Chưa xác định) đã được phát biểu ở Mục~\ref{sec:bien-menh-de-kb}. Mục này không nhắc lại mà chỉ trình bày cách hiện thực chúng trên bộ giải DPLL và cách giảm số lần gọi bộ giải.
+
+\subsection{Quy về các lần gọi bộ giải}
+\label{subsec:he-qua-logic}
+
+Theo nguyên lý phản chứng, $KB \models \ell \iff KB \land \neg\ell$ không thỏa được, với $\ell$ là literal của một biến cơ sở. Mỗi câu hỏi suy diễn do đó là \emph{một} lần gọi bộ giải với đúng một giả định $\neg\ell$: kết quả UNSAT nghĩa là $\ell$ được chứng minh, kết quả SAT nghĩa là chưa chứng minh được và mô hình trả về là một phản ví dụ.
+
+Cần kiểm tra tính thỏa được của $KB$ trước mọi phép phân loại, vì nếu $KB$ không thỏa được thì $KB \land \neg\ell$ cũng không thỏa được với mọi $\ell$, tức là $KB$ ``suy ra mọi thứ'' và kết luận như vậy vô nghĩa. Khi đó hệ thống báo trạng thái \textsc{Inconsistent} và không đưa ra phán quyết nào.
+
+\subsection{Phân loại một ô bằng hai truy vấn}
+\label{subsec:phan-loai-mot-o}
+
+Với ô $i$ ứng với biến $v$, thuật toán dưới đây hiện thực trực tiếp ba nhãn nói trên bằng hai truy vấn $KB \land v$ và $KB \land \neg v$, cho biết ô $i$ \emph{có thể} nhận giá trị nào.
+
+\begin{algorithm}[H]
+\caption{Phân loại một ô \textsc{ClassifyCell}}
+\label{alg:classify-cell}
+\begin{algorithmic}[1]
+\REQUIRE Cơ sở tri thức $KB$ đã nạp vào bộ giải; ô $i$ ứng với biến cơ sở $v$
+\ENSURE \textsc{Criminal}, \textsc{Innocent}, \textsc{Unknown} hoặc \textsc{Inconsistent}
+\IF{$\textsc{Solve}([\,])$ không phải SAT}
+    \RETURN \textsc{Inconsistent} \COMMENT{$KB$ mâu thuẫn}
+\ENDIF
+\STATE $c_T \leftarrow (\textsc{Solve}([v])$ là SAT$)$ \COMMENT{ô $i$ có thể là Tội phạm?}
+\STATE $c_F \leftarrow (\textsc{Solve}([\neg v])$ là SAT$)$ \COMMENT{ô $i$ có thể là Vô tội?}
+\IF{$c_T$ \AND $c_F$}
+    \RETURN \textsc{Unknown}
+\ELSIF{$c_T$}
+    \RETURN \textsc{Criminal}
+\ELSE
+    \RETURN \textsc{Innocent}
+\ENDIF
+\end{algorithmic}
+\end{algorithm}
+
+Cách làm này đúng nhưng tốn ba lần gọi bộ giải cho mỗi ô (một lần kiểm tra nhất quán và hai truy vấn). Khi phải phân loại tất cả các ô chưa lật ở mỗi bước suy luận, chi phí này có thể giảm đáng kể như trình bày dưới đây.
+
+\subsection{Phân loại đồng thời các ô chưa lật}
+\label{subsec:phan-loai-dong-thoi}
+
+Nhận xét then chốt là mô hình mà bộ giải trả về khi SAT là một phép gán \emph{đầy đủ} trên mọi biến $1..N$. Do đó mỗi mô hình tìm được là một \emph{bằng chứng} cho giá trị của \emph{mọi} ô chưa lật cùng lúc: nếu trong một mô hình ô $i$ là Tội phạm thì thân phận Tội phạm của ô $i$ chắc chắn phù hợp với $KB$, và không cần hỏi lại câu $KB \land v$. Hơn nữa, nếu qua các mô hình khác nhau ta đã quan sát được cả hai giá trị của một ô thì ô đó chắc chắn là Chưa xác định mà không cần thêm truy vấn nào. Chỉ khi một ô mới chỉ xuất hiện với một giá trị $w$, ta mới cần hỏi giá trị đối lập $\neg w$.
+
+\begin{algorithm}[H]
+\caption{Phân loại đồng thời \textsc{ClassifyCells}}
+\label{alg:classify-cells}
+\begin{algorithmic}[1]
+\REQUIRE Cơ sở tri thức $KB$ đã nạp vào bộ giải; danh sách các ô chưa lật $C$, ô $i \in C$ ứng với biến cơ sở $v_i$
+\ENSURE Nhãn của từng ô thuộc $C$, hoặc \textsc{Inconsistent}
+\STATE $(s, M) \leftarrow \textsc{Solve}([\,])$
+\IF{$s$ không phải SAT}
+    \RETURN \textsc{Inconsistent}
+\ENDIF
+\STATE $V_i \leftarrow \{M[v_i]\}$ với mọi $i \in C$ \COMMENT{tập giá trị đã quan sát của ô $i$}
+\FORALL{$i \in C$ theo thứ tự đã cho}
+    \IF{$|V_i| = 2$}
+        \STATE $\textit{nhãn}(i) \leftarrow$ \textsc{Unknown}
+    \ELSE
+        \STATE $w \leftarrow$ phần tử duy nhất của $V_i$
+        \STATE $(s, M') \leftarrow \textsc{Solve}([\,\text{literal của } v_i \text{ ứng với giá trị } \neg w\,])$
+        \IF{$s$ là SAT}
+            \STATE $V_j \leftarrow V_j \cup \{M'[v_j]\}$ với mọi $j \in C$ \COMMENT{ghi nhận thêm bằng chứng}
+            \STATE $\textit{nhãn}(i) \leftarrow$ \textsc{Unknown}
+        \ELSIF{$w = \text{True}$}
+            \STATE $\textit{nhãn}(i) \leftarrow$ \textsc{Criminal}
+        \ELSE
+            \STATE $\textit{nhãn}(i) \leftarrow$ \textsc{Innocent}
+        \ENDIF
+    \ENDIF
+\ENDFOR
+\RETURN $\textit{nhãn}$
+\end{algorithmic}
+\end{algorithm}
+
+\textbf{Tính đúng đắn.} Một ô được gán nhãn \textsc{Unknown} khi đã có hai mô hình của $KB$ gán cho nó hai giá trị khác nhau, nên cả hai thân phận đều thực sự phù hợp với $KB$. Một ô được gán nhãn \textsc{Criminal} (hoặc \textsc{Innocent}) khi truy vấn giá trị đối lập cho kết quả UNSAT, tức là $KB \land \neg \ell$ không thỏa được, nên $KB \models \ell$. Như vậy nhãn của mỗi ô đều được chứng minh, không có nhãn nào dựa trên phỏng đoán.
+
+\textbf{Số lần gọi bộ giải.} Thuật toán gọi bộ giải một lần để lấy mô hình đầu tiên, và sau đó tối đa một lần cho mỗi ô, tức tối đa $1 + |C|$ lần, so với $1 + 2|C|$ lần nếu hỏi hai truy vấn cho từng ô.
+\subsection{Từ trạng thái công khai đến báo cáo phân loại}
+\label{subsec:tu-trang-thai-den-bao-cao}
+
+Bộ phân loại mà động cơ trò chơi sử dụng nhận vào \emph{chỉ} trạng thái công khai tại một thời điểm (các gợi ý đã lật và các thân phận đã được chứng minh) và thực hiện chuỗi bước sau:
+\begin{enumerate}
+    \item Mã hóa các gợi ý đã lật và các thân phận đã biết thành $KB_t$ ở dạng CNF theo Chương~\ref{chap:hinh-thuc-hoa}.
+    \item Dựng một bộ giải DPLL cho $KB_t$, với các biến cơ sở là biến quyết định.
+    \item Phân loại mọi ô chưa lật bằng thuật toán phân loại đồng thời ở trên.
+    \item Đóng gói kết quả thành một báo cáo mang theo định danh của đúng trạng thái đã dùng để suy diễn, để động cơ trò chơi từ chối các báo cáo cũ.
+\end{enumerate}
+Nếu $KB_t$ mâu thuẫn thì báo cáo mang trạng thái \textsc{Inconsistent} và không chứa phân loại nào cho các ô.
+
+Mỗi khi có thêm một ô được lật, hệ thống có thêm một gợi ý và một thân phận mới nên $KB_{t+1}$ khác $KB_t$; vì vậy bộ giải được dựng lại cho mỗi bước suy luận và việc tái sử dụng bộ giải chỉ diễn ra trong phạm vi một lần phân loại.
 \section{Thuật toán kiểm tra tính duy nhất của nghiệm}
 \label{sec:kiem-tra-tinh-duy-nhat}
-% Trình bày thuật toán xác định câu đố có nghiệm duy nhất trên toàn bộ tập gợi ý.
+
+Một câu đố hợp lệ phải có \emph{đúng một} nghiệm khi xét toàn bộ tập gợi ý. Nếu không có nghiệm nào, các gợi ý mâu thuẫn với nhau; nếu có nhiều nghiệm, người chơi dù suy luận đúng đến đâu cũng không thể xác định duy nhất thân phận của một số ô. Mục này trình bày thuật toán xác định số lượng nghiệm của một tập gợi ý hoàn chỉnh, được dùng để kiểm định bộ câu đố thử nghiệm.
+
+\subsection{Phát biểu bài toán}
+\label{subsec:phat-bieu-duy-nhat}
+
+Khác với việc phân loại ở mục trước, việc kiểm tra tính duy nhất là kiểm tra \emph{ngoại tuyến}: đầu vào là \emph{tất cả} các gợi ý của câu đố mà không có thân phận nào được lật sẵn, và thuật toán không cần biết nghiệm ẩn của câu đố. Gọi $KB_{\text{đủ}}$ là CNF mã hóa toàn bộ các gợi ý. Kết quả thuộc một trong ba trường hợp:
+\begin{itemize}
+    \item \textsc{None}: $KB_{\text{đủ}}$ không thỏa được, các gợi ý mâu thuẫn nhau.
+    \item \textsc{Unique}: $KB_{\text{đủ}}$ có đúng một mô hình, câu đố hợp lệ.
+    \item \textsc{Multiple}: $KB_{\text{đủ}}$ có từ hai mô hình trở lên, câu đố mơ hồ.
+\end{itemize}
+Vì các biến phụ được xác định hàm theo các biến cơ sở, hai mô hình khác nhau luôn khác nhau ở ít nhất một biến cơ sở. Do đó có thể đếm nghiệm chỉ trên $n^2$ biến cơ sở.
+
+\subsection{Thuật toán}
+\label{subsec:thuat-toan-duy-nhat}
+
+Cách đếm toàn bộ nghiệm có thể tốn số lần gọi bộ giải tỉ lệ với số nghiệm. Thuật toán dưới đây tránh điều đó bằng cách chỉ cần phân biệt ``một nghiệm'' với ``nhiều hơn một nghiệm''. Ý tưởng như sau: lấy một mô hình $M$ bất kỳ; $M$ là nghiệm duy nhất khi và chỉ khi mỗi ô bị \emph{ép} phải nhận đúng giá trị của nó trong $M$. Với mỗi ô ta hỏi liệu có mô hình nào gán cho ô đó giá trị ngược với $M$ hay không.
+
+\begin{algorithm}[H]
+\caption{Kiểm tra tính duy nhất \textsc{CheckUniqueness}}
+\label{alg:check-uniqueness}
+\begin{algorithmic}[1]
+\REQUIRE $KB_{\text{đủ}}$ mã hóa toàn bộ gợi ý, đã nạp vào bộ giải; các biến cơ sở $v = 1, \dots, n^2$
+\ENSURE \textsc{None}, \textsc{Unique} (kèm nghiệm) hoặc \textsc{Multiple} (kèm hai nghiệm khác nhau)
+\STATE $(s, M) \leftarrow \textsc{Solve}([\,])$
+\IF{$s$ không phải SAT}
+    \RETURN \textsc{None}
+\ENDIF
+\FORALL{$v = 1, \dots, n^2$}
+    \STATE $(s, M') \leftarrow \textsc{Solve}([\,\text{literal của } v \text{ ứng với giá trị } \neg M[v]\,])$
+    \IF{$s$ là SAT}
+        \RETURN \textsc{Multiple} với hai nghiệm $M$ và $M'$ \COMMENT{$M'[v] \ne M[v]$}
+    \ENDIF
+\ENDFOR
+\RETURN \textsc{Unique} với nghiệm $M$
+\end{algorithmic}
+\end{algorithm}
+
+\textbf{Tính đúng đắn.} Nếu thuật toán trả về \textsc{Multiple} thì $M$ và $M'$ đều là mô hình của $KB_{\text{đủ}}$ và khác nhau ở biến $v$, nên có ít nhất hai nghiệm; chính hai mô hình này là bằng chứng. Ngược lại, nếu có một nghiệm $M^* \ne M$ thì $M^*$ phải khác $M$ ở một biến cơ sở $v$ nào đó, khi đó truy vấn ứng với $v$ là SAT (mô hình $M^*$ làm chứng), nên thuật toán không thể trả về \textsc{Unique}. Vậy \textsc{Unique} chỉ được trả về khi $M$ là nghiệm duy nhất. Trường hợp \textsc{None} đúng theo định nghĩa của UNSAT.
+
+\textbf{Số lần gọi bộ giải.} Tối đa $1 + n^2$ lần, tức là 10, 17 và 26 lần cho bàn $3\times3$, $4\times4$ và $5\times5$, không phụ thuộc vào số lượng nghiệm.
 
 \section{Vòng lặp suy luận của tác tử logic}
 \label{sec:vong-lap-suy-luan}
