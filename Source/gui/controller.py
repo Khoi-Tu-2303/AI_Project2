@@ -28,71 +28,76 @@ from gui.clue_formatter import format_clue, format_clue_formula
 from logic.encoder import CNFEncoder
 from logic.entailment import EntailmentClassifier
 
+try:
+    from agent.logic_agent import LogicAgent
+except ImportError:  # pragma: no cover
+    LogicAgent = None  # type: ignore[assignment,misc]
+
 
 CASE_METADATA_VN: dict[str, dict[str, Any]] = {
-    "chain_demo": {
-        "code": "HỒ SƠ #01",
-        "title": "Mắt Xích Đầu Tiên",
-        "subtitle": "Khởi động kỹ năng suy luận chuỗi cơ bản (3×3)",
-        "story": "Một vụ đánh tráo tài liệu mật tại phòng lưu trữ. Từ lời khai duy nhất của Alice (A1), hãy lần theo chuỗi suy luận tất yếu để vạch mặt từng nghi phạm.",
-        "difficulty": 1,
-        "badge": "Nhập môn 3×3",
-    },
-    "3x3_chain": {
-        "code": "HỒ SƠ #01",
-        "title": "Mắt Xích Đầu Tiên",
-        "subtitle": "Khởi động kỹ năng suy luận chuỗi cơ bản (3×3)",
-        "story": "Một vụ đánh tráo tài liệu mật tại phòng lưu trữ. Từ lời khai duy nhất của Alice (A1), hãy lần theo chuỗi suy luận tất yếu để vạch mặt từng nghi phạm.",
-        "difficulty": 1,
-        "badge": "Nhập môn 3×3",
-    },
     "3x3_classic": {
-        "code": "HỒ SƠ #02",
+        "code": "HỒ SƠ #01",
         "title": "Đêm Gala Thượng Lưu",
-        "subtitle": "Suy luận theo Hàng, Cột và Láng giềng (3×3)",
-        "story": "Chiếc vòng cổ kim cương biến mất ngay giữa bữa tiệc. An (Thám tử) và Minh (Phi công) đã lộ diện thân phận — hãy giải mã lời khai của họ để tìm ra toàn bộ đồng phạm.",
+        "subtitle": "Suy diễn phản chứng tam giác từ 1 manh mối (3×3)",
+        "story": "Viên kim cương biến mất giữa dạ tiệc bảo tàng nghệ thuật. Chỉ từ lời khai ban đầu của Thanh tra ngầm Hải (B2), hãy kết hợp phản chứng đa manh mối để lật mặt toàn bộ đồng phạm.",
         "difficulty": 1,
         "badge": "Cơ bản 3×3",
+    },
+    "3x3_extensions": {
+        "code": "HỒ SƠ #02",
+        "title": "Chuyến Tàu Đêm Phương Đông",
+        "subtitle": "Mệnh đề Chẵn/Lẻ PARITY & Đối chiếu vùng COMPARE (3×3)",
+        "story": "Mật thư ngoại giao bị đánh cắp trên chuyến tàu tốc hành xuyên biên giới. Từ Tùy viên Duy (C1), hãy giải mã các ràng buộc chẵn/lẻ và đối chiếu hàng – cột hóc búa.",
+        "difficulty": 2,
+        "badge": "Mở rộng 3×3",
     },
     "4x4_detective": {
         "code": "HỒ SƠ #03",
         "title": "Chuyên Án Dinh Thự Cổ",
-        "subtitle": "Đội hình 16 nghi phạm đa ngành nghề (4×4)",
-        "story": "16 vị khách bị cô lập trong dinh thự cổ sau cơn bão lớn. Kết hợp các ràng buộc số lượng trên từng hàng và cột để lật tẩy mạng lưới ngầm.",
+        "subtitle": "16 nghi phạm trên đảo sương mù — Quay lui DPLL (4×4)",
+        "story": "16 người bị cô lập trong dinh thự cổ sau cơn bão lớn. Xuất phát duy nhất từ Quản gia Kiên (C2), truy vết đan chéo 15 bước suy luận không một lời khai thừa.",
         "difficulty": 2,
         "badge": "Thám tử 4×4",
     },
     "4x4_crossfire": {
         "code": "HỒ SƠ #04",
         "title": "Mạng Lưới Giao Thoa",
-        "subtitle": "Giao thoa Hàng - Cột với PARITY & COMPARE (4×4)",
-        "story": "Những lời khai đan chéo giữa Cột A và Hàng 1 tạo nên vùng giao thoa hóc búa. Chỉ có suy diễn CNF chuẩn xác mới không rơi vào bẫy suy đoán.",
+        "subtitle": "Thương cảng sương mù — Giao thoa PARITY & COMPARE (4×4)",
+        "story": "Đường dây buôn lậu cổ vật ẩn mình tại bến cảng đêm. Chỉ từ Đặc vụ cảng vụ Mạnh (B3), hãy bóc tách mạng lưới giao thoa giữa các vùng láng giềng và hàng cột.",
         "difficulty": 3,
         "badge": "Chuyên sâu 4×4",
     },
     "5x5_mastermind": {
         "code": "HỒ SƠ #05",
         "title": "Trùm Cuối Tuyệt Mật",
-        "subtitle": "Đại án 25 nghi phạm — Thử thách đỉnh cao (5×5)",
-        "story": "Hồ sơ lớn của Cục Điều Tra với 25 nghi phạm từ Ngoại giao, Pháp y đến Chuyên gia mật mã. Kiểm chứng sức mạnh lan truyền đơn vị (Unit Propagation) trên lưới 5×5.",
+        "subtitle": "Hội nghị thượng đỉnh — Đại án 25 nghi phạm (5×5)",
+        "story": "Âm mưu rò rỉ tài liệu mật tại Hội nghị Thượng đỉnh Quốc tế. Bắt đầu từ tâm bàn cờ Thanh tra liên bang Nga (C3), vượt qua 24 bước suy diễn phản chứng đan chéo.",
         "difficulty": 3,
         "badge": "Siêu cấp 5×5",
     },
     "5x5_syndicate": {
         "code": "HỒ SƠ #06",
         "title": "Mạng Lưới Ngầm 5×5",
-        "subtitle": "Tổ hợp 8 mẫu lời khai & Giao thoa vùng trên lưới 5×5",
-        "story": "Chuyên án 5×5 thứ hai tích hợp đầy đủ các ràng buộc Chẵn/Lẻ (PARITY), Đối chiếu vùng (COMPARE) và Láng giềng 8 hướng trên 25 nghi phạm với nghiệm duy nhất.",
+        "subtitle": "Sòng bạc Hoàng gia — Đỉnh cao suy diễn đa tầng (5×5)",
+        "story": "Tổ chức tội phạm ngầm ẩn náu trong Câu lạc bộ Jazz & Sòng bạc Hoàng gia. Từ Thám tử chìm Hồng (D2), kết hợp đủ hệ mệnh đề mở rộng để phá giải đại án 25 người.",
         "difficulty": 3,
         "badge": "Siêu cấp 5×5",
     },
-    "3x3_extensions": {
-        "code": "MỞ RỘNG #07",
-        "title": "Mật Mã Chẵn Lẻ & Đối Chiếu",
-        "subtitle": "Mệnh đề mở rộng PARITY & COMPARE (3×3)",
-        "story": "Hung thủ để lại những lời khai mã hóa dưới dạng tính chẵn/lẻ (PARITY) và đối chiếu tương quan số lượng giữa các hàng cột (COMPARE).",
-        "difficulty": 2,
-        "badge": "Mở rộng 3×3",
+    "chain_demo": {
+        "code": "MẪU THỬ #00",
+        "title": "Mắt Xích Đầu Tiên (Fixture)",
+        "subtitle": "Hồ sơ mẫu kiểm thử chuỗi suy luận cơ bản (3×3)",
+        "story": "Hồ sơ mẫu chuẩn dùng cho kiểm thử tự động: từ lời khai của Alice (A1), lần theo chuỗi suy luận tất yếu qua 8 nghi phạm.",
+        "difficulty": 1,
+        "badge": "Mẫu chuẩn 3×3",
+    },
+    "3x3_chain": {
+        "code": "MẪU THỬ #00",
+        "title": "Mắt Xích Đầu Tiên (Fixture)",
+        "subtitle": "Hồ sơ mẫu kiểm thử chuỗi suy luận cơ bản (3×3)",
+        "story": "Hồ sơ mẫu chuẩn dùng cho kiểm thử tự động: từ lời khai của Alice (A1), lần theo chuỗi suy luận tất yếu qua 8 nghi phạm.",
+        "difficulty": 1,
+        "badge": "Mẫu chuẩn 3×3",
     },
     "3x3_stuck": {
         "code": "KIỂM THỬ #07",
@@ -122,15 +127,13 @@ CASE_METADATA_VN: dict[str, dict[str, Any]] = {
 
 
 def _create_default_classifier() -> Classifier:
-    try:
-        from agent.logic_agent import LogicAgent  # type: ignore[import-not-found]
-
-        agent = LogicAgent()
-        if callable(agent):
-            return agent
-    except Exception:
-        pass
     return EntailmentClassifier()
+
+
+def _create_logic_agent(classifier: Classifier) -> Any:
+    if LogicAgent is not None:
+        return LogicAgent(classifier=classifier)
+    return None
 
 
 @dataclass(frozen=True)
@@ -181,6 +184,7 @@ class GUIController:
         puzzles_dir: Path | None = None,
     ) -> None:
         self._classifier: Classifier = classifier if classifier is not None else _create_default_classifier()
+        self._agent: Any = _create_logic_agent(self._classifier)
         self._engine: GameEngine | None = None
         self._current_puzzle_path: Path | None = None
         self._selected_clue_cell: Cell | None = None
@@ -193,6 +197,10 @@ class GUIController:
         if puzzles_dir is None:
             puzzles_dir = Path(__file__).resolve().parent.parent / "puzzles"
         self._puzzles_dir = puzzles_dir
+
+    @property
+    def agent(self) -> Any:
+        return self._agent
 
     @property
     def reveal_step_by_cell(self) -> dict[Cell, int]:
@@ -302,6 +310,7 @@ class GUIController:
             self._current_puzzle_path = path
 
         self._engine = GameEngine(classifier=self._classifier)
+        self._agent = _create_logic_agent(self._classifier)
         state = self._engine.load(puzzle_in)
         self._selected_clue_cell = None
         self._active_hint = None
@@ -325,6 +334,7 @@ class GUIController:
     def restart(self) -> PublicState:
         self._require_engine()
         assert self._engine is not None
+        self._agent = _create_logic_agent(self._classifier)
         state = self._engine.restart()
         self._selected_clue_cell = None
         self._active_hint = None
@@ -408,6 +418,19 @@ class GUIController:
         outcome = self._engine.submit_verdict(cell, verdict)
         state = self._engine.get_public_state()
         self._refresh_solver_telemetry(state)
+        self._record_verdict_outcome(state_before, state, cell, verdict, outcome, actor="Người chơi")
+        return outcome
+
+    def _record_verdict_outcome(
+        self,
+        state_before: PublicState,
+        state: PublicState,
+        cell: Cell,
+        verdict: Status,
+        outcome: VerdictOutcome,
+        *,
+        actor: str = "LogicAgent",
+    ) -> None:
         verdict_vn = "VÔ TỘI" if verdict is Status.INNOCENT else "THỦ PHẠM"
 
         if outcome.result is VerdictResult.ACCEPTED:
@@ -506,7 +529,7 @@ class GUIController:
                 cell=cell,
                 verdict=verdict,
                 outcome="ACCEPTED",
-                detail=f"Chấp nhận {cell} là {verdict_vn} (đã chứng minh tất yếu). Mở lời khai {clue_id}.",
+                detail=f"[{actor}] Chấp nhận {cell} là {verdict_vn} (đã chứng minh tất yếu). Mở lời khai {clue_id}.",
                 clue_id=clue_id,
             )
         elif outcome.result is VerdictResult.NOT_PROVABLE:
@@ -515,7 +538,7 @@ class GUIController:
                 cell=cell,
                 verdict=verdict,
                 outcome="NOT_PROVABLE",
-                detail=f"Từ chối {cell} = {verdict_vn}: Chưa đủ bằng chứng suy diễn (cấm đoán mò).",
+                detail=f"[{actor}] Từ chối {cell} = {verdict_vn}: Chưa đủ bằng chứng suy diễn (cấm đoán mò).",
             )
         else:
             self._append_trace(
@@ -523,46 +546,47 @@ class GUIController:
                 cell=cell,
                 verdict=verdict,
                 outcome="CONTRADICTED",
-                detail=f"Từ chối {cell} = {verdict_vn}: Mâu thuẫn trực tiếp với các lời khai hiện tại!",
+                detail=f"[{actor}] Từ chối {cell} = {verdict_vn}: Mâu thuẫn trực tiếp với các lời khai hiện tại!",
             )
-        return outcome
 
     def get_hint(self) -> Hint | None:
-        state = self.get_public_state()
+        self._require_engine()
+        assert self._engine is not None
+        port = self._engine.get_game_port()
+        state = port.get_public_state()
         if not state.unsolved:
             self._active_hint = None
             return None
 
-        report = self._classifier(state)
-        self._refresh_solver_telemetry(state)
-        if report.status is not ReasoningStatus.READY:
-            raise ReasoningFailure(report.status, report.message)
+        if self._agent is not None:
+            hint = self._agent.hint(state)
+            self._refresh_solver_telemetry(state)
+        else:
+            report = self._classifier(state)
+            self._refresh_solver_telemetry(state)
+            if report.status is not ReasoningStatus.READY:
+                raise ReasoningFailure(report.status, report.message)
+            clue_ids = tuple(c.id for c in state.revealed_clues.values())
+            hint = None
+            for cell in state.unsolved:
+                cls_val = report.by_cell.get(cell, Classification.UNKNOWN)
+                if cls_val is Classification.CRIMINAL:
+                    hint = Hint(token=state.token, cell=cell, verdict=Status.CRIMINAL, clue_ids=clue_ids)
+                    break
+                if cls_val is Classification.INNOCENT:
+                    hint = Hint(token=state.token, cell=cell, verdict=Status.INNOCENT, clue_ids=clue_ids)
+                    break
 
-        clue_ids = tuple(c.id for c in state.revealed_clues.values())
-        for cell in state.unsolved:
-            cls_val = report.by_cell.get(cell, Classification.UNKNOWN)
-            if cls_val is Classification.INNOCENT:
-                hint = Hint(token=state.token, cell=cell, verdict=Status.INNOCENT, clue_ids=clue_ids)
-                self._active_hint = hint
-                self._append_trace(
-                    action="HINT",
-                    cell=cell,
-                    verdict=Status.INNOCENT,
-                    outcome="FORCED",
-                    detail=f"Gợi ý AI: Nghi phạm ở ô {cell} đã đủ bằng chứng chứng minh suy diễn.",
-                )
-                return hint
-            if cls_val is Classification.CRIMINAL:
-                hint = Hint(token=state.token, cell=cell, verdict=Status.CRIMINAL, clue_ids=clue_ids)
-                self._active_hint = hint
-                self._append_trace(
-                    action="HINT",
-                    cell=cell,
-                    verdict=Status.CRIMINAL,
-                    outcome="FORCED",
-                    detail=f"Gợi ý AI: Nghi phạm ở ô {cell} đã đủ bằng chứng chứng minh suy diễn.",
-                )
-                return hint
+        if hint is not None:
+            self._active_hint = hint
+            self._append_trace(
+                action="HINT",
+                cell=hint.cell,
+                verdict=hint.verdict,
+                outcome="FORCED",
+                detail=f"[LogicAgent] Gợi ý: Nghi phạm ở ô {hint.cell} đã đủ bằng chứng chứng minh suy diễn.",
+            )
+            return hint
 
         self._active_hint = None
         self._append_trace(
@@ -570,15 +594,54 @@ class GUIController:
             cell=None,
             verdict=None,
             outcome="STUCK",
-            detail="Không có ô nào bị ép buộc logic từ các lời khai hiện tại (STUCK / UNKNOWN).",
+            detail="[LogicAgent] Không có ô nào bị ép buộc logic từ các lời khai hiện tại (STUCK / UNKNOWN).",
         )
         return None
 
     def step_auto_solve(self) -> VerdictOutcome | None:
-        hint = self.get_hint()
-        if hint is None:
+        self._require_engine()
+        assert self._engine is not None
+
+        if self._agent is None:
+            hint = self.get_hint()
+            if hint is None:
+                return None
+            return self.submit_verdict(hint.cell, hint.verdict)
+
+        port = self._engine.get_game_port()
+        state_before = port.get_public_state()
+        if not state_before.unsolved:
+            self._active_hint = None
             return None
-        return self.submit_verdict(hint.cell, hint.verdict)
+
+        step_res = self._agent.step(port)
+        if step_res is None:
+            self._active_hint = None
+            self._refresh_solver_telemetry(state_before)
+            self._append_trace(
+                action="AGENT_STEP",
+                cell=None,
+                verdict=None,
+                outcome="STUCK",
+                detail="[LogicAgent] Dừng an toàn: Không có ô nào bị ép buộc logic tiếp theo (cấm đoán mò).",
+            )
+            return None
+
+        state_after = port.get_public_state()
+        self._refresh_solver_telemetry(
+            state_after,
+            extra_sat_calls=len(step_res.sat_queries),
+            extra_stats=step_res.stats,
+        )
+        self._record_verdict_outcome(
+            state_before,
+            state_after,
+            step_res.cell,
+            step_res.verdict,
+            step_res.outcome,
+            actor="LogicAgent",
+        )
+        return step_res.outcome
 
     def auto_solve_all(self, max_steps: int = 100) -> list[VerdictOutcome]:
         outcomes: list[VerdictOutcome] = []
@@ -609,9 +672,29 @@ class GUIController:
             runtime_ms=0.0,
         )
 
-    def _refresh_solver_telemetry(self, state: PublicState) -> None:
+    def _refresh_solver_telemetry(
+        self,
+        state: PublicState,
+        *,
+        extra_sat_calls: int | None = None,
+        extra_stats: Any = None,
+    ) -> None:
         encoder = CNFEncoder(state.n)
         kb = encoder.build_kb(tuple(state.revealed_clues.values()), state.known_statuses)
+        prev = self._telemetry
+        if extra_stats is not None and extra_sat_calls is not None:
+            self._telemetry = TelemetrySnapshot(
+                num_primary=kb.num_primary,
+                num_aux=kb.num_aux,
+                num_clauses=len(kb.clauses),
+                sat_calls=prev.sat_calls + extra_sat_calls,
+                decisions=prev.decisions + extra_stats.decisions,
+                propagations=prev.propagations + extra_stats.propagations,
+                backtracks=prev.backtracks + extra_stats.backtracks,
+                runtime_ms=prev.runtime_ms + extra_stats.runtime_seconds * 1000.0,
+            )
+            return
+
         ent_stats = getattr(self._classifier, "last_stats", None)
         if ent_stats is not None and hasattr(ent_stats, "solver"):
             s = ent_stats.solver
@@ -619,22 +702,22 @@ class GUIController:
                 num_primary=kb.num_primary,
                 num_aux=kb.num_aux,
                 num_clauses=len(kb.clauses),
-                sat_calls=ent_stats.sat_calls,
-                decisions=s.decisions,
-                propagations=s.propagations,
-                backtracks=s.backtracks,
-                runtime_ms=s.runtime_seconds * 1000.0,
+                sat_calls=prev.sat_calls + ent_stats.sat_calls,
+                decisions=prev.decisions + s.decisions,
+                propagations=prev.propagations + s.propagations,
+                backtracks=prev.backtracks + s.backtracks,
+                runtime_ms=prev.runtime_ms + s.runtime_seconds * 1000.0,
             )
         else:
             self._telemetry = TelemetrySnapshot(
                 num_primary=kb.num_primary,
                 num_aux=kb.num_aux,
                 num_clauses=len(kb.clauses),
-                sat_calls=self._telemetry.sat_calls + 1,
-                decisions=self._telemetry.decisions,
-                propagations=self._telemetry.propagations,
-                backtracks=self._telemetry.backtracks,
-                runtime_ms=self._telemetry.runtime_ms,
+                sat_calls=prev.sat_calls + 1,
+                decisions=prev.decisions,
+                propagations=prev.propagations,
+                backtracks=prev.backtracks,
+                runtime_ms=prev.runtime_ms,
             )
 
     def _append_trace(

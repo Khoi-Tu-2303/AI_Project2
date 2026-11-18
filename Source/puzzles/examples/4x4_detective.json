@@ -1,215 +1,250 @@
 {
   "schema_version": 2,
+  "id": "4x4_detective",
   "n": 4,
   "characters": [
     {
       "cell": "A1",
-      "name": "An",
-      "profession": "Thám tử"
+      "name": "Anh",
+      "profession": "Thám tử tư"
     },
     {
       "cell": "B1",
-      "name": "Bình",
-      "profession": "Bác sĩ"
+      "name": "Bảo",
+      "profession": "Bác sĩ riêng"
     },
     {
       "cell": "C1",
-      "name": "Châu",
-      "profession": "Đầu bếp"
+      "name": "Chi",
+      "profession": "Thư ký di chúc"
     },
     {
       "cell": "D1",
       "name": "Dũng",
-      "profession": "Phi công"
+      "profession": "Luật sư gia tộc"
     },
     {
       "cell": "A2",
       "name": "Giang",
-      "profession": "Kỹ sư"
+      "profession": "Kiến trúc sư"
     },
     {
       "cell": "B2",
-      "name": "Hải",
-      "profession": "Nghệ sĩ"
+      "name": "Hoàng",
+      "profession": "Chủ nhân dinh thự"
     },
     {
       "cell": "C2",
-      "name": "Khánh",
-      "profession": "Bảo vệ"
+      "name": "Kiên",
+      "profession": "Quản gia trưởng"
     },
     {
       "cell": "D2",
-      "name": "Linh",
-      "profession": "Thẩm phán"
+      "name": "Lan",
+      "profession": "Đầu bếp dinh thự"
     },
     {
       "cell": "A3",
-      "name": "Minh",
-      "profession": "Dược sĩ"
+      "name": "Mai",
+      "profession": "Nhà thực vật học"
     },
     {
       "cell": "B3",
       "name": "Nam",
-      "profession": "Nhà báo"
+      "profession": "Cựu đại tá"
     },
     {
       "cell": "C3",
       "name": "Oanh",
-      "profession": "Giáo sư"
+      "profession": "Giáo sư sử học"
     },
     {
       "cell": "D3",
-      "name": "Phúc",
-      "profession": "Kiến trúc sư"
+      "name": "Phương",
+      "profession": "Họa sĩ phục chế"
     },
     {
       "cell": "A4",
-      "name": "Quân",
-      "profession": "Thuyền trưởng"
+      "name": "Quang",
+      "profession": "Người làm vườn"
     },
     {
       "cell": "B4",
-      "name": "Sơn",
-      "profession": "Nhạc sĩ"
+      "name": "Thảo",
+      "profession": "Y tá trực đêm"
     },
     {
       "cell": "C4",
-      "name": "Thảo",
-      "profession": "Thư ký"
+      "name": "Uyên",
+      "profession": "Nghệ sĩ dương cầm"
     },
     {
       "cell": "D4",
-      "name": "Uyên",
-      "profession": "Pháp y"
+      "name": "Yến",
+      "profession": "Cháu gái thừa kế"
     }
   ],
-  "initial_revealed": {
-    "A1": "CRIMINAL",
-    "D4": "INNOCENT"
-  },
   "clues": {
     "A1": {
       "id": "c_A1",
-      "type": "SAME",
-      "cells": [
-        "A1",
-        "B1"
-      ]
+      "type": "AT_LEAST",
+      "region": {
+        "kind": "NEIGHBORS",
+        "arg": "C4"
+      },
+      "k": 2
     },
     "B1": {
       "id": "c_B1",
-      "type": "EXACTLY",
+      "type": "AT_MOST",
       "region": {
-        "kind": "ROW",
-        "arg": 1
+        "kind": "NEIGHBORS",
+        "arg": "C4"
       },
       "k": 2
     },
     "C1": {
       "id": "c_C1",
-      "type": "DIFFERENT",
-      "cells": [
-        "C1",
-        "A2"
-      ]
+      "type": "AT_LEAST",
+      "region": {
+        "kind": "EXPLICIT",
+        "arg": [
+          "A1",
+          "B4"
+        ]
+      },
+      "k": 1
     },
     "D1": {
       "id": "c_D1",
       "type": "EXACTLY",
       "region": {
-        "kind": "COL",
-        "arg": "A"
+        "kind": "EXPLICIT",
+        "arg": [
+          "C2",
+          "A3",
+          "B3",
+          "B4"
+        ]
       },
-      "k": 2
+      "k": 1
     },
     "A2": {
       "id": "c_A2",
-      "type": "SAME",
-      "cells": [
-        "A3",
-        "C2"
-      ]
+      "type": "AT_LEAST",
+      "region": {
+        "kind": "EXPLICIT",
+        "arg": [
+          "D1",
+          "C4"
+        ]
+      },
+      "k": 1
     },
     "B2": {
       "id": "c_B2",
       "type": "EXACTLY",
       "region": {
-        "kind": "COL",
-        "arg": "D"
+        "kind": "EXPLICIT",
+        "arg": [
+          "B2",
+          "A3",
+          "B3",
+          "C3"
+        ]
       },
-      "k": 1
+      "k": 0
     },
     "C2": {
       "id": "c_C2",
-      "type": "DIFFERENT",
-      "cells": [
-        "C2",
-        "D2"
-      ]
+      "type": "AT_MOST",
+      "region": {
+        "kind": "EXPLICIT",
+        "arg": [
+          "C2",
+          "B3",
+          "C3"
+        ]
+      },
+      "k": 1
     },
     "D2": {
       "id": "c_D2",
-      "type": "EXACTLY",
-      "region": {
-        "kind": "ROW",
-        "arg": 2
-      },
-      "k": 2
-    },
-    "A3": {
-      "id": "c_A3",
       "type": "AT_MOST",
-      "region": {
-        "kind": "NEIGHBORS",
-        "arg": "A3"
-      },
-      "k": 2
-    },
-    "B3": {
-      "id": "c_B3",
-      "type": "EXACTLY",
-      "region": {
-        "kind": "COL",
-        "arg": "C"
-      },
-      "k": 2
-    },
-    "C3": {
-      "id": "c_C3",
-      "type": "EXACTLY",
-      "region": {
-        "kind": "ROW",
-        "arg": 4
-      },
-      "k": 2
-    },
-    "D3": {
-      "id": "c_D3",
-      "type": "AT_LEAST",
       "region": {
         "kind": "EXPLICIT",
         "arg": [
           "B4",
-          "C4",
           "D4"
         ]
       },
-      "k": 2
+      "k": 1
     },
-    "A4": {
-      "id": "c_A4",
-      "type": "FACT",
-      "cells": [
-        "A1"
-      ],
-      "status": "CRIMINAL"
-    },
-    "B4": {
-      "id": "c_B4",
+    "A3": {
+      "id": "c_A3",
       "type": "EXACTLY",
       "region": {
         "kind": "COL",
         "arg": "B"
+      },
+      "k": 0
+    },
+    "B3": {
+      "id": "c_B3",
+      "type": "AT_LEAST",
+      "region": {
+        "kind": "EXPLICIT",
+        "arg": [
+          "A1",
+          "D4"
+        ]
+      },
+      "k": 1
+    },
+    "C3": {
+      "id": "c_C3",
+      "type": "AT_MOST",
+      "region": {
+        "kind": "NEIGHBORS",
+        "arg": "D1"
+      },
+      "k": 1
+    },
+    "D3": {
+      "id": "c_D3",
+      "type": "AT_MOST",
+      "region": {
+        "kind": "EXPLICIT",
+        "arg": [
+          "C2",
+          "A4"
+        ]
+      },
+      "k": 1
+    },
+    "A4": {
+      "id": "c_A4",
+      "type": "AT_MOST",
+      "region": {
+        "kind": "EXPLICIT",
+        "arg": [
+          "B1",
+          "C2",
+          "C4"
+        ]
+      },
+      "k": 1
+    },
+    "B4": {
+      "id": "c_B4",
+      "type": "AT_MOST",
+      "region": {
+        "kind": "EXPLICIT",
+        "arg": [
+          "D1",
+          "C2",
+          "B4"
+        ]
       },
       "k": 2
     },
@@ -217,37 +252,49 @@
       "id": "c_C4",
       "type": "EXACTLY",
       "region": {
-        "kind": "ROW",
-        "arg": 3
+        "kind": "EXPLICIT",
+        "arg": [
+          "A1",
+          "B1",
+          "D4"
+        ]
       },
-      "k": 1
+      "k": 2
     },
     "D4": {
       "id": "c_D4",
-      "type": "FACT",
-      "cells": [
-        "D4"
-      ],
-      "status": "INNOCENT"
+      "type": "AT_LEAST",
+      "region": {
+        "kind": "EXPLICIT",
+        "arg": [
+          "A2",
+          "B4",
+          "C4",
+          "D4"
+        ]
+      },
+      "k": 2
     }
+  },
+  "initial_revealed": {
+    "C2": "CRIMINAL"
   },
   "solution": {
     "A1": "CRIMINAL",
-    "B1": "CRIMINAL",
+    "B1": "INNOCENT",
     "C1": "INNOCENT",
-    "D1": "INNOCENT",
+    "D1": "CRIMINAL",
     "A2": "CRIMINAL",
     "B2": "INNOCENT",
-    "C2": "INNOCENT",
-    "D2": "CRIMINAL",
+    "C2": "CRIMINAL",
+    "D2": "INNOCENT",
     "A3": "INNOCENT",
     "B3": "INNOCENT",
-    "C3": "CRIMINAL",
-    "D3": "INNOCENT",
+    "C3": "INNOCENT",
+    "D3": "CRIMINAL",
     "A4": "INNOCENT",
-    "B4": "CRIMINAL",
-    "C4": "CRIMINAL",
-    "D4": "INNOCENT"
-  },
-  "id": "4x4_detective"
+    "B4": "INNOCENT",
+    "C4": "INNOCENT",
+    "D4": "CRIMINAL"
+  }
 }

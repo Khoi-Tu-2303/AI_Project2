@@ -1,155 +1,169 @@
 {
   "schema_version": 2,
+  "id": "3x3_extensions",
   "n": 3,
   "characters": [
     {
       "cell": "A1",
-      "name": "An",
-      "profession": "Thám tử"
+      "name": "Bình",
+      "profession": "Trưởng tàu"
     },
     {
       "cell": "B1",
-      "name": "Bình",
-      "profession": "Đầu bếp"
+      "name": "Cường",
+      "profession": "Lái tàu chính"
     },
     {
       "cell": "C1",
-      "name": "Châu",
-      "profession": "Thư ký"
+      "name": "Duy",
+      "profession": "Tùy viên ngoại giao"
     },
     {
       "cell": "A2",
-      "name": "Dũng",
-      "profession": "Bác sĩ"
+      "name": "Hiền",
+      "profession": "Bác sĩ quân y"
     },
     {
       "cell": "B2",
-      "name": "Giang",
-      "profession": "Kỹ sư"
+      "name": "Long",
+      "profession": "Thương gia lụa"
     },
     {
       "cell": "C2",
-      "name": "Hải",
-      "profession": "Nghệ sĩ"
+      "name": "Ngọc",
+      "profession": "Phóng viên chiến trường"
     },
     {
       "cell": "A3",
-      "name": "Khánh",
-      "profession": "Bảo vệ"
+      "name": "Phúc",
+      "profession": "Nhân viên điện tín"
     },
     {
       "cell": "B3",
-      "name": "Linh",
-      "profession": "Thẩm phán"
+      "name": "Sơn",
+      "profession": "Hầu bàn toa VIP"
     },
     {
       "cell": "C3",
-      "name": "Minh",
-      "profession": "Phi công"
+      "name": "Vân",
+      "profession": "Nữ bá tước"
     }
   ],
-  "initial_revealed": {
-    "A1": "CRIMINAL",
-    "B1": "CRIMINAL"
-  },
   "clues": {
     "A1": {
       "id": "c_A1",
-      "type": "FACT",
-      "cells": [
-        "A1"
-      ],
-      "status": "CRIMINAL"
+      "type": "COMPARE",
+      "left": {
+        "kind": "ROW",
+        "arg": 1
+      },
+      "right": {
+        "kind": "COL",
+        "arg": "B"
+      },
+      "op": "GT"
     },
     "B1": {
       "id": "c_B1",
       "type": "PARITY",
       "region": {
-        "kind": "ROW",
-        "arg": 1
+        "kind": "NEIGHBORS",
+        "arg": "A2"
       },
       "parity": "EVEN"
     },
     "C1": {
       "id": "c_C1",
-      "type": "COMPARE",
-      "left": {
-        "kind": "ROW",
-        "arg": 1
+      "type": "AT_MOST",
+      "region": {
+        "kind": "EXPLICIT",
+        "arg": [
+          "C1",
+          "A3",
+          "C3"
+        ]
       },
-      "right": {
-        "kind": "COL",
-        "arg": "A"
-      },
-      "op": "GT"
+      "k": 1
     },
     "A2": {
       "id": "c_A2",
-      "type": "EXACTLY",
+      "type": "PARITY",
       "region": {
-        "kind": "COL",
-        "arg": "B"
+        "kind": "EXPLICIT",
+        "arg": [
+          "B1",
+          "B2",
+          "A3"
+        ]
       },
-      "k": 2
+      "parity": "EVEN"
     },
     "B2": {
       "id": "c_B2",
-      "type": "PARITY",
-      "region": {
-        "kind": "ROW",
-        "arg": 2
-      },
-      "parity": "ODD"
+      "type": "DIFFERENT",
+      "cells": [
+        "A2",
+        "B2"
+      ]
     },
     "C2": {
       "id": "c_C2",
-      "type": "DIFFERENT",
-      "cells": [
-        "B2",
-        "B3"
-      ]
+      "type": "AT_LEAST",
+      "region": {
+        "kind": "EXPLICIT",
+        "arg": [
+          "C1",
+          "C2"
+        ]
+      },
+      "k": 1
     },
     "A3": {
       "id": "c_A3",
-      "type": "COMPARE",
-      "left": {
-        "kind": "COL",
-        "arg": "B"
+      "type": "AT_LEAST",
+      "region": {
+        "kind": "EXPLICIT",
+        "arg": [
+          "A1",
+          "B3"
+        ]
       },
-      "right": {
-        "kind": "ROW",
-        "arg": 3
-      },
-      "op": "EQ"
+      "k": 1
     },
     "B3": {
       "id": "c_B3",
-      "type": "DIFFERENT",
-      "cells": [
-        "B2",
-        "C3"
-      ]
+      "type": "AT_MOST",
+      "region": {
+        "kind": "NEIGHBORS",
+        "arg": "B2"
+      },
+      "k": 4
     },
     "C3": {
       "id": "c_C3",
       "type": "EXACTLY",
       "region": {
-        "kind": "COL",
-        "arg": "C"
+        "kind": "EXPLICIT",
+        "arg": [
+          "B2",
+          "C3"
+        ]
       },
-      "k": 2
+      "k": 0
     }
+  },
+  "initial_revealed": {
+    "C1": "CRIMINAL"
   },
   "solution": {
     "A1": "CRIMINAL",
-    "B1": "CRIMINAL",
-    "C1": "INNOCENT",
-    "A2": "INNOCENT",
+    "B1": "INNOCENT",
+    "C1": "CRIMINAL",
+    "A2": "CRIMINAL",
     "B2": "INNOCENT",
-    "C2": "CRIMINAL",
+    "C2": "INNOCENT",
     "A3": "INNOCENT",
     "B3": "CRIMINAL",
-    "C3": "CRIMINAL"
-  },
-  "id": "3x3_extensions"
+    "C3": "INNOCENT"
+  }
 }

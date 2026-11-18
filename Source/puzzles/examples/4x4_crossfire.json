@@ -1,195 +1,227 @@
 {
   "schema_version": 2,
+  "id": "4x4_crossfire",
   "n": 4,
   "characters": [
     {
       "cell": "A1",
-      "name": "An",
-      "profession": "Thám tử"
+      "name": "Bích",
+      "profession": "Thanh tra hải quan"
     },
     {
       "cell": "B1",
-      "name": "Bình",
-      "profession": "Bác sĩ"
+      "name": "Chương",
+      "profession": "Thuyền trưởng tàu hàng"
     },
     {
       "cell": "C1",
-      "name": "Châu",
-      "profession": "Đầu bếp"
+      "name": "Cảnh",
+      "profession": "Hoa tiêu cảng"
     },
     {
       "cell": "D1",
-      "name": "Dũng",
-      "profession": "Phi công"
+      "name": "Diệp",
+      "profession": "Kế toán kho vận"
     },
     {
       "cell": "A2",
-      "name": "Giang",
-      "profession": "Kỹ sư"
+      "name": "Hiếu",
+      "profession": "Thợ máy boong tàu"
     },
     {
       "cell": "B2",
-      "name": "Hải",
-      "profession": "Nghệ sĩ"
+      "name": "Hạnh",
+      "profession": "Chủ tàu viễn dương"
     },
     {
       "cell": "C2",
-      "name": "Khánh",
-      "profession": "Bảo vệ"
+      "name": "Khoa",
+      "profession": "Thủ kho cảng Bắc"
     },
     {
       "cell": "D2",
-      "name": "Linh",
-      "profession": "Thẩm phán"
+      "name": "Liêm",
+      "profession": "Môi giới bảo hiểm"
     },
     {
       "cell": "A3",
-      "name": "Minh",
-      "profession": "Dược sĩ"
+      "name": "Lộc",
+      "profession": "Thủy thủ trưởng"
     },
     {
       "cell": "B3",
-      "name": "Nam",
-      "profession": "Nhà báo"
+      "name": "Mạnh",
+      "profession": "Đặc vụ cảng vụ"
     },
     {
       "cell": "C3",
-      "name": "Oanh",
-      "profession": "Giáo sư"
+      "name": "Nhật",
+      "profession": "Chuyên viên kiểm định"
     },
     {
       "cell": "D3",
-      "name": "Phúc",
-      "profession": "Kiến trúc sư"
+      "name": "Phong",
+      "profession": "Lái cần cẩu"
     },
     {
       "cell": "A4",
-      "name": "Quân",
-      "profession": "Thuyền trưởng"
+      "name": "Quyên",
+      "profession": "Chủ quán rượu cảng"
     },
     {
       "cell": "B4",
-      "name": "Sơn",
-      "profession": "Nhạc sĩ"
+      "name": "Sỹ",
+      "profession": "Người gác hải đăng"
     },
     {
       "cell": "C4",
-      "name": "Thảo",
-      "profession": "Thư ký"
+      "name": "Trung",
+      "profession": "Tài xế xe tải đêm"
     },
     {
       "cell": "D4",
-      "name": "Uyên",
-      "profession": "Pháp y"
+      "name": "Vũ",
+      "profession": "Thương nhân đá quý"
     }
   ],
-  "initial_revealed": {
-    "A1": "INNOCENT",
-    "B1": "CRIMINAL"
-  },
   "clues": {
     "A1": {
       "id": "c_A1",
-      "type": "FACT",
-      "cells": [
-        "A1"
-      ],
-      "status": "INNOCENT"
-    },
-    "B1": {
-      "id": "c_B1",
       "type": "AT_MOST",
       "region": {
-        "kind": "ROW",
-        "arg": 1
+        "kind": "EXPLICIT",
+        "arg": [
+          "A1",
+          "C1",
+          "B2"
+        ]
       },
       "k": 1
     },
+    "B1": {
+      "id": "c_B1",
+      "type": "PARITY",
+      "region": {
+        "kind": "EXPLICIT",
+        "arg": [
+          "B2",
+          "C2",
+          "C3",
+          "C4"
+        ]
+      },
+      "parity": "EVEN"
+    },
     "C1": {
       "id": "c_C1",
-      "type": "DIFFERENT",
-      "cells": [
-        "C1",
-        "A2"
-      ]
+      "type": "AT_LEAST",
+      "region": {
+        "kind": "EXPLICIT",
+        "arg": [
+          "A1",
+          "C4"
+        ]
+      },
+      "k": 1
     },
     "D1": {
       "id": "c_D1",
-      "type": "COMPARE",
-      "left": {
-        "kind": "COL",
-        "arg": "A"
+      "type": "AT_LEAST",
+      "region": {
+        "kind": "EXPLICIT",
+        "arg": [
+          "B1",
+          "A4"
+        ]
       },
-      "right": {
-        "kind": "ROW",
-        "arg": 1
-      },
-      "op": "EQ"
+      "k": 1
     },
     "A2": {
       "id": "c_A2",
-      "type": "SAME",
-      "cells": [
-        "A2",
-        "B2"
-      ]
+      "type": "COMPARE",
+      "left": {
+        "kind": "ROW",
+        "arg": 3
+      },
+      "right": {
+        "kind": "COL",
+        "arg": "D"
+      },
+      "op": "GT"
     },
     "B2": {
       "id": "c_B2",
+      "type": "AT_MOST",
+      "region": {
+        "kind": "EXPLICIT",
+        "arg": [
+          "B3",
+          "D4"
+        ]
+      },
+      "k": 1
+    },
+    "C2": {
+      "id": "c_C2",
       "type": "PARITY",
       "region": {
         "kind": "EXPLICIT",
         "arg": [
           "A2",
-          "B2",
-          "C2"
+          "C2",
+          "C4"
         ]
       },
       "parity": "ODD"
     },
-    "C2": {
-      "id": "c_C2",
-      "type": "EXACTLY",
-      "region": {
-        "kind": "ROW",
-        "arg": 2
-      },
-      "k": 3
-    },
     "D2": {
       "id": "c_D2",
-      "type": "SAME",
-      "cells": [
-        "D2",
-        "B3"
-      ]
+      "type": "EXACTLY",
+      "region": {
+        "kind": "EXPLICIT",
+        "arg": [
+          "A3",
+          "C3"
+        ]
+      },
+      "k": 2
     },
     "A3": {
       "id": "c_A3",
-      "type": "EXACTLY",
+      "type": "AT_LEAST",
       "region": {
-        "kind": "COL",
-        "arg": "B"
+        "kind": "EXPLICIT",
+        "arg": [
+          "A1",
+          "D1"
+        ]
       },
-      "k": 2
+      "k": 1
     },
     "B3": {
       "id": "c_B3",
-      "type": "AT_LEAST",
+      "type": "AT_MOST",
       "region": {
-        "kind": "NEIGHBORS",
-        "arg": "D4"
+        "kind": "EXPLICIT",
+        "arg": [
+          "C1",
+          "D2",
+          "B3"
+        ]
       },
-      "k": 2
+      "k": 1
     },
     "C3": {
       "id": "c_C3",
-      "type": "EXACTLY",
+      "type": "AT_MOST",
       "region": {
-        "kind": "COL",
-        "arg": "C"
+        "kind": "EXPLICIT",
+        "arg": [
+          "D1",
+          "C4"
+        ]
       },
-      "k": 2
+      "k": 1
     },
     "D3": {
       "id": "c_D3",
@@ -198,60 +230,76 @@
         "kind": "ROW",
         "arg": 3
       },
-      "k": 1
+      "k": 3
     },
     "A4": {
       "id": "c_A4",
-      "type": "EXACTLY",
-      "region": {
-        "kind": "COL",
-        "arg": "D"
+      "type": "COMPARE",
+      "left": {
+        "kind": "ROW",
+        "arg": 4
       },
-      "k": 2
+      "right": {
+        "kind": "COL",
+        "arg": "A"
+      },
+      "op": "LT"
     },
     "B4": {
       "id": "c_B4",
-      "type": "DIFFERENT",
-      "cells": [
-        "B4",
-        "C4"
-      ]
+      "type": "AT_MOST",
+      "region": {
+        "kind": "NEIGHBORS",
+        "arg": "D4"
+      },
+      "k": 2
     },
     "C4": {
       "id": "c_C4",
       "type": "EXACTLY",
       "region": {
-        "kind": "ROW",
-        "arg": 4
+        "kind": "EXPLICIT",
+        "arg": [
+          "B2",
+          "A4"
+        ]
       },
-      "k": 2
+      "k": 0
     },
     "D4": {
       "id": "c_D4",
-      "type": "FACT",
-      "cells": [
-        "B1"
-      ],
-      "status": "CRIMINAL"
+      "type": "AT_MOST",
+      "region": {
+        "kind": "EXPLICIT",
+        "arg": [
+          "A2",
+          "C2",
+          "A3",
+          "D4"
+        ]
+      },
+      "k": 1
     }
   },
+  "initial_revealed": {
+    "B3": "CRIMINAL"
+  },
   "solution": {
-    "A1": "INNOCENT",
+    "A1": "CRIMINAL",
     "B1": "CRIMINAL",
     "C1": "INNOCENT",
     "D1": "INNOCENT",
-    "A2": "CRIMINAL",
-    "B2": "CRIMINAL",
-    "C2": "CRIMINAL",
+    "A2": "INNOCENT",
+    "B2": "INNOCENT",
+    "C2": "INNOCENT",
     "D2": "INNOCENT",
-    "A3": "INNOCENT",
-    "B3": "INNOCENT",
-    "C3": "INNOCENT",
-    "D3": "CRIMINAL",
+    "A3": "CRIMINAL",
+    "B3": "CRIMINAL",
+    "C3": "CRIMINAL",
+    "D3": "INNOCENT",
     "A4": "INNOCENT",
     "B4": "INNOCENT",
     "C4": "CRIMINAL",
-    "D4": "CRIMINAL"
-  },
-  "id": "4x4_crossfire"
+    "D4": "INNOCENT"
+  }
 }

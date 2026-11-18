@@ -42,20 +42,20 @@ def test_e01_controller_load_restart() -> None:
     assert isinstance(state0, PublicState)
     assert not hasattr(state0, "solution")
     assert state0.n == 3
-    assert set(state0.known_statuses.keys()) == {"A1", "C3"}
-    assert set(state0.revealed_clues.keys()) == {"A1", "C3"}
+    assert set(state0.known_statuses.keys()) == {"B2"}
+    assert set(state0.revealed_clues.keys()) == {"B2"}
     assert state0.token.revision == 0
 
-    outcome = ctrl.submit_verdict("B1", Status.CRIMINAL)
+    outcome = ctrl.submit_verdict("C1", Status.INNOCENT)
     assert outcome.result is VerdictResult.ACCEPTED
     state1 = ctrl.get_public_state()
     assert state1.token.revision == 1
-    assert "B1" in state1.known_statuses
+    assert "C1" in state1.known_statuses
 
     state2 = ctrl.restart()
     assert state2.token.revision == 0
     assert state2.token.session_id != state0.token.session_id
-    assert set(state2.known_statuses.keys()) == {"A1", "C3"}
+    assert set(state2.known_statuses.keys()) == {"B2"}
 
 
 def test_e02_clue_highlighting_and_overlap() -> None:
@@ -63,21 +63,21 @@ def test_e02_clue_highlighting_and_overlap() -> None:
     ctrl = GUIController()
     ctrl.load_puzzle(EXAMPLES_DIR / "3x3_classic.json")
 
-    refs_a1 = ctrl.select_clue("A1")
-    assert refs_a1 == ("A1", "B1")
-    assert ctrl.highlighted_cells == ("A1", "B1")
+    refs_b2 = ctrl.select_clue("B2")
+    assert refs_b2 == ("C1", "A2", "B2")
+    assert ctrl.highlighted_cells == ("C1", "A2", "B2")
 
-    assert ctrl.select_clue("B1") == ()
+    assert ctrl.select_clue("C1") == ()
     assert ctrl.highlighted_cells == ()
 
     ctrl.load_puzzle(EXAMPLES_DIR / "3x3_extensions.json")
-    ctrl.submit_verdict("C1", Status.INNOCENT)
-    refs_c1 = ctrl.select_clue("C1")
-    assert refs_c1 == ("A1", "B1", "C1", "A2", "A3")
+    ctrl.auto_solve_all()
+    refs_a1 = ctrl.select_clue("A1")
+    assert refs_a1 == ("A1", "B1", "C1", "B2", "B3")
     breakdown = ctrl.get_clue_region_breakdown()
-    assert breakdown["overlap"] == ("A1",)
-    assert breakdown["left"] == ("B1", "C1")
-    assert breakdown["right"] == ("A2", "A3")
+    assert breakdown["overlap"] == ("B1",)
+    assert breakdown["left"] == ("A1", "C1")
+    assert breakdown["right"] == ("B2", "B3")
 
 
 def test_e03_manual_verdict_outcomes() -> None:
@@ -85,37 +85,43 @@ def test_e03_manual_verdict_outcomes() -> None:
     ctrl = GUIController()
     state0 = ctrl.load_puzzle(EXAMPLES_DIR / "3x3_classic.json")
 
-    out_np = ctrl.submit_verdict("B2", Status.CRIMINAL)
+    out_np = ctrl.submit_verdict("C3", Status.CRIMINAL)
     assert out_np.result is VerdictResult.NOT_PROVABLE
     assert ctrl.get_public_state().token == state0.token
 
-    out_contra = ctrl.submit_verdict("B1", Status.INNOCENT)
+    out_contra = ctrl.submit_verdict("C1", Status.CRIMINAL)
     assert out_contra.result is VerdictResult.CONTRADICTED
     assert ctrl.get_public_state().token == state0.token
 
-    out_ok = ctrl.submit_verdict("B1", Status.CRIMINAL)
+    out_ok = ctrl.submit_verdict("C1", Status.INNOCENT)
     assert out_ok.result is VerdictResult.ACCEPTED
-    assert out_ok.new_clue is not None and out_ok.new_clue.id == "c_B1"
+    assert out_ok.new_clue is not None and out_ok.new_clue.id == "c_C1"
     assert ctrl.get_public_state().token.revision == 1
 
 
 def test_e04_hint_and_autosolve_isolation() -> None:
-    """E-04: Gợi ý tìm đúng ô bị ép buộc mà không tự lật thẻ; Tự động phá án giải trọn vẹn."""
+    """E-04: Gợi ý & Tự động phá án kết nối thực sự qua LogicAgent + GamePort (không lộ solution)."""
+    from agent.logic_agent import LogicAgent
+
     raw_puzzle = load_puzzle(EXAMPLES_DIR / "3x3_classic.json")
     stripped_puzzle = replace(raw_puzzle, solution=None)
 
     ctrl = GUIController()
     state_before = ctrl.load_puzzle(stripped_puzzle)
+    assert isinstance(ctrl.agent, LogicAgent)
+
     hint = ctrl.get_hint()
     assert hint is not None
-    assert hint.cell == "B1"
-    assert hint.verdict is Status.CRIMINAL
+    assert hint.cell == "C1"
+    assert hint.verdict is Status.INNOCENT
     assert ctrl.get_public_state().token == state_before.token
-    assert "B1" not in ctrl.get_public_state().known_statuses
+    assert "C1" not in ctrl.get_public_state().known_statuses
 
     outcomes = ctrl.auto_solve_all()
-    assert len(outcomes) == 7
+    assert len(outcomes) == 8
     assert ctrl.is_complete()
+    assert ctrl.agent._step_counter == 8
+    assert ctrl.telemetry.backtracks >= 1
 
     ctrl.load_puzzle(EXAMPLES_DIR / "3x3_stuck.json")
     stuck_outcomes = ctrl.auto_solve_all()
@@ -217,17 +223,17 @@ def test_e07_web_gui_vietnamese_screens_and_api() -> None:
     assert s0["case_title"] == "Đêm Gala Thượng Lưu"
     assert len(s0["puzzles"]) >= 9
 
-    s1 = web.handle_api("/api/select_clue", {"cell": "A1"})
-    assert s1["selected_inspector"]["cell"] == "A1"
-    b1_item = next(c for c in s1["cells"] if c["cell"] == "B1")
-    assert b1_item["highlight_role"] == "REF"
+    s1 = web.handle_api("/api/select_clue", {"cell": "B2"})
+    assert s1["selected_inspector"]["cell"] == "B2"
+    c1_item = next(c for c in s1["cells"] if c["cell"] == "C1")
+    assert c1_item["highlight_role"] == "REF"
 
     s2 = web.handle_api("/api/hint", {})
     assert s2["banner_kind"] == "HINT"
-    b1_hinted = next(c for c in s2["cells"] if c["cell"] == "B1")
-    assert b1_hinted["is_hinted"] is True
-    assert b1_hinted["revealed"] is False
+    c1_hinted = next(c for c in s2["cells"] if c["cell"] == "C1")
+    assert c1_hinted["is_hinted"] is True
+    assert c1_hinted["revealed"] is False
 
     s3 = web.handle_api("/api/step", {})
-    assert s3["last_outcome"]["cell"] == "B1"
+    assert s3["last_outcome"]["cell"] == "C1"
     assert s3["last_outcome"]["result"] == "ACCEPTED"

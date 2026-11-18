@@ -366,9 +366,8 @@ function toggleCrimeStrings() {
 }
 
 const OFFICIAL_SIX_IDS = [
-  "chain_demo",
-  "3x3_chain",
   "3x3_classic",
+  "3x3_extensions",
   "4x4_detective",
   "4x4_crossfire",
   "5x5_mastermind",
@@ -582,11 +581,19 @@ function renderCaseSelection(puzzles) {
   grid.innerHTML = "";
   const solved = getSolvedCases();
 
+  const isFixture = id => id === "chain_demo" || id === "3x3_chain";
   const filtered = puzzles.filter(p => {
     if (currentCaseFilter === "official") return isOfficialSix(p.case_id);
     if (currentCaseFilter === "all") return true;
-    if (currentCaseFilter === "edge") return p.kind !== "normal" && p.kind !== "stress";
-    return String(p.n) === currentCaseFilter && (p.kind === "normal" || p.kind === "stress");
+    if (currentCaseFilter === "edge") return (p.kind !== "normal" && p.kind !== "stress") || isFixture(p.case_id);
+    return String(p.n) === currentCaseFilter && isOfficialSix(p.case_id);
+  }).sort((a, b) => {
+    const ia = OFFICIAL_SIX_IDS.indexOf(a.case_id);
+    const ib = OFFICIAL_SIX_IDS.indexOf(b.case_id);
+    if (ia !== -1 && ib !== -1) return ia - ib;
+    if (ia !== -1) return -1;
+    if (ib !== -1) return 1;
+    return 0;
   });
 
   filtered.forEach(p => {
@@ -644,49 +651,120 @@ function renderCaseSelection(puzzles) {
   });
 }
 
-/* Minh họa SVG nhân vật theo nghề nghiệp */
+/* Minh họa Chân dung Hồ sơ Mugshot Noir theo 14 nhóm nghề nghiệp */
 function suspectPortraitSvg(profession, isRevealed, status) {
   const p = (profession || "").toLowerCase();
   let accent = "#F59E0B";
-  let coat = "#334155";
-  let badge = "";
+  let suit = "#263147";
+  let lapel = "#475569";
+  let accessory = "";
 
-  if (p.includes("thám tử") || p.includes("detective") || p.includes("cảnh sát")) {
-    accent = "#F59E0B"; coat = "#1E293B";
-    badge = `<path d="M9 13 Q18 8 27 13" stroke="#FBBF24" stroke-width="2.2" fill="none"/><ellipse cx="18" cy="10" rx="6" ry="3.2" fill="#F59E0B"/>`;
-  } else if (p.includes("bác sĩ") || p.includes("dược") || p.includes("pháp y") || p.includes("nurse") || p.includes("doctor")) {
-    accent = "#38BDF8"; coat = "#0F766E";
-    badge = `<rect x="16.5" y="24" width="3" height="7" rx="1" fill="#38BDF8"/><rect x="14" y="26.5" width="8" height="2.6" rx="1" fill="#38BDF8"/>`;
-  } else if (p.includes("đầu bếp") || p.includes("baker") || p.includes("chef")) {
-    accent = "#FB923C"; coat = "#475569";
-    badge = `<path d="M12 11 C12 6, 24 6, 24 11" fill="#F8FAFC" stroke="#FB923C" stroke-width="1.5"/>`;
-  } else if (p.includes("phi công") || p.includes("thuyền trưởng") || p.includes("pilot")) {
-    accent = "#60A5FA"; coat = "#1E3A8A";
-    badge = `<polygon points="18,8 25,11 18,13 11,11" fill="#FBBF24"/>`;
-  } else if (p.includes("thẩm phán") || p.includes("luật sư") || p.includes("ngoại giao")) {
-    accent = "#C084FC"; coat = "#312E81";
-    badge = `<path d="M15 24 L18 29 L21 24" stroke="#FBBF24" stroke-width="1.8" fill="none"/>`;
-  } else if (p.includes("kỹ sư") || p.includes("kiến trúc") || p.includes("mật mã")) {
-    accent = "#34D399"; coat = "#065F46";
-    badge = `<rect x="12" y="13" width="12" height="3.2" rx="1.5" fill="#38BDF8"/>`;
-  } else if (p.includes("nghệ sĩ") || p.includes("nhạc") || p.includes("đạo diễn")) {
-    accent = "#F472B6"; coat = "#701A75";
-    badge = `<ellipse cx="19" cy="9.5" rx="7" ry="3" fill="#F472B6"/>`;
+  if (p.includes("thám tử") || p.includes("thanh tra") || p.includes("cảnh sát") || p.includes("đặc vụ") || p.includes("chỉ huy") || p.includes("tình báo")) {
+    accent = "#F59E0B"; suit = "#1E293B"; lapel = "#D97706";
+    // Fedora noir hat + brass detective lapel star
+    accessory = `
+      <path d="M9 15 Q22 10.5 35 15" stroke="${accent}" stroke-width="2.2" stroke-linecap="round"/>
+      <path d="M14 14.5 L16.2 9.2 L27.8 9.2 L30 14.5 Z" fill="${accent}" fill-opacity="0.88"/>
+      <circle cx="27.5" cy="33" r="1.8" fill="#FDE68A"/>`;
+  } else if (p.includes("vệ sĩ") || p.includes("bảo vệ") || p.includes("tuần tra") || p.includes("an ninh") || p.includes("quân") || p.includes("đại tá")) {
+    accent = "#38BDF8"; suit = "#172554"; lapel = "#3B82F6";
+    // Security tactical collar + coiled earpiece
+    accessory = `
+      <rect x="15.5" y="16.5" width="13" height="3.2" rx="1.5" fill="#0F172A" stroke="${accent}" stroke-width="1"/>
+      <path d="M28.5 21 C31 22, 30 26, 28 28" stroke="${accent}" stroke-width="1.3" fill="none"/>`;
+  } else if (p.includes("bác sĩ") || p.includes("dược") || p.includes("pháp y") || p.includes("y tá") || p.includes("quân y")) {
+    accent = "#2DD4BF"; suit = "#134E4A"; lapel = "#5EEAD4";
+    // Stethoscope + medical cross pin
+    accessory = `
+      <path d="M16 26 C16 32, 28 32, 28 26" stroke="${accent}" stroke-width="1.6" fill="none"/>
+      <circle cx="25.5" cy="32.5" r="1.9" fill="${accent}"/>`;
+  } else if (p.includes("bếp") || p.includes("pha chế") || p.includes("hầu bàn") || p.includes("rượu") || p.includes("baker") || p.includes("chef")) {
+    accent = "#FB923C"; suit = "#3F2E26"; lapel = "#FDBA74";
+    // Classic toque / bow-tie
+    accessory = `
+      <path d="M14 13.5 C13 8, 31 8, 30 13.5 Z" fill="#F8FAFC" stroke="${accent}" stroke-width="1.3"/>
+      <polygon points="19,28 22,29.6 19,31.2" fill="${accent}"/>
+      <polygon points="25,28 22,29.6 25,31.2" fill="${accent}"/>`;
+  } else if (p.includes("tàu") || p.includes("thuyền") || p.includes("hoa tiêu") || p.includes("thủy thủ") || p.includes("phi công") || p.includes("cảng") || p.includes("hải đăng")) {
+    accent = "#60A5FA"; suit = "#1E3A8A"; lapel = "#93C5FD";
+    // Officer peaked cap + gold wing emblem
+    accessory = `
+      <path d="M12 14.5 L32 14.5 L29.5 9.8 L14.5 9.8 Z" fill="#1E3A8A" stroke="${accent}" stroke-width="1.4"/>
+      <path d="M11 14.8 Q22 13 33 14.8" stroke="#FBBF24" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="22" cy="12.2" r="1.3" fill="#FBBF24"/>`;
+  } else if (p.includes("luật sư") || p.includes("thẩm phán") || p.includes("ngoại giao") || p.includes("đại sứ") || p.includes("tùy viên") || p.includes("nghị sự")) {
+    accent = "#C084FC"; suit = "#2E1065"; lapel = "#E9D5FF";
+    // Diplomatic cravat + gold pin
+    accessory = `
+      <path d="M19 26.5 L22 35 L25 26.5 Z" fill="#FDE68A" fill-opacity="0.9"/>
+      <circle cx="22" cy="29.5" r="1.3" fill="${accent}"/>`;
+  } else if (p.includes("mật mã") || p.includes("kỹ sư") || p.includes("kiến trúc") || p.includes("it") || p.includes("radar") || p.includes("dữ liệu") || p.includes("điện tín") || p.includes("viễn thông") || p.includes("mở khóa")) {
+    accent = "#34D399"; suit = "#064E3B"; lapel = "#6EE7B7";
+    // Precision round frames
+    accessory = `
+      <circle cx="19" cy="18.2" r="2.5" stroke="${accent}" stroke-width="1.4" fill="#0F172A" fill-opacity="0.45"/>
+      <circle cx="25" cy="18.2" r="2.5" stroke="${accent}" stroke-width="1.4" fill="#0F172A" fill-opacity="0.45"/>
+      <line x1="21.5" y1="18.2" x2="22.5" y2="18.2" stroke="${accent}" stroke-width="1.4"/>`;
+  } else if (p.includes("ca sĩ") || p.includes("opera") || p.includes("vũ công") || p.includes("nghệ sĩ") || p.includes("nhạc") || p.includes("họa sĩ") || p.includes("nhiếp ảnh") || p.includes("jazz") || p.includes("piano") || p.includes("saxophone") || p.includes("phục trang")) {
+    accent = "#F472B6"; suit = "#500724"; lapel = "#FBCFE8";
+    // Beret / stage pearl strand
+    accessory = `
+      <ellipse cx="23" cy="11.2" rx="8" ry="3.2" transform="rotate(-8 23 11.2)" fill="${accent}" fill-opacity="0.85"/>
+      <path d="M17.5 27.5 Q22 31 26.5 27.5" stroke="#FDE68A" stroke-width="1.6" stroke-dasharray="1.5 2" fill="none"/>`;
+  } else if (p.includes("giám tuyển") || p.includes("giáo sư") || p.includes("sử học") || p.includes("thực vật") || p.includes("kiểm định") || p.includes("sưu tầm") || p.includes("lưu trữ")) {
+    accent = "#FBBF24"; suit = "#3E2723"; lapel = "#D7CCC8";
+    // Scholar monocle + chain
+    accessory = `
+      <circle cx="25" cy="18.2" r="2.7" stroke="#FBBF24" stroke-width="1.5" fill="none"/>
+      <path d="M27.3 19.8 Q28.5 24 26.5 28" stroke="#FBBF24" stroke-width="1" fill="none"/>`;
+  } else if (p.includes("nhà báo") || p.includes("phóng viên") || p.includes("phiên dịch")) {
+    accent = "#FDBA74"; suit = "#292524"; lapel = "#E7E5E4";
+    // Press fedora with white press card
+    accessory = `
+      <path d="M10 14.5 Q22 11 34 14.5" stroke="${accent}" stroke-width="2" stroke-linecap="round"/>
+      <path d="M15 14.2 L17 9.5 L27 9.5 L29 14.2 Z" fill="#44403C"/>
+      <rect x="23.5" y="10.6" width="3.2" height="2.4" rx="0.4" fill="#FEF3C7"/>`;
+  } else if (p.includes("tài phiệt") || p.includes("chủ") || p.includes("bá tước") || p.includes("nữ hoàng") || p.includes("thừa kế") || p.includes("kim hoàn") || p.includes("thương")) {
+    accent = "#FDE047"; suit = "#3B0764"; lapel = "#FEF08A";
+    // Diamond lapel brooch + high collar
+    accessory = `
+      <polygon points="22,27 24.4,29.6 22,32.2 19.6,29.6" fill="#FEF08A" stroke="${accent}" stroke-width="0.9"/>`;
   } else {
-    accent = "#A78BFA"; coat = "#374151";
+    accent = "#94A3B8"; suit = "#1E293B"; lapel = "#CBD5E1";
+    // Formal bow-tie / executive tie
+    accessory = `
+      <polygon points="18.8,27.8 22,29.5 18.8,31.2" fill="${accent}"/>
+      <polygon points="25.2,27.8 22,29.5 25.2,31.2" fill="${accent}"/>`;
   }
 
   if (isRevealed) {
-    coat = status === "INNOCENT" ? "#059669" : "#E11D48";
+    if (status === "INNOCENT") {
+      suit = "#065F46";
+      lapel = "#34D399";
+      accent = "#10B981";
+    } else {
+      suit = "#9F1239";
+      lapel = "#FDA4AF";
+      accent = "#F43F5E";
+    }
   }
 
-  return `<svg width="32" height="32" viewBox="0 0 36 36" fill="none" aria-hidden="true">
-    <path d="M7 33 C7 24.5, 29 24.5, 29 33" fill="${coat}"/>
-    <circle cx="18" cy="15.5" r="6" fill="#FDE68A" stroke="${accent}" stroke-width="1.4"/>
-    <circle cx="16" cy="15" r="0.9" fill="#1E293B"/>
-    <circle cx="20" cy="15" r="0.9" fill="#1E293B"/>
-    <path d="M16 18 Q18 19.4 20 18" stroke="#1E293B" stroke-width="1.1" fill="none" stroke-linecap="round"/>
-    ${badge}
+  const headFill = isRevealed ? "#F5E6CA" : "#1E293B";
+  const headStroke = isRevealed ? accent : "rgba(248, 250, 252, 0.32)";
+  const ruleStroke = isRevealed ? "rgba(15, 23, 42, 0.12)" : "rgba(255, 255, 255, 0.09)";
+
+  return `<svg class="mugshot-svg" viewBox="0 0 44 44" fill="none" aria-hidden="true">
+    <line x1="5" y1="11" x2="39" y2="11" stroke="${ruleStroke}" stroke-width="0.9"/>
+    <line x1="5" y1="19" x2="39" y2="19" stroke="${ruleStroke}" stroke-width="0.9"/>
+    <line x1="5" y1="27" x2="39" y2="27" stroke="${ruleStroke}" stroke-width="0.9"/>
+    <path d="M7.5 41 C8 30.2, 36 30.2, 36.5 41 Z" fill="${suit}" stroke="${headStroke}" stroke-width="1.1"/>
+    <path d="M17.5 27.2 L22 34.5 L26.5 27.2" stroke="${lapel}" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+    <circle cx="22" cy="18.5" r="6.4" fill="${headFill}" stroke="${headStroke}" stroke-width="1.4"/>
+    ${isRevealed
+      ? `<circle cx="19.8" cy="18.2" r="0.95" fill="#1E293B"/><circle cx="24.2" cy="18.2" r="0.95" fill="#1E293B"/><path d="M19.8 21.3 Q22 22.4 24.2 21.3" stroke="#334155" stroke-width="1.1" stroke-linecap="round"/>`
+      : `<text x="22" y="21.2" text-anchor="middle" fill="rgba(245, 158, 11, 0.72)" font-size="8.5" font-family="JetBrains Mono, monospace" font-weight="800">?</text>`
+    }
+    ${accessory}
   </svg>`;
 }
 
@@ -720,25 +798,68 @@ async function apiCall(path, body = {}) {
 }
 
 /* =========================================================================
-   VẼ BẢNG TRỰC QUAN HÓA CÔNG THỨC & LUỒNG CHẠY DPLL (THẺ PHÁ ÁN TRINH THÁM)
+   VẼ BẢNG TRỰC QUAN HÓA CÔNG THỨC & LUỒNG CHẠY DPLL (FORENSIC DPLL CONSOLE)
    ========================================================================= */
+function escapeHtmlText(raw) {
+  return String(raw || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function formatLogicFormulaHtml(expr) {
+  let s = escapeHtmlText(expr);
+  s = s.replace(/KB₀/g, '<span class="m-kb">KB<sub>0</sub></span>');
+  s = s.replace(/KB_(\d+)/g, '<span class="m-kb">KB<sub>$1</sub></span>');
+  s = s.replace(/¬C_([A-E]\d+)/g, '<span class="m-lit-neg">¬C<sub>$1</sub></span>');
+  s = s.replace(/C_([A-E]\d+)/g, '<span class="m-lit-pos">C<sub>$1</sub></span>');
+  s = s.replace(/aux_(\d+)/g, '<span class="m-aux">aux<sub>$1</sub></span>');
+  s = s.replace(/\(UNSAT\)|\bUNSAT\b/g, '<span class="m-tag-unsat">UNSAT</span>');
+  s = s.replace(/\(SAT\)|\bSAT\b/g, '<span class="m-tag-sat">SAT</span>');
+  return s;
+}
+
 function renderLiveVisualizer(data) {
   const steps = data.deduction_steps || [];
   const initClues = data.initial_clues || [];
   const totalSteps = steps.length;
+  const expectedTotalSteps = Math.max(totalSteps, (data.total_cells || 0) - initClues.length);
 
   let activeStepIdx = selectedVisualStep !== null ? selectedVisualStep : totalSteps;
   if (activeStepIdx > totalSteps) activeStepIdx = totalSteps;
 
+  const isAutoRunning = Boolean(autoTimer);
+  const isReplayRunning = Boolean(playbackTimer);
+
   const pulseDot = document.getElementById("lvPulseDot");
   if (pulseDot) {
-    pulseDot.classList.toggle("running", Boolean(autoTimer));
+    pulseDot.classList.toggle("running", isAutoRunning || isReplayRunning);
   }
 
+  const pbPlayBtn = document.getElementById("pbPlayPause");
   const pbPlayIcon = document.getElementById("pbPlayIcon");
-  if (pbPlayIcon) {
-    pbPlayIcon.textContent = playbackTimer ? "⏸" : "▶";
+  const pbPlayText = document.getElementById("pbPlayText");
+  const playSvg = `<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>`;
+  const pauseSvg = `<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>`;
+  const replaySvg = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>`;
+
+  if (pbPlayBtn) {
+    pbPlayBtn.classList.toggle("is-active", isAutoRunning || isReplayRunning);
   }
+  if (isAutoRunning) {
+    if (pbPlayIcon) pbPlayIcon.innerHTML = pauseSvg;
+    if (pbPlayText) pbPlayText.textContent = "Tạm dừng";
+  } else if (isReplayRunning) {
+    if (pbPlayIcon) pbPlayIcon.innerHTML = pauseSvg;
+    if (pbPlayText) pbPlayText.textContent = "Dừng tua";
+  } else if (!data.is_complete && (totalSteps === 0 || activeStepIdx === totalSteps)) {
+    if (pbPlayIcon) pbPlayIcon.innerHTML = playSvg;
+    if (pbPlayText) pbPlayText.textContent = "Chạy DPLL";
+  } else {
+    if (pbPlayIcon) pbPlayIcon.innerHTML = replaySvg;
+    if (pbPlayText) pbPlayText.textContent = "Phát lại";
+  }
+
   const pbSpeedLabel = document.getElementById("pbSpeedLabel");
   if (pbSpeedLabel) {
     pbSpeedLabel.textContent = `${playbackSpeed.toFixed(1)}×`;
@@ -746,94 +867,175 @@ function renderLiveVisualizer(data) {
 
   const st = activeStepIdx > 0 ? steps[activeStepIdx - 1] : null;
 
-  // 1. Thanh điều hướng bước tinh gọn (Clean Stepper Bar)
+  // 1. Thanh Tiến Trình Chuỗi Phá Án (Forensic Chain Progress Rail)
   const pbStepText = document.getElementById("pbStepText");
   if (pbStepText) {
     if (activeStepIdx === 0) {
-      pbStepText.textContent = `Khởi điểm KB₀ (${initClues.length} ô mở sẵn)`;
+      pbStepText.innerHTML = `Khởi điểm <span class="m-kb">KB<sub>0</sub></span> · ${initClues.length} ô mở sẵn`;
     } else if (st) {
-      pbStepText.textContent = `Bước #${activeStepIdx} / ${totalSteps}: ${st.name} (${st.cell}) = ${st.verdict_vn}`;
+      const vCls = st.verdict === "INNOCENT" ? "txt-innocent" : "txt-criminal";
+      pbStepText.innerHTML = `Bước #${activeStepIdx} · <strong>${escapeHtmlText(st.name)} (${st.cell})</strong> · <span class="${vCls}">${st.verdict_vn}</span>`;
     }
   }
+
+  const pbStepCounter = document.getElementById("pbStepCounter");
+  if (pbStepCounter) {
+    pbStepCounter.textContent = `${activeStepIdx} / ${expectedTotalSteps}`;
+  }
+
+  const prevBtn = document.getElementById("pbPrev");
+  const nextBtn = document.getElementById("pbNext");
+  if (prevBtn) prevBtn.disabled = activeStepIdx <= 0;
+  if (nextBtn) nextBtn.disabled = activeStepIdx >= totalSteps;
 
   const dotsWrap = document.getElementById("lvDotsWrap");
   if (dotsWrap) {
     dotsWrap.innerHTML = "";
+    const isCompact = expectedTotalSteps > 10;
+    dotsWrap.classList.toggle("compact-track", isCompact);
+
     const kb0Dot = document.createElement("button");
     kb0Dot.type = "button";
-    kb0Dot.className = "step-dot" + (activeStepIdx === 0 ? " active" : "");
-    kb0Dot.textContent = "0";
-    kb0Dot.title = "KB₀ (Dữ kiện mở sẵn ban đầu)";
+    kb0Dot.className = "step-dot kb0-dot" + (activeStepIdx === 0 ? " active" : "");
+    kb0Dot.innerHTML = "<span>KB<sub>0</sub></span>";
+    kb0Dot.title = "Khởi điểm KB0 (Dữ kiện mở sẵn ban đầu)";
     kb0Dot.addEventListener("click", () => playbackGoTo(0));
     dotsWrap.appendChild(kb0Dot);
 
-    steps.forEach((s) => {
+    for (let idx = 1; idx <= expectedTotalSteps; idx++) {
+      const solvedStep = idx <= totalSteps ? steps[idx - 1] : null;
       const dot = document.createElement("button");
       dot.type = "button";
-      const dotKind = s.verdict === "INNOCENT" ? "innocent" : "criminal";
-      dot.className = `step-dot ${dotKind}` + (activeStepIdx === s.step_no ? " active" : "");
-      dot.textContent = String(s.step_no);
-      dot.title = `Bước #${s.step_no}: ${s.name} (${s.cell}) = ${s.verdict_vn}`;
-      dot.addEventListener("click", () => playbackGoTo(s.step_no));
+      if (solvedStep) {
+        const dotKind = solvedStep.verdict === "INNOCENT" ? "innocent" : "criminal";
+        dot.className = `step-dot ${dotKind}` + (activeStepIdx === idx ? " active" : "");
+        dot.textContent = String(idx);
+        dot.title = `Bước #${idx}: ${solvedStep.name} (${solvedStep.cell}) = ${solvedStep.verdict_vn}`;
+        dot.addEventListener("click", () => playbackGoTo(idx));
+      } else {
+        dot.className = "step-dot pending";
+        dot.textContent = String(idx);
+        dot.disabled = true;
+        dot.title = `Bước #${idx}: Đang chờ chứng minh phản chứng`;
+      }
       dotsWrap.appendChild(dot);
-    });
+    }
   }
 
-  // 2. Thân Thẻ Phá Án Trinh Thám (Hero Detective Storyboard)
+  // 2. Thân Bảng Forensic DPLL Console
   const flowBody = document.getElementById("lvFlowBody");
   if (!flowBody) return;
 
   if (activeStepIdx === 0) {
+    const remainingCells = Math.max(0, (data.total_cells || 0) - (data.revealed_count || 0));
+
     const initItemsHtml = initClues.map(ic => {
-      const unitLit = ic.status === "CRIMINAL" ? `(C_${ic.cell})` : `(¬C_${ic.cell})`;
-      const stLabel = ic.status === "CRIMINAL" ? "THỦ PHẠM" : "VÔ TỘI";
+      const isCrim = ic.status === "CRIMINAL";
+      const unitLit = isCrim ? `(C_${ic.cell})` : `(¬C_${ic.cell})`;
+      const stLabel = isCrim ? "THỦ PHẠM" : "VÔ TỘI";
+      const stCls = isCrim ? "criminal" : "innocent";
+      const isSel = Boolean(ic.selected);
+      const clickArg = isSel ? "null" : `'${ic.cell}'`;
+
       return `
-        <div class="story-evidence-card">
-          <div class="story-card-title">${ic.owner} (${ic.cell}) · ${stLabel}</div>
-          <div class="story-quote">“${ic.text}”</div>
-          <div style="font-family:var(--font-mono); font-size:11px; color:var(--ink-muted); margin-top:3px;">
-            Mệnh đề đơn vị: <code>${unitLit}</code> | CNF: <code>${ic.cnf_preview}</code>
+        <div class="witness-dossier-card clickable-evidence ${isSel ? 'is-selected' : ''}" onclick="selectClue(${clickArg})" title="Bấm để soi vùng lời khai của ${escapeHtmlText(ic.owner)} (${ic.cell}) trên bàn cờ">
+          <div class="witness-card-head">
+            <div class="witness-identity-group">
+              <div class="witness-mugshot">${suspectPortraitSvg(ic.profession || "", true, ic.status)}</div>
+              <div class="witness-meta">
+                <div class="witness-name-line">
+                  <span class="witness-name">${escapeHtmlText(ic.owner)}</span>
+                  <span class="witness-coord">Ô ${ic.cell}</span>
+                  <span class="witness-verdict-chip ${stCls}">${stLabel}</span>
+                </div>
+                <div class="witness-prof">${escapeHtmlText(ic.profession || "Nhân chứng hiện trường")}</div>
+              </div>
+            </div>
+            <span class="evidence-jump-pill ${isSel ? 'active' : ''}">${isSel ? "Đang soi ●" : "Soi vùng ↗"}</span>
           </div>
+
+          <div class="witness-quote-box">“${escapeHtmlText(ic.text)}”</div>
+
+          <div class="witness-formula-bar">
+            <div class="wf-item">
+              <span class="wf-lbl">Đơn vị</span>
+              <code class="wf-code">${formatLogicFormulaHtml(unitLit)}</code>
+            </div>
+            <span class="wf-divider" aria-hidden="true"></span>
+            <div class="wf-item wf-grow">
+              <span class="wf-lbl">Đại số</span>
+              <code class="wf-code">${formatLogicFormulaHtml(ic.math_formula)}</code>
+            </div>
+          </div>
+
+          <details class="cnf-collapse" onclick="event.stopPropagation()">
+            <summary>
+              <span>Xem khai triển chuẩn CNF (+${ic.clause_count} mệnh đề)</span>
+              <span class="cnf-chevron" aria-hidden="true">▾</span>
+            </summary>
+            <div class="cnf-collapse-body">
+              <code>${formatLogicFormulaHtml(ic.cnf_preview)}</code>
+            </div>
+          </details>
         </div>
       `;
     }).join("");
 
+    const quickActionHtml = !data.is_complete ? `
+      <div class="console-action-dock">
+        <button type="button" class="btn-console-primary" onclick="stopAutoSolve(); stepSolve();">
+          <div class="console-primary-text">
+            <span class="console-primary-title">GIẢI 1 BƯỚC PHẢN CHỨNG</span>
+            <span class="console-primary-sub">Kiểm định UNSAT / SAT từ KB<sub>0</sub> để mở ô kế tiếp</span>
+          </div>
+          <svg class="console-primary-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/>
+          </svg>
+        </button>
+        <button type="button" class="btn-console-secondary" onclick="requestHint()" title="Nhờ AI chỉ điểm ô có thể suy luận tiếp theo mà không tự mở thẻ">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/>
+          </svg>
+          <span>Chỉ điểm gợi ý</span>
+        </button>
+      </div>
+    ` : "";
+
     flowBody.innerHTML = `
-      <div class="hero-verdict-card">
-        <div class="hero-verdict-top">
-          <div class="hero-suspect-profile">
-            <div>
-              <div class="hero-suspect-name">Cơ Sở Tri Thức Khởi Điểm KB₀</div>
-              <div style="font-size:11.5px; color:var(--ink-secondary); margin-top:2px;">
-                Chứa các sự thật mở sẵn và ràng buộc suy diễn của bàn cờ
-              </div>
+      <div class="kb0-console-wrap">
+        <div class="kb0-overview-card">
+          <div class="kb0-overview-top">
+            <div class="kb0-heading-group">
+              <div class="kb0-heading">Cơ Sở Tri Thức Khởi Điểm <span class="m-kb">KB<sub>0</sub></span></div>
+              <div class="kb0-subheading">Tiên đề sự thật ban đầu &amp; hệ ràng buộc CNF của bàn cờ</div>
+            </div>
+            <span class="kb0-ready-pill"><span class="kb0-ready-dot"></span>SẴN SÀNG</span>
+          </div>
+          <div class="kb0-telemetry-strip">
+            <div class="kb0-stat-cell">
+              <div class="kb0-stat-val">${data.telemetry.num_primary}<span class="kb0-stat-aux">+${data.telemetry.num_aux} phụ</span></div>
+              <div class="kb0-stat-lbl">Biến mệnh đề</div>
+            </div>
+            <div class="kb0-stat-cell">
+              <div class="kb0-stat-val">${data.telemetry.num_clauses}</div>
+              <div class="kb0-stat-lbl">Mệnh đề CNF</div>
+            </div>
+            <div class="kb0-stat-cell">
+              <div class="kb0-stat-val">${remainingCells}</div>
+              <div class="kb0-stat-lbl">Ô chờ suy diễn</div>
             </div>
           </div>
-          <span class="hero-stamp-badge innocent">SẴN SÀNG</span>
         </div>
-        <div class="hero-entailment-formula">
-          <span>Công thức khởi điểm</span>
-          <span>${data.telemetry.num_clauses} mệnh đề CNF</span>
-        </div>
-      </div>
 
-      <div class="refute-storyboard">
-        <div class="story-branch sat">
-          <div class="story-branch-header">
-            <span>Dữ kiện ban đầu (${initClues.length} thẻ mở sẵn)</span>
+        <div class="console-witness-block">
+          <div class="console-section-hdr">
+            <span class="stage-num">TIỀN ĐỀ</span>
+            <span class="stage-name">Hồ Sơ Nhân Chứng Mở Sẵn (${initClues.length})</span>
           </div>
-          <div class="story-branch-desc">
-            Lời khai từ các nhân chứng này là tiền đề logic để bộ giải DPLL suy luận phản chứng các bước tiếp theo.
-          </div>
+          ${initItemsHtml}
         </div>
-        ${initItemsHtml}
-      </div>
 
-      <div class="story-unlocked-card">
-        <div class="story-card-title">Hướng dẫn thao tác</div>
-        <div class="story-quote" style="font-style:normal; font-size:12px;">
-          Bấm nút <strong>“Tự động phá án”</strong> hoặc <strong>“Giải 1 bước”</strong> trên thanh công cụ để xem bộ giải chứng minh phản chứng từng ô!
-        </div>
+        ${quickActionHtml}
       </div>
     `;
     return;
@@ -845,13 +1047,16 @@ function renderLiveVisualizer(data) {
   const badgeClass = isInn ? "innocent" : "criminal";
   const badgeText = isInn ? "VÔ TỘI" : "THỦ PHẠM";
 
-  // Lời khai tiền đề (Supporting Evidence)
+  // Lời khai tiền đề (Supporting Evidence) — bấm vào để soi vùng trực tiếp trên bàn cờ
   const supCluesHtml = (st.supporting_clues || []).map(sc => `
-    <div class="story-evidence-card">
-      <div class="story-card-title">Lời khai từ ${sc.owner} (${sc.cell})</div>
-      <div class="story-quote">“${sc.text}”</div>
-      <div style="font-family:var(--font-mono); font-size:10.5px; color:var(--ink-muted); margin-top:2px;">
-        Công thức: <code>${sc.math_formula}</code>
+    <div class="story-evidence-card clickable-evidence" onclick="selectClue('${sc.cell}')" title="Bấm để soi vùng lời khai của ${escapeHtmlText(sc.owner)} (${sc.cell})">
+      <div class="story-card-title">
+        <span>Nhân chứng ${escapeHtmlText(sc.owner)} (${sc.cell})</span>
+        <span class="evidence-jump-pill">Soi vùng ↗</span>
+      </div>
+      <div class="story-quote">“${escapeHtmlText(sc.text)}”</div>
+      <div class="story-formula-line">
+        <code>${formatLogicFormulaHtml(sc.math_formula)}</code>
       </div>
     </div>
   `).join("");
@@ -859,68 +1064,85 @@ function renderLiveVisualizer(data) {
   // Lời khai mới mở khóa
   const newClueHtml = st.new_clue ? `
     <div class="story-unlocked-card">
-      <div class="story-card-title">Lời khai mới hé lộ từ ${st.name} (${st.cell})</div>
-      <div class="story-quote">“${st.new_clue.text}”</div>
-      <div style="font-family:var(--font-mono); font-size:11px; color:var(--gold-bright); margin-top:3px;">
-        +${st.new_clue.clause_count} mệnh đề CNF nạp vào KB_${st.step_no}
+      <div class="story-card-title">
+        <span>Lời khai mới từ ${escapeHtmlText(st.name)} (${st.cell})</span>
+        <span class="unlocked-clause-tag">+${st.new_clue.clause_count} CNF → KB<sub>${st.step_no}</sub></span>
       </div>
+      <div class="story-quote">“${escapeHtmlText(st.new_clue.text)}”</div>
+      <div class="story-unlocked-meta">
+        <code>${formatLogicFormulaHtml(st.new_clue.math_formula)}</code>
+        <code>${formatLogicFormulaHtml(st.unit_clause)}</code>
+      </div>
+      ${st.new_clue.cnf_preview ? `
+        <details class="cnf-collapse">
+          <summary>
+            <span>Chi tiết mệnh đề CNF nạp thêm</span>
+            <span class="cnf-chevron" aria-hidden="true">▾</span>
+          </summary>
+          <div class="cnf-collapse-body">
+            <code>${formatLogicFormulaHtml(st.new_clue.cnf_preview)}</code>
+          </div>
+        </details>
+      ` : ""}
     </div>
   ` : '';
 
+  const hasBacktracks = (st.telemetry.backtracks || 0) > 0;
+  const nextStepBtnHtml = (!data.is_complete && activeStepIdx === totalSteps) ? `
+    <div class="console-action-dock compact-dock">
+      <button type="button" class="btn-console-primary compact-btn" onclick="stopAutoSolve(); stepSolve();">
+        <span class="console-primary-title">GIẢI BƯỚC #${totalSteps + 1} TIẾP THEO</span>
+        <svg class="console-primary-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/>
+        </svg>
+      </button>
+    </div>
+  ` : "";
+
   flowBody.innerHTML = `
-    <!-- 1. Thẻ Phán Quyết Nổi Bật -->
-    <div class="hero-verdict-card ${badgeClass}">
-      <div class="hero-verdict-top">
-        <div class="hero-suspect-profile">
-          <div>
-            <div class="hero-suspect-name">${st.name}</div>
-            <span class="hero-suspect-cell">Ô ${st.cell}</span>
+    <div class="pipeline-4layer">
+      <!-- TẦNG 1: TIỀN ĐỀ TRI THỨC -->
+      <div class="pipeline-stage">
+        <div class="pipeline-stage-head">
+          <span class="stage-num">01</span>
+          <span class="stage-name">Tiền Đề Tri Thức Công Khai (<span class="m-kb">KB<sub>${st.step_no - 1}</sub></span>)</span>
+        </div>
+        ${supCluesHtml || '<div class="story-evidence-card"><div class="story-quote">Tổng hợp các mệnh đề đã mở trong KB hiện hành.</div></div>'}
+      </div>
+
+      <!-- TẦNG 2: PHÉP THỬ PHẢN CHỨNG -->
+      <div class="pipeline-stage">
+        <div class="pipeline-stage-head">
+          <span class="stage-num">02</span>
+          <span class="stage-name">Kiểm Tra Phản Chứng (Proof by Refutation)</span>
+        </div>
+        <div class="refute-storyboard">
+          <div class="story-branch unsat">
+            <div class="story-branch-header">
+              <span>✕ Giả thiết đối lập</span>
+              <code>${formatLogicFormulaHtml(st.refutation_query)}</code>
+            </div>
+            <div class="story-branch-desc">${formatLogicFormulaHtml(st.refutation_desc)}</div>
+          </div>
+          <div class="story-branch sat">
+            <div class="story-branch-header">
+              <span>✓ Nhánh nhất quán</span>
+              <code>${formatLogicFormulaHtml(st.consistency_query)}</code>
+            </div>
+            <div class="story-branch-desc">
+              Mọi mô hình thỏa mãn <span class="m-kb">KB<sub>${st.step_no - 1}</sub></span> đều buộc <strong>${escapeHtmlText(st.name)} (${st.cell}) = ${st.verdict_vn}</strong>.
+            </div>
           </div>
         </div>
-        <span class="hero-stamp-badge ${badgeClass}">${badgeText}</span>
       </div>
-      <div class="hero-entailment-formula">
-        <span>Suy diễn tất yếu</span>
-        <code>${st.entailment_formula}</code>
-      </div>
-    </div>
 
-    <!-- 2. Sơ Đồ Phản Chứng 2 Nhánh Trực Quan -->
-    <div class="refute-storyboard">
-      <div class="story-branch unsat">
-        <div class="story-branch-header">
-          <span>✕ Bác bỏ giả thiết: ${st.refutation_query}</span>
+      <!-- TẦNG 3: ĐỘNG CƠ DPLL SAT -->
+      <div class="pipeline-stage">
+        <div class="pipeline-stage-head">
+          <span class="stage-num">03</span>
+          <span class="stage-name">Động Cơ DPLL SAT (${st.telemetry.runtime_ms}ms tích lũy)</span>
         </div>
-        <div class="story-branch-desc">
-          ${st.refutation_desc}
-        </div>
-      </div>
-      <div class="story-branch sat">
-        <div class="story-branch-header">
-          <span>✓ Khẳng định: ${st.consistency_query}</span>
-        </div>
-        <div class="story-branch-desc">
-          Do giả thiết đối lập bị bác bỏ hoàn toàn, ${st.name} (${st.cell}) bắt buộc phải là <strong>${st.verdict_vn}</strong>!
-        </div>
-      </div>
-    </div>
-
-    <!-- 3. Bằng chứng làm tiền đề -->
-    ${supCluesHtml ? `
-      <div style="display:flex; flex-direction:column; gap:6px;">
-        <div style="font-size:11px; font-weight:800; color:var(--ink-muted); text-transform:uppercase; letter-spacing:0.04em;">Chứng cứ tiền đề đã dùng</div>
-        ${supCluesHtml}
-      </div>
-    ` : ''}
-
-    <!-- 4. Lời khai mới mở khóa -->
-    ${newClueHtml}
-
-    <!-- 5. Chi tiết thuật toán DPLL & Mệnh đề CNF (Thu gọn mặc định) -->
-    <details class="dpll-tech-accordion">
-      <summary>Chi tiết kỹ thuật CNF &amp; DPLL Solver (${st.telemetry.runtime_ms}ms) ▾</summary>
-      <div class="dpll-tech-body">
-        <div class="dpll-mini-metrics" style="display:grid; grid-template-columns:repeat(4,1fr); gap:6px;">
+        <div class="dpll-live-strip">
           <div class="dpll-mini-box">
             <div class="dpll-mini-val">${st.telemetry.propagations}</div>
             <div class="dpll-mini-lbl">Unit Prop</div>
@@ -929,7 +1151,7 @@ function renderLiveVisualizer(data) {
             <div class="dpll-mini-val">${st.telemetry.decisions}</div>
             <div class="dpll-mini-lbl">Decisions</div>
           </div>
-          <div class="dpll-mini-box">
+          <div class="dpll-mini-box ${hasBacktracks ? 'has-bt' : ''}">
             <div class="dpll-mini-val">${st.telemetry.backtracks}</div>
             <div class="dpll-mini-lbl">Backtracks</div>
           </div>
@@ -938,11 +1160,34 @@ function renderLiveVisualizer(data) {
             <div class="dpll-mini-lbl">SAT Calls</div>
           </div>
         </div>
-        <div style="font-family:var(--font-mono); font-size:11px; color:var(--ink-muted);">
-          Mệnh đề đơn vị sinh ra: <code>${st.unit_clause}</code> | Tổng mệnh đề KB: <code>${st.telemetry.num_clauses}</code>
-        </div>
       </div>
-    </details>
+
+      <!-- TẦNG 4: PHÁN QUYẾT & MỞ KHÓA KB MỚI -->
+      <div class="pipeline-stage stage-last">
+        <div class="pipeline-stage-head">
+          <span class="stage-num">04</span>
+          <span class="stage-name">Kết Luận Tất Yếu &amp; Cập Nhật <span class="m-kb">KB<sub>${st.step_no}</sub></span></span>
+        </div>
+        <div class="hero-verdict-card ${badgeClass}">
+          <div class="hero-verdict-top">
+            <div class="hero-suspect-profile">
+              <div class="hero-mugshot-mini">${suspectPortraitSvg(st.profession || "", true, st.verdict)}</div>
+              <div>
+                <div class="hero-suspect-name">${escapeHtmlText(st.name)}</div>
+                <span class="hero-suspect-cell">Ô ${st.cell}${st.profession ? ' · ' + escapeHtmlText(st.profession) : ''}</span>
+              </div>
+            </div>
+            <span class="hero-stamp-badge ${badgeClass}">${badgeText}</span>
+          </div>
+          <div class="hero-entailment-formula">
+            <span>Hệ quả logic</span>
+            <code>${formatLogicFormulaHtml(st.entailment_formula)}</code>
+          </div>
+        </div>
+        ${newClueHtml}
+      </div>
+    </div>
+    ${nextStepBtnHtml}
   `;
 }
 
@@ -999,6 +1244,12 @@ function playbackGoToLatest() {
 }
 
 function togglePlaybackPlay() {
+  if (autoTimer) {
+    stopAutoSolve();
+    playSfx("click");
+    if (currentState) renderLiveVisualizer(currentState);
+    return;
+  }
   if (playbackTimer) {
     clearInterval(playbackTimer);
     playbackTimer = null;
@@ -1008,6 +1259,19 @@ function togglePlaybackPlay() {
   }
   if (!currentState) return;
   const total = (currentState.deduction_steps || []).length;
+  const curIdx = selectedVisualStep !== null ? selectedVisualStep : total;
+
+  // Nếu bàn cờ chưa giải xong và đang ở bước hiện hành (hoặc chưa có bước nào), kích hoạt chạy DPLL trực tiếp
+  if (!currentState.is_complete && (total === 0 || curIdx === total)) {
+    selectedVisualStep = null;
+    const lblAuto = document.getElementById("lblAuto");
+    if (lblAuto) lblAuto.textContent = "Tạm dừng";
+    playSfx("click");
+    autoTimer = setTimeout(loopAutoSolve, 80);
+    renderLiveVisualizer(currentState);
+    return;
+  }
+
   if (total === 0) return;
   if (selectedVisualStep === null || selectedVisualStep >= total) {
     selectedVisualStep = 0;
@@ -1096,8 +1360,8 @@ function renderCrimeStrings(data) {
   } else if (activeStepIdx > 0 && steps[activeStepIdx - 1]) {
     const st = steps[activeStepIdx - 1];
     sourceCell = st.cell;
-    (st.premise_clues || []).forEach(pc => {
-      targetCellsWithRoles.push({ cell: pc.cell, role: "ref-line" });
+    (st.supporting_clues || st.premise_clues || []).forEach(pc => {
+      targetCellsWithRoles.push({ cell: pc.cell, role: "deduce-line" });
     });
   }
 
@@ -1109,7 +1373,7 @@ function renderCrimeStrings(data) {
     const r = el.getBoundingClientRect();
     return {
       x: r.left - shellRect.left + r.width / 2,
-      y: r.top - shellRect.top + r.height / 2,
+      y: r.top - shellRect.top + 10,
     };
   };
 
@@ -1128,25 +1392,46 @@ function renderCrimeStrings(data) {
 
     const midX = (sPt.x + tPt.x) / 2;
     const midY = (sPt.y + tPt.y) / 2;
-    const curvature = Math.min(dist * 0.18, 36);
+    const curvature = Math.min(dist * 0.16, 34);
     const nx = -dy / dist;
     const ny = dx / dist;
     const cx = midX + nx * curvature;
     const cy = midY + ny * curvature;
 
+    const dAttr = role === "deduce-line"
+      ? `M ${tPt.x} ${tPt.y} Q ${cx} ${cy} ${sPt.x} ${sPt.y}`
+      : `M ${sPt.x} ${sPt.y} Q ${cx} ${cy} ${tPt.x} ${tPt.y}`;
+
+    const shadow = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    shadow.setAttribute("d", dAttr);
+    shadow.setAttribute("class", "crime-string-shadow");
+    svg.appendChild(shadow);
+
     const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    path.setAttribute("d", `M ${sPt.x} ${sPt.y} Q ${cx} ${cy} ${tPt.x} ${tPt.y}`);
+    path.setAttribute("d", dAttr);
     path.setAttribute("class", `crime-string-path ${role}`);
     svg.appendChild(path);
 
+    const pulse = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    pulse.setAttribute("d", dAttr);
+    pulse.setAttribute("class", `crime-string-pulse ${role}`);
+    svg.appendChild(pulse);
+
     [sPt, tPt].forEach((pt, pIdx) => {
+      const halo = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      halo.setAttribute("cx", pt.x);
+      halo.setAttribute("cy", pt.y);
+      halo.setAttribute("r", pIdx === 0 ? "7" : "5.5");
+      halo.setAttribute("fill", pIdx === 0 ? "rgba(245, 158, 11, 0.25)" : "rgba(244, 63, 94, 0.22)");
+      svg.appendChild(halo);
+
       const pin = document.createElementNS("http://www.w3.org/2000/svg", "circle");
       pin.setAttribute("cx", pt.x);
       pin.setAttribute("cy", pt.y);
-      pin.setAttribute("r", pIdx === 0 ? "4.5" : "3.5");
+      pin.setAttribute("r", pIdx === 0 ? "4.6" : "3.8");
       pin.setAttribute("fill", pIdx === 0 ? "#F59E0B" : "#F43F5E");
-      pin.setAttribute("stroke", "#FFFFFF");
-      pin.setAttribute("stroke-width", "1.2");
+      pin.setAttribute("stroke", "#FEF3C7");
+      pin.setAttribute("stroke-width", "1.4");
       svg.appendChild(pin);
     });
   });
@@ -1203,6 +1488,11 @@ function render(data) {
 
   const badgeClause = document.getElementById("badgeClauseCount");
   if (badgeClause) badgeClause.textContent = `${data.telemetry.num_clauses} CNF`;
+  const topClause = document.getElementById("topClauseCount");
+  if (topClause) {
+    const bt = data.telemetry.backtracks || 0;
+    topClause.textContent = bt > 0 ? `${data.telemetry.num_clauses} CNF · ${bt} BT` : `${data.telemetry.num_clauses} CNF`;
+  }
 
   const kind = data.banner_kind || "READY";
   const spInner = document.getElementById("spotlightInner");
@@ -1239,6 +1529,40 @@ function render(data) {
   const shell = document.getElementById("boardShell");
   if (shell) shell.dataset.n = String(n);
 
+  const originBadge = document.getElementById("coordOriginBadge");
+  if (originBadge) originBadge.textContent = `${n}×${n}`;
+
+  const colHdr = document.getElementById("boardColHeaders");
+  if (colHdr) {
+    colHdr.innerHTML = "";
+    colHdr.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
+    for (let c = 0; c < n; c++) {
+      const colLet = String.fromCharCode(65 + c);
+      const chip = document.createElement("div");
+      chip.className = "coord-ruler-chip col-chip";
+      chip.innerHTML = `<span class="ruler-sub">CỘT</span><span class="ruler-main">${colLet}</span>`;
+      chip.title = `Rê chuột để soi nhanh Cột ${colLet}`;
+      chip.addEventListener("mouseenter", () => highlightAxis("col", colLet, true));
+      chip.addEventListener("mouseleave", () => highlightAxis("col", colLet, false));
+      colHdr.appendChild(chip);
+    }
+  }
+
+  const rowHdr = document.getElementById("boardRowHeaders");
+  if (rowHdr) {
+    rowHdr.innerHTML = "";
+    rowHdr.style.gridTemplateRows = `repeat(${n}, 1fr)`;
+    for (let r = 1; r <= n; r++) {
+      const chip = document.createElement("div");
+      chip.className = "coord-ruler-chip row-chip";
+      chip.innerHTML = `<span class="ruler-sub">H</span><span class="ruler-main">${r}</span>`;
+      chip.title = `Rê chuột để soi nhanh Hàng ${r}`;
+      chip.addEventListener("mouseenter", () => highlightAxis("row", String(r), true));
+      chip.addEventListener("mouseleave", () => highlightAxis("row", String(r), false));
+      rowHdr.appendChild(chip);
+    }
+  }
+
   const rowsWrap = document.getElementById("boardRowsWrap");
   if (rowsWrap) {
     rowsWrap.innerHTML = "";
@@ -1251,6 +1575,8 @@ function render(data) {
 
       const card = document.createElement("div");
       card.dataset.cellId = item.cell;
+      card.dataset.col = item.cell.charAt(0);
+      card.dataset.row = item.cell.slice(1);
       const classes = ["suspect-card"];
       if (item.revealed) {
         classes.push(item.status === "INNOCENT" ? "revealed-innocent" : "revealed-criminal");
@@ -1417,10 +1743,23 @@ function render(data) {
     victoryShownForSession = data.session_id;
     playSfx("victory");
     document.getElementById("vStatCells").textContent = `${data.revealed_count}/${data.total_cells}`;
+    const vVars = document.getElementById("vStatVars");
+    if (vVars) vVars.textContent = `${t.num_primary} / ${t.num_aux}`;
     document.getElementById("vStatClauses").textContent = t.num_clauses;
-    document.getElementById("vStatProps").textContent = t.propagations;
+    const vQueries = document.getElementById("vStatQueries");
+    if (vQueries) vQueries.textContent = t.sat_calls;
+    document.getElementById("vStatProps").textContent = `${t.propagations} (${t.decisions} dec)`;
+    const vBt = document.getElementById("vStatBacktracks");
+    if (vBt) vBt.textContent = `${t.backtracks} BT · ${t.runtime_ms.toFixed(1)}ms`;
     setTimeout(() => openModal("modalVictory"), 520);
   }
+}
+
+function highlightAxis(kind, val, active) {
+  const attr = kind === "col" ? "data-col" : "data-row";
+  document.querySelectorAll(`.suspect-card[${attr}="${val}"]`).forEach(el => {
+    el.classList.toggle("axis-hover-glow", active);
+  });
 }
 
 async function selectClue(cell) {
@@ -1476,6 +1815,7 @@ function stopAutoSolve() {
   if (lblAuto) lblAuto.textContent = "Tự động phá án";
   const pulseDot = document.getElementById("lvPulseDot");
   if (pulseDot) pulseDot.classList.remove("running");
+  if (currentState) renderLiveVisualizer(currentState);
 }
 
 async function loopAutoSolve() {
