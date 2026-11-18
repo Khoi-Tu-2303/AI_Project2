@@ -102,18 +102,140 @@ Bên cạnh sáu mẫu cốt lõi, đồ án hiện thực thêm hai mẫu gợi
 \section{Mã hóa sang dạng chuẩn hội (CNF)}
 \label{sec:ma-hoa-cnf}
 
+Bộ mã hóa \texttt{CNFEncoder} nhận gợi ý có cấu trúc, kiểm tra tính hợp lệ rồi chuyển tự động sang CNF; không phân tích ngôn ngữ tự nhiên và không viết sẵn công thức riêng cho từng câu đố. Một literal được lưu bằng số nguyên khác 0 có dấu, mệnh đề tuyển là danh sách literal, còn CNF là danh sách các mệnh đề tuyển. Chẳng hạn, \texttt{[[1, 2], [-1]]} biểu diễn $(C_1\lor C_2)\land\neg C_1$. Danh sách CNF rỗng biểu diễn hằng đúng; CNF chứa một mệnh đề rỗng biểu diễn hằng sai.
+
+Khi sử dụng biến phụ, tiêu chí đúng là bảo toàn nghiệm sau khi chiếu về các biến chính. Gọi $F_c(\mathbf C,\mathbf Z)$ là CNF của gợi ý $c$, với $\mathbf C$ là biến thân phận và $\mathbf Z$ là biến phụ. Với mọi phép gán đầy đủ $\alpha$ trên bàn cờ, yêu cầu là:
+\[
+\operatorname{Semantic}(c,\alpha)=\text{True}
+\iff \exists\beta:\ F_c(\alpha,\beta)=\text{True}.
+\]
+Do đó, biến phụ chỉ biểu diễn kết quả tính trung gian; chúng không bổ sung giả định về thân phận nhân vật.
+
 \subsection{Dẫn xuất toán học cho gợi ý nhị phân}
 \label{subsec:dan-xuat-nhi-phan}
 % Phần này do thành viên phụ trách bộ mã hóa (Module B) biên soạn.
+
+Với gợi ý \texttt{FACT}, thân phận Tội phạm của ô $i$ được mã hóa bằng mệnh đề đơn vị $(C_i)$, còn thân phận Vô tội bằng $(\neg C_i)$. Phép mã hóa cần một mệnh đề và không có biến phụ.
+
+Đặt $a=C_i$, $b=C_j$. Gợi ý \texttt{SAME} được dẫn xuất từ phép tương đương:
+\[
+a\leftrightarrow b
+\equiv(a\rightarrow b)\land(b\rightarrow a)
+\equiv(\neg a\lor b)\land(a\lor\neg b).
+\]
+Hai mệnh đề lần lượt loại các phép gán $(a,b)=(1,0)$ và $(0,1)$, chỉ giữ lại hai trạng thái bằng nhau. Ngược lại, gợi ý \texttt{DIFFERENT} dùng phép tuyển loại trừ:
+\[
+a\oplus b\equiv(a\lor b)\land(\neg a\lor\neg b).
+\]
+Mệnh đề đầu cấm hai ô cùng Vô tội, mệnh đề sau cấm hai ô cùng Tội phạm. Trên bảng $3\times3$, \texttt{SAME(A1,B1)} cho \texttt{[[-1,2],[1,-2]]}, còn \texttt{DIFFERENT(A1,B1)} cho \texttt{[[1,2],[-1,-2]]}. Cả hai đều cần đúng hai mệnh đề, không có biến phụ.
 
 \subsection{Dẫn xuất toán học cho gợi ý đếm số lượng}
 \label{subsec:dan-xuat-dem-so-luong}
 % Phần này do thành viên phụ trách bộ mã hóa (Module B) biên soạn.
 
+Với vùng gồm $m$ ô, gọi $x_1,\ldots,x_m$ là các biến tương ứng, được hiểu là 0 hoặc 1 khi tính tổng. Ba gợi ý \texttt{AT\_LEAST}, \texttt{AT\_MOST}, \texttt{EXACTLY} lần lượt đặt ràng buộc $\sum x_i\ge k$, $\sum x_i\le k$, $\sum x_i=k$. Đầu vào hợp lệ yêu cầu $k$ nguyên, không phải Boolean, và $0\le k\le m$.
+
+Thay vì liệt kê các tổ hợp ô, bộ mã hóa xây mạch đếm ngưỡng bằng quy hoạch động. Đặt $S(i,j)$ là phát biểu ``trong $i$ literal đầu có ít nhất $j$ literal đúng''. Ta có:
+\[
+S(i,0)=\text{True},\qquad S(0,j)=\text{False}\quad(j>0),
+\]
+\[
+S(i,j)\leftrightarrow S(i-1,j)\lor\bigl(x_i\land S(i-1,j-1)\bigr).
+\]
+Truy hồi chia thành hai khả năng: tiền tố đã có đủ $j$ literal đúng, hoặc literal mới đúng và tiền tố có ít nhất $j-1$ literal đúng.
+
+Các cổng trung gian được mã hóa theo kiểu Tseitin bằng tương đương hai chiều. Cụ thể:
+\begin{align*}
+z\leftrightarrow(a\land b)&\equiv
+(\neg z\lor a)\land(\neg z\lor b)\land(z\lor\neg a\lor\neg b),\\
+z\leftrightarrow(a\lor b)&\equiv
+(z\lor\neg a)\land(z\lor\neg b)\land(\neg z\lor a\lor b).
+\end{align*}
+Vì vậy, khi đầu vào đã cố định thì giá trị biến phụ cũng được xác định. Sau khi dựng mạch, bộ mã hóa ép đầu ra bằng mệnh đề đơn vị:
+\[
+\begin{array}{ll}
+\texttt{AT\_LEAST}(R,k): & S(m,k),\\
+\texttt{AT\_MOST}(R,k): & \neg S(m,k+1),\\
+\texttt{EXACTLY}(R,k): & S(m,k)\land\neg S(m,k+1).
+\end{array}
+\]
+Nội bộ mạch quy ước ngưỡng không dương là hằng đúng, ngưỡng vượt $m$ là hằng sai. Nhờ đó, \texttt{AT\_LEAST}(0) và \texttt{AT\_MOST}($m$) không áp đặt thêm điều kiện; \texttt{EXACTLY}(0) và \texttt{EXACTLY}($m$) lần lượt buộc mọi ô Vô tội và mọi ô Tội phạm.
+
+Ví dụ, ``đúng một Tội phạm trong A1, B1'' có dạng trực tiếp $(a\lor b)\land(\neg a\lor\neg b)$. Với cách dựng mạch hiện tại trên bảng $3\times3$, hai ngưỡng được xây riêng:
+\[
+u_{10}\leftrightarrow(a\lor b),\quad
+u_{11}\leftrightarrow(a\lor b),\quad
+u_{12}\leftrightarrow(b\land a),\quad
+u_{10}\land\neg u_{12}.
+\]
+Ba cổng sinh chín mệnh đề, cộng hai mệnh đề ép đầu ra thành 11 mệnh đề và ba biến phụ. Tuy lớn hơn dạng trực tiếp, công thức vẫn chỉ chấp nhận $(a,b)=(1,0)$ hoặc $(0,1)$ sau khi chiếu nghiệm.
+
+Một mạch ngưỡng $q$, với $1\le q\le m$, cần $O(mq)$ cổng, mệnh đề và thời gian dựng; lưu hai hàng quy hoạch động cần $O(q)$ bộ nhớ ngoài phần đầu ra. Hai mạch của \texttt{EXACTLY} chưa chia sẻ cổng, có chặn trên $O(m^2)$. Tính đúng của bộ đếm được chứng minh quy nạp theo $i$: điều kiện cơ sở đúng với tiền tố rỗng, còn truy hồi bảo toàn nghĩa ``ít nhất $j$'' ở mỗi bước.
+
 \subsection{Mã hóa các gợi ý mở rộng và quản lý biến phụ}
 \label{subsec:ma-hoa-mo-rong-bien-phu}
 % Phần này do thành viên phụ trách bộ mã hóa (Module B) biên soạn.
 
+\paragraph{Ràng buộc chẵn/lẻ.}
+Gợi ý \texttt{PARITY} được mã hóa bằng chuỗi XOR $p=x_1\oplus\cdots\oplus x_m$. Mỗi cổng $z\leftrightarrow(a\oplus b)$ tương đương:
+\[
+\begin{aligned}
+&(a\lor b\lor\neg z)\land(\neg a\lor\neg b\lor\neg z)\\
+&\land(a\lor\neg b\lor z)\land(\neg a\lor b\lor z).
+\end{aligned}
+\]
+Mệnh đề cuối ép $p$ đúng nếu số Tội phạm lẻ, hoặc ép $p$ sai nếu số Tội phạm chẵn. Với vùng hợp lệ không rỗng gồm $m$ ô, cần $m-1$ biến phụ và $4(m-1)+1$ mệnh đề. Ví dụ, gợi ý lẻ trên hàng A1, B1, C1 dùng hai cổng XOR và một mệnh đề ép đầu ra, tổng cộng hai biến phụ và chín mệnh đề; số Tội phạm được phép là 1 hoặc 3.
+
+\paragraph{So sánh hai vùng.}
+Để mã hóa \texttt{COMPARE}, đặt $A=L\setminus R$, $B=R\setminus L$, $t=|B|$. Các ô giao nhau đóng góp bằng nhau ở hai vế nên triệt tiêu trong hiệu:
+\[
+\operatorname{count}(L)-\operatorname{count}(R)
+=\sum_{i\in A}C_i+\sum_{j\in B}(1-C_j)-t.
+\]
+Đặt $T=\sum_{i\in A}C_i+\sum_{j\in B}\neg C_j$, trong đó mỗi literal được tính theo giá trị chân trị 0 hoặc 1. Ràng buộc gốc trở thành $T\operatorname{op}t$, cho phép tái sử dụng bộ đếm trên literal có dấu:
+\[
+\begin{array}{c|ccccc}
+\operatorname{op} & = & < & \le & > & \ge\\ \hline
+\text{Điều kiện} & T=t & T\le t-1 & T\le t & T\ge t+1 & T\ge t
+\end{array}
+\]
+Phạm vi triển khai của \texttt{CompareOp} hiện gồm năm phép trên; phép khác nhau ($\ne$) chưa được hỗ trợ trực tiếp. Khi $L=R$, hiệu luôn bằng 0: các phép $=,\le,\ge$ trở thành hằng đúng, còn $<,>$ trở thành hằng sai.
+
+Ví dụ, ``hàng 1 nhiều Tội phạm hơn cột B'' trên bảng $3\times3$ được chuyển thành:
+\[
+C_{A1}+C_{C1}+\neg C_{B2}+\neg C_{B3}\ge3.
+\]
+Ô B1 được triệt tiêu ở cả hai vế. Bộ mã hóa dựng ngưỡng 3 trên danh sách literal \texttt{[1,3,-5,-8]}, sinh 11 biến phụ và 34 mệnh đề khi mã hóa riêng gợi ý này. Cách biến đổi giữ nguyên ngữ nghĩa đếm hai vùng, kể cả khi chúng giao nhau.
+
+\paragraph{Quản lý biến và dựng cơ sở tri thức.}
+Lớp \texttt{VarMap} thực hiện ánh xạ thuận/ngược theo quy ước ở Mục~\ref{sec:bien-menh-de-kb}. Các biến phụ được cấp tăng dần từ $n^2+1$, không trùng giữa các gợi ý trong cùng lượt dựng. Hàm \texttt{build\_kb()} kiểm tra gợi ý, từ chối ID trùng, chuẩn bị các mệnh đề đơn vị theo thứ tự biến chính, đặt lại bộ cấp biến phụ một lần rồi ghép CNF của toàn bộ gợi ý với các mệnh đề đơn vị. Với cùng thứ tự gợi ý và trạng thái đã biết, kết quả dựng lại là xác định. Không ghép CNF cũ với CNF mới sau khi đặt lại bộ cấp biến phụ vì có thể trùng ID.
+
+Trước khi cấp biến cho cổng AND/OR, bộ mã hóa rút gọn hằng, đầu vào trùng và đầu vào đối nhau. Khi ghi mệnh đề, literal trùng được gộp và mệnh đề hằng đúng bị bỏ. Kết quả \texttt{KnowledgeBase} lưu các mệnh đề bằng tuple lồng nhau cùng số biến chính, biến phụ và số mệnh đề; ảnh chụp cũ không đổi khi encoder được dùng lại. Ngay cả KB rỗng vẫn ghi nhận đủ $n^2$ biến chính.
+
+Đầu vào dựng KB chỉ lấy từ gợi ý đã lộ và trạng thái đã biết trong \texttt{PublicState}; bộ mã hóa không nhận lời giải ẩn hay trực tiếp truy cập \texttt{GameEngine}. Ví dụ, trạng thái khởi tạo của câu đố chuỗi chỉ biết A1 Vô tội và gợi ý công khai xác nhận B1 Tội phạm, nên KB là \texttt{((2,),(-1,))}. Tầng gọi chịu trách nhiệm bảo đảm nguồn dữ liệu công khai; bộ mã hóa chỉ kiểm tra cấu trúc gợi ý, không tự xác định gợi ý đã lộ hay chưa.
+
+Do mỗi mạch dùng vùng biến phụ riêng và các cổng được định nghĩa hai chiều, một phép gán thỏa mọi gợi ý luôn mở rộng được thành mô hình của KB; ngược lại, mọi mô hình KB khi chiếu về biến chính đều thỏa các gợi ý và trạng thái đã biết. Bước dựng KB chưa kiểm tra tính nhất quán: việc phát hiện UNSAT và suy diễn hệ quả logic được thực hiện ở Chương~\ref{chap:cac-thuat-toan}.
+
 \section{Đánh giá ngữ nghĩa trực tiếp}
 \label{sec:danh-gia-ngu-nghia-truc-tiep}
 % Phần này do thành viên phụ trách bộ mã hóa (Module B) biên soạn.
+
+Lớp \texttt{SemanticEvaluator} đánh giá gợi ý trực tiếp trên một phép gán đầy đủ cho đúng $n^2$ ô. Mỗi giá trị phải có kiểu Boolean; phép gán thiếu/thừa ô hoặc dùng số nguyên, enum thân phận thay Boolean bị từ chối. Phương thức \texttt{evaluate(clue, assignment)} không gọi bộ mã hóa hay bộ giải SAT:
+\begin{itemize}
+    \item \texttt{FACT}, \texttt{SAME}, \texttt{DIFFERENT}: so sánh trực tiếp các giá trị Boolean.
+    \item \texttt{EXACTLY}, \texttt{AT\_LEAST}, \texttt{AT\_MOST}: đếm số giá trị đúng trong vùng rồi so sánh với $k$.
+    \item \texttt{PARITY}: lấy tổng theo mô-đun 2; \texttt{COMPARE}: đếm riêng từng vùng rồi áp dụng một trong năm phép so sánh đã nêu.
+\end{itemize}
+Chẳng hạn, A1 và C1 là Tội phạm, B1 là Vô tội thì gợi ý ``đúng hai Tội phạm trên hàng 1'' đúng, còn gợi ý ``số Tội phạm trên hàng 1 là lẻ'' sai. Với hai vùng giao nhau, evaluator đếm trực tiếp từng vùng, trong khi encoder triệt tiêu giao bằng đại số; hai cách tính phải cho cùng kết quả. Tính độc lập ở đây nằm ở cách đánh giá ngữ nghĩa so với cách dựng CNF; hai thành phần vẫn dùng chung kiểu dữ liệu, kiểm định và tiện ích phân giải vùng.
+
+\paragraph{Phương pháp kiểm chứng.}
+Bộ kiểm thử \texttt{test\_encoder\_acceptance.py} đối chiếu ba hướng: oracle ngữ nghĩa trực tiếp, vét cạn mô hình CNF ở ca nhỏ rồi chiếu về biến chính, và lan truyền đơn vị khi cố định toàn bộ biến chính ở mạch lớn. Cách thứ ba dựa trên các cổng tương đương không chu trình: đầu vào cố định sẽ xác định lần lượt đầu ra. Nếu còn mệnh đề chưa quyết định mà không còn mệnh đề đơn vị, kiểm thử báo lỗi; đây không phải bộ giải SAT tổng quát.
+
+Mười một nhóm B01--B11 bao phủ ánh xạ biến, tám mẫu gợi ý, các ngưỡng đếm biên, vùng giao/trùng/rời, phép chiếu nghiệm, tính độc lập của ảnh chụp KB, chống trùng biến phụ, từ chối dữ liệu sai và ranh giới thông tin công khai. Trên bảng $3\times3$, các gợi ý được chọn được kiểm tra đủ $2^9=512$ phép gán; trên mỗi kích thước $4\times4$ và $5\times5$, kiểm tra hai phép gán biên và 20 phép gán giả ngẫu nhiên với seed 2026. Phạm vi này không đồng nghĩa vét cạn mọi gợi ý hoặc mọi phép gán của bảng lớn.
+
+Theo kết quả nghiệm thu ngày 05/11/2026 được ghi trong tài liệu phần B, cổng G-B đạt 11/11 nhóm kiểm tra. Đây là kết quả riêng của mô-đun mã hóa, không thay thế đánh giá bộ giải và tác tử ở Chương~\ref{chap:thuc-nghiem-danh-gia}. Có thể chạy lại bằng lệnh sau từ thư mục \texttt{Source} của mã nguồn:
+\begin{verbatim}
+python -m pytest tests/test_encoder_acceptance.py -v
+\end{verbatim}
+
+Các giới hạn chính là hai ngưỡng của \texttt{EXACTLY} chưa chia sẻ cổng, chưa có bộ nhớ đệm gợi ý hay lựa chọn mã hóa theo kích thước vùng. Kiểm thử ở bảng lớn chỉ lấy mẫu; lỗi chung trong tiện ích vùng cần được kiểm tra bổ sung ở tầng nền tảng. Số biến và mệnh đề phản ánh chi phí biểu diễn, không trực tiếp chứng minh thời gian giải SAT hoặc hiệu năng giải toàn bộ câu đố.
