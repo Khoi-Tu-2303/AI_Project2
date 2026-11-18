@@ -100,18 +100,134 @@ Mã nguồn của hệ thống được tổ chức phân tầng rõ ràng theo 
 \section{Giao diện đồ họa}
 \label{sec:giao-dien-do-hoa}
 
+Để đáp ứng đầy đủ các yêu cầu tại Mục 4.1 của đề bài về một phiên bản trò chơi hoàn chỉnh, trực quan và tuân thủ nghiêm ngặt ranh giới bảo mật thông tin, hệ thống giao diện người dùng (gói \texttt{Source/gui/}) được thiết kế theo mô hình Điều khiển -- Hiển thị (\emph{Controller -- View}) với hai chế độ vận hành song song dùng chung một bộ điều khiển trung tâm \texttt{GUIController}:
+
+\begin{itemize}
+    \item \textbf{Giao diện Web trinh thám Tiếng Việt (chế độ mặc định):} Khi khởi chạy từ \texttt{Source/main.py}, lớp \texttt{WebGUIApp} (\texttt{gui/web\_server.py}) khởi tạo máy chủ HTTP đa luồng (\texttt{ThreadingHTTPServer} thuộc thư viện chuẩn Python, mặc định tại địa chỉ \texttt{127.0.0.1:8080}) để phục vụ ứng dụng trang đơn gồm ba tệp tách biệt trong \texttt{gui/web/} (\texttt{index.html}, \texttt{styles.css}, \texttt{app.js}). Mọi thao tác của người chơi và tác tử được trao đổi qua các điểm cuối JSON REST API (\texttt{/api/state}, \texttt{/api/load}, \texttt{/api/load\_raw}, \texttt{/api/restart}, \texttt{/api/select\_clue}, \texttt{/api/verdict}, \texttt{/api/hint}, \texttt{/api/step}) được đồng bộ hóa an toàn luồng bằng khóa \texttt{threading.Lock}.
+    \item \textbf{Giao diện cửa sổ Desktop Tkinter (chế độ dự phòng và kiểm thử):} Kích hoạt thông qua tham số dòng lệnh \texttt{--desktop}, lớp \texttt{GriductiveApp} (\texttt{gui/app.py}) dựng bàn cờ trực tiếp trên \texttt{tk.Canvas}, chia sẻ cùng thực thể \texttt{GUIController}, bộ định dạng gợi ý và hệ thống bảng màu chủ đề (\texttt{gui/theme.py}).
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    node distance=1.05cm and 1.25cm,
+    box/.style={rectangle, rounded corners=4pt, draw=black!75, thick, fill=gray!8, minimum height=1.05cm, text width=3.3cm, align=center, font=\small},
+    corebox/.style={rectangle, rounded corners=4pt, draw=blue!70!black, thick, fill=blue!6, minimum height=1.15cm, text width=3.6cm, align=center, font=\small},
+    guardbox/.style={rectangle, rounded corners=4pt, draw=red!70!black, thick, fill=red!5, minimum height=1.05cm, text width=3.5cm, align=center, font=\small},
+    arr/.style={->, >=stealth, thick, draw=black!80}
+]
+    \node[guardbox] (engine) {\textbf{GameEngine}\\{\footnotesize (Giữ \texttt{solution} ẩn \& gợi ý chưa lật)}};
+    \node[corebox, right=1.25cm of engine] (port) {\textbf{GamePort / PublicState}\\{\footnotesize (Ảnh chụp bất biến công khai)}};
+    \node[corebox, right=1.25cm of port] (ctrl) {\textbf{GUIController}\\{\footnotesize (Điều phối phiên, vết \& thống kê)}};
+    \node[box, below=1.0cm of port] (agent) {\textbf{LogicAgent}\\{\footnotesize (\texttt{hint}, \texttt{step}, \texttt{run})}};
+    \node[box, below=1.0cm of ctrl] (view) {\textbf{Web UI \& Tkinter UI}\\{\footnotesize (Hiển thị bàn cờ \& luồng DPLL)}};
+
+    \draw[arr] (engine) -- node[above, font=\scriptsize] {Đóng gói} (port);
+    \draw[arr] (port) -- node[above, font=\scriptsize] {Chỉ đọc công khai} (ctrl);
+    \draw[arr, <->] (port) -- node[right, font=\scriptsize] {Suy diễn / Phán quyết} (agent);
+    \draw[arr, <->] (agent) -- node[below, font=\scriptsize] {Ủy quyền AI} (ctrl);
+    \draw[arr, <->] (ctrl) -- node[right, font=\scriptsize] {JSON / Sự kiện} (view);
+    \draw[arr, dashed] (ctrl.north) to[out=158, in=22] node[above, font=\scriptsize] {Chỉ gọi \texttt{load()} và \texttt{restart()}} (engine.north);
+\end{tikzpicture}
+\caption{Kiến trúc phân tách bảo mật thông tin giữa lõi trò chơi, tác tử logic và giao diện đồ họa.}
+\label{fig:kien-truc-gui}
+\end{figure}
+
+Như minh họa tại Hình~\ref{fig:kien-truc-gui}, ranh giới bảo mật thông tin được thực thi xuyên suốt từ lõi xử lý đến tầng hiển thị. \texttt{GUIController} chỉ giữ tham chiếu tới \texttt{GameEngine} để thực hiện hai thao tác quản trị vòng đời màn chơi là nạp câu đố (\texttt{load\_puzzle}) và khởi động lại (\texttt{restart}). Toàn bộ dữ liệu xuất ra giao diện qua hàm \texttt{serialize\_state\_payload} đều được trích xuất độc quyền từ ảnh chụp bất biến \texttt{PublicState}; đáp án ẩn (\texttt{solution}) và nội dung các gợi ý chưa mở tuyệt đối không bao giờ xuất hiện trong gói tin trả về trình duyệt, loại bỏ hoàn toàn khả năng rò rỉ dữ liệu ẩn.
+
+Không gian giao diện Web được tổ chức thành ba màn hình chức năng liên hoàn gồm \emph{Màn hình bắt đầu} (trạm chỉ huy trinh thám kèm bảng ghim manh mối trực quan), \emph{Kho lưu trữ hồ sơ vụ án} (hỗ trợ lọc danh mục 10 hồ sơ theo cấp độ $3 \times 3$, $4 \times 4$, $5 \times 5$ và nhóm kiểm thử biên AI) và \emph{Màn hình điều tra bàn cờ}. Người dùng có thể chuyển đổi linh hoạt giữa hai giao diện màu sắc tương phản cao là \emph{Đêm Trinh Thám} (\texttt{noir}) và \emph{Hồ Sơ Cổ Điển} (\texttt{paper}), bật hoặc tắt hiệu ứng âm thanh tổng hợp thời gian thực bằng Web Audio API, cũng như kích hoạt chế độ giảm chuyển động (\texttt{--reduced-motion}).
+
 \subsection{Bàn cờ và hiển thị gợi ý}
 \label{subsec:ban-co-hien-thi}
-% Phần này do thành viên phụ trách giao diện (Module E) biên soạn.
+
+Trên màn hình điều tra chính, khu vực bên trái hiển thị bàn cờ ma trận vuông kích thước $N \times N$ ($N \in \{3, 4, 5\}$) tự động co giãn tỷ lệ theo kích thước màn chơi. Bao quanh lưới là khung thước tọa độ trực quan đánh chữ cái cột (\texttt{A}--\texttt{E}) ở cạnh trên và đánh số thứ tự hàng (\texttt{1}--\texttt{5}) ở cạnh trái, đi kèm nhãn kích thước ma trận tại góc gốc. Khi người chơi rê chuột lên một nhãn cột hoặc nhãn hàng trên thước tọa độ, toàn bộ các thẻ bài thuộc trục tương ứng sẽ phát sáng đồng bộ, hỗ trợ định vị nhanh phạm vi hàng và cột khi đọc lời khai.
+
+Mỗi ô trên lưới được biểu diễn dưới dạng một thẻ hồ sơ nhân vật chứa đầy đủ mã tọa độ chuẩn (chẳng hạn \texttt{B2}), họ tên, chức danh nghề nghiệp và hình ảnh đại diện minh họa dạng vector (SVG). Giao diện phân biệt rạch ròi hai trạng thái của thẻ bài:
+\begin{itemize}
+    \item \textbf{Thẻ đang úp (chưa chứng minh):} Mang nhãn trạng thái \textbf{``Chưa mở''}, hiển thị chân dung ẩn danh tối màu, ẩn hoàn toàn thân phận thật cũng như nội dung gợi ý của nhân vật, đồng thời cung cấp hai nút phán quyết trực tiếp ngay dưới chân thẻ.
+    \item \textbf{Thẻ đã lật mở (đã xác minh):} Đóng dấu nổi bật thân phận đã chứng minh bằng nhãn màu xanh ngọc (\textbf{Vô tội}) hoặc đỏ thẫm (\textbf{Thủ phạm}), gắn kèm huy hiệu thứ tự suy diễn (\textbf{Mở sẵn} đối với các ô thuộc tri thức khởi tạo $KB_0$, hoặc \textbf{Bước \#$k$} đối với ô được lật ở bước suy luận thứ $k$), và hiển thị nguyên văn phát biểu gợi ý của nhân vật đó.
+\end{itemize}
+
+Nhằm giúp người chơi nắm bắt tự nhiên các ràng buộc logic mà không cần xử lý ngôn ngữ tự nhiên ở tầng đầu vào, mô-đun \texttt{gui/clue\_formatter.py} đảm nhận việc chuyển dịch tự động từ cấu trúc dữ liệu \texttt{Clue} sang hai dạng biểu diễn song song:
+\begin{enumerate}
+    \item \textbf{Lời khai Tiếng Việt tự nhiên (\texttt{format\_clue}):} Sinh câu phát biểu hoàn chỉnh kèm tên nhân vật và tọa độ cho toàn bộ 8 mẫu gợi ý (\texttt{FACT}, \texttt{SAME}, \texttt{DIFFERENT}, \texttt{EXACTLY}, \texttt{AT\_LEAST}, \texttt{AT\_MOST}, \texttt{PARITY}, \texttt{COMPARE}). Trên bàn cờ mật độ cao $5 \times 5$, bộ định dạng tự động kích hoạt chế độ rút gọn (\texttt{compact=True}) để bảo đảm nội dung hiển thị gọn gàng trong khung thẻ.
+    \item \textbf{Công thức đại số và mệnh đề chuẩn hội (\texttt{format\_clue\_formula}):} Kết xuất đồng thời biểu thức toán học tương ứng (ví dụ $(C_{A1} + C_{B1} + C_{C1}) = 1$ hoặc $(C_{A1} \oplus C_{B1} \oplus C_{C1}) \equiv 0 \pmod 2$) cùng bản xem trước các mệnh đề CNF thực tế được sinh bởi \texttt{CNFEncoder} và số lượng biến phụ phát sinh.
+\end{enumerate}
+
+Đặc biệt, giao diện hiện thực cơ chế \textbf{chọn gợi ý và làm nổi bật vùng tham chiếu} (\emph{Clue Highlighting}) hỗ trợ trọn vẹn cả 8 loại gợi ý. Khi người chơi bấm nút \emph{Soi vùng lời khai} trên một thẻ đã mở (hoặc bấm vào lời khai tương ứng trong bảng điều khiển), phương thức \texttt{GUIController.select\_clue} gọi hàm hình học \texttt{referenced\_cells(clue, n)} và \texttt{get\_clue\_region\_breakdown()} để khoanh vùng trực quan các ô liên quan trên bàn cờ:
+\begin{itemize}
+    \item Với các gợi ý đơn lẻ, nhị phân, đếm số lượng và chẵn lẻ, mọi ô thuộc vùng tham chiếu đều được gắn viền sáng và nhãn \textbf{Ô liên quan}.
+    \item Với mẫu mở rộng so sánh hai vùng \texttt{COMPARE}, hệ thống tự động phân rã hai tập hợp ô thành ba miền độc lập và gắn nhãn màu phân biệt trực tiếp trên từng thẻ: \textbf{Vế trái} ($L \setminus R$), \textbf{Vế phải} ($R \setminus L$) và \textbf{Giao nhau} ($L \cap R$).
+    \item Đồng thời, lớp phủ đồ họa vector (\emph{Crime Board Strings}) vẽ các đường cong Bezier mô phỏng sợi dây chỉ đỏ thám tử nối từ ghim của thẻ chứa lời khai đến từng ô được tham chiếu, kết hợp cùng thanh tiêu điểm phía trên bàn cờ liệt kê chi tiết danh sách tọa độ đang được soi chiếu.
+\end{itemize}
 
 \subsection{Tương tác lật thẻ và phán đoán}
 \label{subsec:tuong-tac-lat-the}
-% Phần này do thành viên phụ trách giao diện (Module E) biên soạn.
+
+Người chơi thực hiện suy luận thủ công bằng cách chọn trực tiếp nút \textbf{Vô tội} (\texttt{INNOCENT}) hoặc \textbf{Thủ phạm} (\texttt{CRIMINAL}) trên bất kỳ thẻ nhân vật nào đang ở trạng thái úp. Yêu cầu phán quyết được chuyển qua \texttt{GUIController.submit\_verdict(cell, verdict)} tới \texttt{GameEngine} để kiểm tra quan hệ hệ quả logic dựa trên cơ sở tri thức công khai $KB_t$ hiện hành. Hệ thống phân biệt minh bạch ba kết quả thẩm định và phản hồi tức thời trên giao diện như tổng hợp tại Bảng~\ref{tab:phan-hoi-phan-quyet}.
+
+\begin{table}[H]
+\centering
+\small
+\renewcommand{\arraystretch}{1.3}
+\caption{Cơ chế phản hồi của giao diện đối với từng kết quả thẩm định phán quyết.}
+\label{tab:phan-hoi-phan-quyet}
+\begin{tabularx}{\textwidth}{|l|L{0.28\textwidth}|X|}
+\hline
+\rowcolor{gray!15}
+\textbf{Mã kết quả} & \textbf{Điều kiện trên $KB_t$} & \textbf{Cập nhật trạng thái và phản hồi trực quan} \\
+\hline
+\texttt{ACCEPTED} & $KB_t \models \ell$ (thân phận đã được chứng minh bắt buộc) & Chấp nhận phán quyết; kích hoạt hoạt ảnh lật thẻ (\texttt{anim-flip}) và âm thanh đóng dấu; gắn nhãn thân phận, hiển thị lời khai mới vào $KB_{t+1}$, tăng chỉ số \texttt{revision}. Nếu toàn bộ $n^2$ ô đã mở, mở hộp thoại tổng kết chiến thắng (\emph{Victory Modal}). \\
+\hline
+\texttt{NOT\_PROVABLE} & Cả $KB_t \land \ell$ và $KB_t \land \neg\ell$ đều thỏa được (\texttt{UNKNOWN}) & Từ chối phán quyết (kể cả khi trùng ngẫu nhiên với đáp án ẩn); kích hoạt hiệu ứng rung cảnh báo (\texttt{anim-shake}), giữ nguyên thẻ úp, không tiết lộ lời khai ẩn và hiển thị thông báo nhắc nhở nguyên tắc không đoán mò. \\
+\hline
+\texttt{CONTRADICTED} & $KB_t \models \neg\ell$ (bị ép buộc mang thân phận ngược lại) & Từ chối phán quyết; rung cảnh báo thẻ bài, giữ nguyên toàn bộ trạng thái bàn cờ cùng mã phiên bản \texttt{StateToken}, đồng thời phát cảnh báo đỏ trên thanh trạng thái rằng kết luận mâu thuẫn trực tiếp với các lời khai hiện có. \\
+\hline
+\end{tabularx}
+\end{table}
+
+Bên cạnh thao tác gửi phán quyết chính thức, giao diện cung cấp đầy đủ các tiện ích hỗ trợ quá trình điều tra và quản lý phiên chơi của người dùng:
+\begin{itemize}
+    \item \textbf{Ghi chú giả thuyết nháp (\emph{Pencil Notes}):} Người chơi có thể nhấp chuột phải vào một thẻ chưa mở (hoặc bật chế độ bút chì trên thanh công cụ) để xoay vòng nhãn ghi chú cá nhân (\texttt{? Vô tội}, \texttt{? Thủ phạm}, hoặc xóa nhãn). Các ghi chú này được lưu trữ thuần túy ở tầng giao diện, giúp người chơi tự đánh dấu giả thiết trung gian khi suy luận tay mà không phát sinh lệnh gửi phán quyết tới \texttt{GameEngine}.
+    \item \textbf{Nạp câu đố và khởi động lại (\emph{Load \& Restart}):} Thanh điều khiển cho phép chuyển nhanh giữa các hồ sơ chuẩn bằng trình đơn thả xuống, quay về kho lưu trữ để duyệt mô tả cốt truyện từng vụ án, hoặc nạp một tệp câu đố tùy chỉnh bên ngoài thông qua hộp thoại chọn tệp và thao tác kéo--thả trực tiếp tệp \texttt{.json} vào cửa sổ trình duyệt (\emph{Drag \& Drop}). Dữ liệu tệp tải lên được chuyển qua điểm cuối \texttt{/api/load\_raw} để kiểm định cấu trúc nghiêm ngặt bằng \texttt{puzzle\_from\_dict} trước khi khởi tạo phiên mới. Nút \textbf{Khởi động lại} (\texttt{Restart}) gọi \texttt{GUIController.restart()} để đặt lại toàn bộ bàn cờ, bộ đếm thống kê và vết suy luận về đúng trạng thái khởi điểm $KB_0$.
+\end{itemize}
 
 \subsection{Bảng điều khiển bộ giải}
 \label{subsec:bang-dieu-khien-bo-giai}
-% Phần này do thành viên phụ trách giao diện (Module E) biên soạn.
+
+Hệ thống điều khiển và quan sát bộ giải suy luận tự động được tích hợp trực tiếp vào màn hình điều tra thông qua ba khu vực phối hợp đồng bộ, giúp người dùng không chỉ vận hành tác tử mà còn theo dõi tường tận bản chất toán học của từng bước chứng minh:
+
+\begin{enumerate}
+    \item \textbf{Cụm điều khiển tác tử suy luận (\emph{Solver Control Dock}):} Nằm tại trung tâm thanh công cụ phía trên, cung cấp ba chế độ trợ giúp và giải tự động:
+    \begin{itemize}
+        \item \emph{Gợi ý (\texttt{Hint}):} Triệu gọi phương thức truy vấn thuần túy \texttt{agent.hint(state)} thông qua \texttt{GamePort}. Nếu tồn tại ô cờ bị ép buộc logic, giao diện gắn huy hiệu phát sáng \textbf{AI gợi ý} lên ô đầu tiên theo thứ tự hàng trước và thông báo gợi ý trên thanh tiêu điểm mà tuyệt đối không tự ý lật thẻ hay đọc lời giải ẩn; nếu không có ô nào suy diễn được, hệ thống báo trạng thái tạm dừng (\texttt{STUCK}).
+        \item \emph{Giải 1 bước (\texttt{Step}):} Gọi \texttt{controller.step\_auto\_solve()} để tác tử \texttt{LogicAgent} thực thi đúng một chu kỳ phân loại, chọn ô tất định theo thứ tự hàng trước, gửi phán quyết kèm \texttt{StateToken} và mở khóa lời khai kế tiếp.
+        \item \emph{Tự động phá án (\texttt{Auto Solve}):} Vận hành vòng lặp gọi từng bước bất đồng bộ theo bộ định thời phía giao diện với ba mức tốc độ tùy chọn (\emph{Nhanh} -- 420\,ms, \emph{Vừa} -- 850\,ms, \emph{Chậm} -- 1400\,ms) cùng nút \emph{Tạm dừng} tức thời. Cách thiết kế theo từng nhịp bất đồng bộ giữ cho giao diện luôn mượt mà, cập nhật trực tiếp hiệu ứng lật bài ở mỗi bước và tự động dừng an toàn ngay khi bàn cờ được giải xong (\texttt{SOLVED}), rơi vào bế tắc (\texttt{STUCK}) hoặc phát hiện mâu thuẫn (\texttt{INCONSISTENT}).
+    \end{itemize}
+
+    \item \textbf{Bảng trực quan hóa luồng suy diễn 4 tầng (\emph{Forensic DPLL Console}) và bộ phát lại:} Chiếm nửa bên phải của không gian làm việc, đóng vai trò bảng giải trình chứng minh hình thức theo thời gian thực. Phía trên bảng là thanh tiến trình chuỗi bước đi ($KB_0 \to \text{Bước \#1} \to \dots \to \text{Bước \#}k$) cho phép người dùng tua lùi, tiến từng bước hoặc phát lại tự động toàn bộ quá trình phá án ở các tốc độ $0.5\times$, $1.0\times$ và $2.0\times$. Tại mỗi bước suy luận thứ $t$ (xác nhận thân phận literal $\ell$ cho ô $c^*$), bảng trình bày rõ ràng sơ đồ luồng 4 tầng:
+    \begin{itemize}
+        \item \emph{Tầng 01 -- Tiền đề tri thức công khai ($KB_{t-1}$):} Trích xuất các thẻ nhân chứng đang mở có vùng tham chiếu giao cắt với ô $c^*$ kèm công thức đại số của chúng; người dùng có thể nhấp trực tiếp vào từng thẻ tiền đề để soi vùng tương ứng trên bàn cờ.
+        \item \emph{Tầng 02 -- Kiểm tra phản chứng (\emph{Proof by Refutation}):} Hiển thị đối xứng hai nhánh kiểm định gồm nhánh giả thiết đối lập dẫn tới mâu thuẫn ($KB_{t-1} \land \neg\ell \Longrightarrow \text{UNSAT}$) và nhánh nhất quán ($KB_{t-1} \land \ell \Longrightarrow \text{SAT}$).
+        \item \emph{Tầng 03 -- Động cơ DPLL SAT:} Cập nhật trực tiếp bốn chỉ số hoạt động nội tại của bộ giải gồm số phép lan truyền đơn vị (\emph{Unit Prop}), số quyết định phân nhánh (\emph{Decisions}), số lần quay lui (\emph{Backtracks}) và số lượt gọi hàm giải (\emph{SAT Calls}) kèm thời gian thực thi tích lũy.
+        \item \emph{Tầng 04 -- Kết luận tất yếu và cập nhật $KB_t$:} Khẳng định hệ quả logic $KB_{t-1} \models \ell$, hiển thị mệnh đề đơn vị mới được bổ sung cùng danh sách mệnh đề CNF khai triển từ lời khai vừa mở khóa.
+    \end{itemize}
+
+    \item \textbf{Ngăn kéo thống kê thực nghiệm và nhật ký suy diễn (\emph{Telemetry \& Trace Drawer}):} Có thể mở bất kỳ lúc nào từ thanh công cụ để quan sát bảng tổng hợp đầy đủ 6 nhóm chỉ số thực nghiệm theo chuẩn Mục 4.5 (số biến chính $n^2$, số biến phụ, tổng số mệnh đề CNF hiện hành, số bước suy diễn, số truy vấn SAT, số lần phân nhánh / lan truyền đơn vị / quay lui và tổng thời gian giải tính bằng mili-giây), danh sách toàn bộ lời khai đã mở kèm dạng chuẩn hội CNF, cùng khung nhật ký vết suy luận (\emph{Deduction Trace}) ghi lại tuần tự mọi thao tác của người chơi và tác tử kèm nhãn phiên bản trạng thái (\texttt{revision}).
+\end{enumerate}
 
 \section{Video demo}
 \label{sec:video-demo}
-% Phần này do thành viên phụ trách giao diện và demo (Module E) biên soạn.
+
+Theo đúng quy định tại Mục 4.7 của đề bài, nhóm đã thực hiện video minh họa toàn diện giao diện đồ họa và các tính năng suy luận của hệ thống (thời lượng từ 5 đến 10 phút, có thuyết minh/phụ đề Tiếng Việt rõ ràng và được lưu trữ công khai trên Google Drive). Nội dung trình diễn trong video được xây dựng theo ba phần mạch lạc:
+
+\begin{enumerate}
+    \item \textbf{Giới thiệu giao diện đồ họa và công cụ trực quan:} Khởi chạy ứng dụng từ điểm vào \texttt{Source/main.py}, giới thiệu bố cục 3 màn hình chức năng, thao tác chuyển đổi chủ đề Sáng/Tối (\emph{Noir} / \emph{Paper}), hộp thoại tra cứu quy tắc suy diễn SAT, kho lưu trữ 10 hồ sơ vụ án, tính năng kéo--thả nạp tệp câu đố \texttt{.json} và cơ chế soi vùng tham chiếu kèm mạng dây chỉ đỏ liên kết (bao gồm cả trường hợp phân tách hai vùng giao nhau của gợi ý \texttt{COMPARE}).
+    \item \textbf{Trải nghiệm chơi thủ công và kiểm chứng nguyên tắc không đoán mò:} Thực hiện suy luận trực tiếp trên màn chơi $3 \times 3$, minh họa đầy đủ trường hợp phán quyết hợp lệ được chấp nhận lật mở thẻ mới (\texttt{ACCEPTED}), trường hợp cố ý đoán mò một ô chưa đủ bằng chứng bị hệ thống từ chối giữ nguyên trạng thái úp (\texttt{NOT\_PROVABLE}), trường hợp gửi phán quyết trái ngược dữ kiện bị cảnh báo mâu thuẫn (\texttt{CONTRADICTED}), kết hợp sử dụng ghi chú nháp và tính năng gợi ý một bước (\texttt{Hint}).
+    \item \textbf{Vận hành tác tử suy luận tự động và kiểm thử biên:} Chạy chế độ giải từng bước (\texttt{Step}) và tự động phá án (\texttt{Auto Solve}) trên các hồ sơ $4 \times 4$ và đại án thử tải $5 \times 5$; quan sát trực tiếp sơ đồ phản chứng 4 tầng trên \emph{Forensic DPLL Console}, chế độ tua phát lại từng bước và bảng thống kê 6 chỉ số thực nghiệm; đồng thời trình diễn cơ chế dừng an toàn khi thiếu dữ kiện trên màn \texttt{3x3\_stuck} (\texttt{STUCK}) và khả năng phát hiện mâu thuẫn tức thời trên màn \texttt{3x3\_inconsistent} (\texttt{INCONSISTENT}).
+\end{enumerate}
+
+\begin{tcolorbox}[colback=gray!5, colframe=blue!65!black, title=\textbf{Liên kết Video Demo sản phẩm (Google Drive)}]
+\textbf{Đường dẫn truy cập công khai (Anyone with the link can view):}\\
+\url{https://drive.google.com/drive/folders/CAP_NHAT_LINK_GOOGLE_DRIVE_TAI_DAY}
+\end{tcolorbox}
